@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Al Lahjah Institute</title>
+<meta name="description" content="Emirati Arabic taught in Dubai by Emiratis. Group and one-to-one classes, complete beginners welcome. Design concept.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&family=Albert+Sans:wght@300..600&family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Noto+Naskh+Arabic:wght@400..600&display=swap">
+<style>
+/* LAYOUT CONCEPT: the page is a desert at first light, built in layers. A pearl sky and
+   a low sun, the word اللهجة standing behind three dune ridges, then a ring of Emirati
+   photographs that turns as you scroll. Light mode is pearl; dark mode is oxblood night. */
+:root{
+  --nav-h:84px;
+  /* pearl (light) */
+  --bg:#f7f4ef; --bg-2:#e8e1d5; --surface:#fffefb; --sec-shadow:rgba(70,36,26,.30);
+  --fg:#34161a; --muted:#7b6560;
+  --accent:#721011; --gold:#86651f; --gold-line:#c6a55e;
+  --rule:rgba(114,16,17,.16);
+  --panel:rgba(255,255,255,.92); --panel-edge:rgba(114,16,17,.10);
+  --panel-shadow:0 1px 0 #fff inset,0 0 0 1px rgba(255,255,255,.7) inset,0 34px 60px -26px rgba(80,38,28,.52),0 10px 22px -10px rgba(80,38,28,.22),0 2px 4px rgba(80,38,28,.10);
+  --logo:#721011; --toggle:rgba(114,16,17,.06);
+  --band:var(--bg-2); --band-fg:var(--fg); --band-muted:var(--muted); --band-gold:var(--gold); --band-rule:var(--rule);
+  --sky-a:#fdfcf9; --sky-b:#efe8dc; --sun:rgba(232,196,112,.6); --sun-core:rgba(255,246,214,.95);
+  --d-far:#e7ddcd; --d-mid:#dacbb5; --d-near:#c9b79b; --rim:rgba(255,255,255,.95);
+  --word:linear-gradient(172deg,#a8282b 0%,#721011 52%,#43090a 100%); --word-shade:rgba(114,16,17,.16); --word-glint:rgba(255,255,255,.55);
+  --hero-fg:var(--fg); --hero-muted:var(--muted);
+  --wa:#169a4f; --wa-hover:#12843f;
+  --display:"Newsreader",Georgia,"Times New Roman",serif;
+  --sans:"Albert Sans","Helvetica Neue",Arial,sans-serif;
+  --ar:"Amiri","Noto Naskh Arabic",Georgia,serif;
+  --ar-display:"Aref Ruqaa","Amiri",Georgia,serif;
+  --col:1200px; --gut:clamp(20px,5vw,64px);
+  --star:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72' fill='none' stroke='%23b08c42' stroke-width='1'%3E%3Cpath d='M36 6l7 15 15-7-7 15 15 7-15 7 7 15-15-7-7 15-7-15-15 7 7-15-15-7 15-7-7-15 15 7z'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#1a0304; --bg-2:#230506; --surface:#2b0809; --sec-shadow:rgba(0,0,0,.55); --fg:#f4ede2; --muted:rgba(244,237,226,.68);
+    --accent:#d27073; --gold:#dcc283; --gold-line:#b99a57; --rule:rgba(220,194,131,.2);
+    --panel:rgba(255,255,255,.045); --panel-edge:rgba(220,194,131,.2);
+    --panel-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 28px 60px -28px rgba(0,0,0,.85),0 3px 10px rgba(0,0,0,.3);
+    --logo:#dcc283; --toggle:rgba(220,194,131,.1);
+    --sky-a:#2d0607; --sky-b:#150203; --sun:rgba(220,194,131,.34); --sun-core:rgba(255,232,170,.9);
+    --d-far:#4c1213; --d-mid:#350b0c; --d-near:#220607; --rim:rgba(220,194,131,.5);
+    --word:linear-gradient(172deg,#fff0bd 0%,#d9bd7c 44%,#9d7a33 100%); --word-shade:rgba(0,0,0,.5); --word-glint:rgba(255,246,214,.5);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1a0304; --bg-2:#230506; --surface:#2b0809; --sec-shadow:rgba(0,0,0,.55); --fg:#f4ede2; --muted:rgba(244,237,226,.68);
+  --accent:#d27073; --gold:#dcc283; --gold-line:#b99a57; --rule:rgba(220,194,131,.2);
+  --panel:rgba(255,255,255,.045); --panel-edge:rgba(220,194,131,.2);
+  --panel-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 28px 60px -28px rgba(0,0,0,.85),0 3px 10px rgba(0,0,0,.3);
+  --logo:#dcc283; --toggle:rgba(220,194,131,.1);
+  --sky-a:#2d0607; --sky-b:#150203; --sun:rgba(220,194,131,.34); --sun-core:rgba(255,232,170,.9);
+  --d-far:#4c1213; --d-mid:#350b0c; --d-near:#220607; --rim:rgba(220,194,131,.5);
+  --word:linear-gradient(172deg,#fff0bd 0%,#d9bd7c 44%,#9d7a33 100%); --word-shade:rgba(0,0,0,.5); --word-glint:rgba(255,246,214,.5);
+  color-scheme:dark;
+}
+html[lang="ar"]{--display:"Amiri","Noto Naskh Arabic",Georgia,serif;--sans:"Noto Naskh Arabic","Amiri",Georgia,serif}
+html[lang="ar"] *{letter-spacing:0!important;text-transform:none!important}
+html[lang="ar"] body{font-size:18px;line-height:1.95;font-weight:400}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-weight:350;font-size:16.5px;line-height:1.75;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+h1,h2,h3{font-family:var(--display);font-weight:400;text-wrap:balance;margin:0;letter-spacing:-.01em}
+p{margin:0} a{color:inherit}
+:focus-visible{outline:2px solid var(--gold-line);outline-offset:3px;border-radius:3px}
+.wrap{max-width:var(--col);margin-inline:auto;padding-inline:var(--gut)}
+.ar{font-family:var(--ar);direction:rtl;unicode-bidi:isolate}
+.lede{font-size:clamp(1.05rem,1.4vw,1.15rem);color:var(--muted);max-width:52ch}
+.label{font-size:.7rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);display:inline-flex;align-items:center;gap:.7rem}
+.label::before{content:"";width:6px;height:6px;background:var(--gold-line);transform:rotate(45deg)}
+section{padding-block:clamp(5rem,10vw,9rem);position:relative}
+#dialect,#how,#trial,#ring{box-shadow:inset 0 18px 24px -18px var(--sec-shadow),inset 0 -18px 24px -18px var(--sec-shadow)}
+#hero{box-shadow:0 26px 40px -24px var(--sec-shadow);z-index:2}
+.glass{background:var(--panel);border:1px solid var(--panel-edge);box-shadow:var(--panel-shadow);-webkit-backdrop-filter:blur(16px) saturate(140%);backdrop-filter:blur(16px) saturate(140%);border-radius:20px}
+#grain{position:fixed;inset:0;width:100%;height:100%;z-index:98;pointer-events:none;opacity:.05;mix-blend-mode:multiply}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #grain{mix-blend-mode:overlay;opacity:.06}}
+:root[data-theme="dark"] #grain{mix-blend-mode:overlay;opacity:.06}
+
+/* nav: the monogram alone */
+#top{position:sticky;top:env(safe-area-inset-top,0px);z-index:60;background:var(--bg);background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:blur(16px) saturate(150%);backdrop-filter:blur(16px) saturate(150%);border-bottom:1px solid transparent;transition:border-color .3s,box-shadow .3s}
+#top.stuck{border-bottom-color:var(--rule);box-shadow:0 12px 30px -22px rgba(60,20,20,.35)}
+.nav{display:flex;align-items:center;gap:1.4rem;min-height:var(--nav-h)}
+.brand{display:block;margin-inline-end:auto;text-decoration:none;padding-block:.5rem}
+.mark{display:block;width:28px;height:56px;background:var(--logo);-webkit-mask:url("img/mark-gold.png") center/contain no-repeat;mask:url("img/mark-gold.png") center/contain no-repeat;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.brand:hover .mark{transform:translateY(-2px) scale(1.04)}
+.nav nav{display:flex;gap:2rem}
+.nav nav a{text-decoration:none;font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;font-weight:500;color:var(--muted);transition:color .2s;padding-block:.5rem;position:relative}
+.nav nav a::after{content:"";position:absolute;inset-inline:0;bottom:.15rem;height:1px;background:var(--gold-line);transform:scaleX(0);transition:transform .35s}
+.nav nav a:hover{color:var(--fg)} .nav nav a:hover::after{transform:scaleX(1)}
+@media(max-width:940px){.nav nav{display:none}}
+.chip{min-width:44px;height:44px;padding-inline:.9rem;border:1px solid var(--rule);background:var(--toggle);color:var(--fg);border-radius:999px;cursor:pointer;display:inline-grid;place-items:center;font-family:var(--sans);font-size:.78rem;font-weight:500;transition:border-color .2s,background .2s}
+.chip:hover{border-color:var(--gold-line)}
+.chip svg{width:18px;height:18px}.chip .sun{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip .sun{display:block}:root:not([data-theme="light"]) .chip .moon{display:none}}
+:root[data-theme="dark"] .chip .sun{display:block}:root[data-theme="dark"] .chip .moon{display:none}
+
+/* buttons */
+.wa-btn{display:inline-flex;align-items:center;gap:.7rem;min-height:54px;padding:.7rem 1.7rem;border-radius:999px;background:var(--wa);color:#fff;text-decoration:none;font-size:.92rem;font-weight:600;letter-spacing:.02em;box-shadow:0 10px 24px -10px rgba(22,154,79,.75),0 1px 0 rgba(255,255,255,.25) inset;transition:background .25s,transform .25s,box-shadow .25s}
+.wa-btn svg{width:22px;height:22px;fill:currentColor;flex:none}
+.wa-btn:hover{background:var(--wa-hover);transform:translateY(-2px);box-shadow:0 16px 30px -12px rgba(22,154,79,.85),0 1px 0 rgba(255,255,255,.25) inset}
+.ar-btn{display:inline-flex;align-items:center;gap:.8rem;min-height:54px;padding:.5rem 1.6rem;border:1px solid var(--gold-line);color:var(--accent);text-decoration:none;font-family:var(--ar-display);font-size:1.3rem;line-height:1.3;direction:rtl;border-radius:999px;background:var(--panel);transition:background .35s,color .35s,transform .35s}
+.ar-btn svg{width:24px;height:12px;stroke:currentColor;fill:none;stroke-width:1.5;transition:transform .35s}
+.ar-btn:hover{background:var(--accent);color:#fff;transform:translateY(-2px)}.ar-btn:hover svg{transform:translateX(-5px)}
+html[dir="rtl"] .ar-btn svg{transform:scaleX(-1)}html[dir="rtl"] .ar-btn:hover svg{transform:scaleX(-1) translateX(-5px)}
+.link{display:inline-flex;align-items:center;min-height:48px;font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;font-weight:500;color:var(--hero-fg);text-decoration:none;border-bottom:1px solid var(--rule);transition:border-color .25s}
+.link:hover{border-color:var(--gold-line)}
+.ig-btn{display:inline-flex;align-items:center;gap:.75rem;min-height:54px;padding:.6rem 1.6rem;border-radius:999px;color:var(--fg);text-decoration:none;font-size:.86rem;font-weight:500;letter-spacing:.04em;position:relative;background:var(--panel);border:1px solid transparent;
+  background-image:linear-gradient(var(--surface),var(--surface)),linear-gradient(120deg,#f9ce6a,#e1306c 45%,#833ab4);background-origin:border-box;background-clip:padding-box,border-box;transition:transform .3s,box-shadow .3s}
+.ig-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6}
+.ig-btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px -14px rgba(225,48,108,.55)}
+
+/* ---------------- hero: a desert at first light, in layers ---------------- */
+#hero{position:relative;overflow:hidden;isolation:isolate;padding:0;color:var(--hero-fg);background:linear-gradient(180deg,var(--sky-a),var(--sky-b))}
+.layer{position:absolute;pointer-events:none;will-change:transform}
+.h-sun{right:6%;top:-8%;width:min(62vw,820px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,var(--sun-core) 0,var(--sun) 24%,transparent 66%);filter:blur(6px);z-index:0}
+.h-photo{inset:-4% 0 0;background:url("img/dunes.jpg") center 55%/cover no-repeat;opacity:.16;z-index:0;-webkit-mask-image:linear-gradient(180deg,#000 30%,transparent 90%);mask-image:linear-gradient(180deg,#000 30%,transparent 90%)}
+.h-star{inset:0;background:var(--star) 0 0/72px 72px;opacity:.09;z-index:0;-webkit-mask-image:radial-gradient(60% 70% at 78% 30%,#000,transparent 75%);mask-image:radial-gradient(60% 70% at 78% 30%,#000,transparent 75%)}
+.hero-grid{position:relative;z-index:4;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(1rem,4vw,4rem);align-items:center;padding-block:clamp(3rem,6vw,5.5rem) clamp(11rem,22vw,17rem)}
+.hero-copy{display:grid;gap:1.5rem;justify-items:start;position:relative;z-index:6}
+#hero h1{font-size:clamp(2.5rem,5.2vw,4.4rem);line-height:1.06;font-weight:300;max-width:13ch;color:var(--hero-fg)}
+#hero h1 em{font-style:italic;color:var(--accent)}
+.hero-sub{color:var(--hero-muted);max-width:40ch;font-size:1.08rem}
+.hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:1rem 2rem;margin-top:.5rem}
+.hero-word{position:relative;z-index:2;justify-self:center;text-align:center;line-height:1}
+.hero-word .big{position:relative;font-family:var(--ar-display);font-size:clamp(7.5rem,22vw,20rem);line-height:1.12;direction:rtl;margin:0;isolation:isolate;
+  background:var(--word);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 0 var(--word-glint))}
+.hero-word .big::before{content:attr(data-t);position:absolute;inset:0;z-index:-1;transform:translate(.045em,.06em);color:var(--word-shade);-webkit-text-fill-color:var(--word-shade);background:none;filter:blur(7px)}
+.hero-word .cap{display:block;margin-top:-.6rem;font-family:var(--display);font-style:italic;color:var(--hero-muted);font-size:1.05rem}
+.dune{left:-48px;right:-48px;bottom:-2px;display:block;z-index:3}
+.dune svg{display:block;width:100%;height:100%}
+.dune.far{height:clamp(180px,30vw,380px)}.dune.mid{height:clamp(150px,24vw,300px);z-index:4}.dune.near{height:clamp(110px,17vw,220px);z-index:5}
+@media(max-width:860px){
+  .hero-grid{grid-template-columns:1fr;padding-bottom:clamp(10rem,40vw,14rem)}
+  .hero-word{order:-1;justify-self:start;text-align:start}
+  .hero-word .big{font-size:clamp(6.5rem,34vw,11rem);line-height:1.08}
+}
+
+/* ---------------- the ring: a scroll-driven 3D carousel ---------------- */
+#ring{padding:0;height:560vh;background:linear-gradient(180deg,var(--bg-2),var(--bg) 38%,var(--bg-2) 100%)}
+.c-stick{position:sticky;top:0;height:100vh;height:100svh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding-top:calc(var(--nav-h) + .6rem);overflow:hidden}
+.c-stick::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 55% at 50% 52%,var(--sun) 0,transparent 70%);opacity:.6;pointer-events:none}
+.c-head{position:relative;z-index:2;width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1rem 2rem;align-items:end}
+.c-head h2{font-size:clamp(1.9rem,4vw,3.2rem);line-height:1.08;font-weight:300;margin-top:.6rem}
+.c-count{font-family:var(--display);font-style:italic;font-size:1.1rem;color:var(--gold);text-align:end;font-variant-numeric:lining-nums tabular-nums}
+.c-count b{font-weight:400;font-size:2.4rem;color:var(--fg);font-style:normal}
+.c-scene{position:relative;perspective:1500px;perspective-origin:50% 40%;display:grid;place-items:center;min-height:0}
+.c-ring{--cw:clamp(150px,21vw,270px);--ch:calc(var(--cw)*1.32);--r:calc(var(--cw)*1.85);position:relative;width:var(--cw);height:var(--ch);transform-style:preserve-3d;transform:translateZ(calc(var(--r)*-1)) rotateY(var(--a,0deg));margin-top:-2vh}
+.c-card{position:absolute;inset:0;margin:0;transform:rotateY(calc(var(--i)*40deg)) translateZ(var(--r));border-radius:16px;overflow:hidden;background:var(--bg-2);backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  box-shadow:0 30px 60px -24px rgba(40,10,10,.55),0 0 0 1px rgba(255,255,255,.18) inset;transition:filter .2s}
+.c-card img{width:100%;height:100%;object-fit:cover;transform:scale(1.04)}
+.c-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(20,4,4,.7)),linear-gradient(120deg,rgba(255,255,255,.18),transparent 35%);pointer-events:none}
+.c-card figcaption{position:absolute;inset-inline:0;bottom:0;z-index:2;padding:.9rem 1rem 1rem;color:#fff;font-family:var(--display);font-size:clamp(.9rem,1.3vw,1.1rem);line-height:1.2;display:grid;gap:.1rem}
+.c-card figcaption span{font-family:var(--ar);font-size:1.1em;opacity:.9;direction:rtl}
+html[dir="rtl"] .c-card figcaption span{direction:rtl}
+.c-floor{position:absolute;left:50%;bottom:6%;width:min(78vw,900px);height:80px;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,rgba(60,20,20,.32),transparent 70%);filter:blur(8px);pointer-events:none}
+.c-foot{position:relative;z-index:3;width:100%;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem 2rem;padding-block:1.2rem calc(1.4rem + env(safe-area-inset-bottom,0px))}
+.c-hint{display:flex;align-items:center;gap:1rem;font-size:.7rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.c-bar{width:clamp(90px,16vw,200px);height:2px;background:var(--rule);position:relative;overflow:hidden}
+.c-bar i{position:absolute;inset:0;background:var(--gold-line);transform-origin:left;transform:scaleX(0)}
+html[dir="rtl"] .c-bar i{transform-origin:right}
+/* no-JS / reduced motion: the ring lays flat into a scroll strip */
+html:not(.js) #ring,#ring.flat{height:auto}
+html:not(.js) .c-stick,#ring.flat .c-stick{position:static;height:auto;padding-block:calc(var(--nav-h) * .4) 2rem}
+html:not(.js) .c-scene,#ring.flat .c-scene{perspective:none;display:block}
+html:not(.js) .c-ring,#ring.flat .c-ring{width:auto;height:auto;transform:none;display:flex;gap:1rem;overflow-x:auto;padding-block:1rem 2rem;scroll-snap-type:x mandatory;margin:0}
+html:not(.js) .c-card,#ring.flat .c-card{position:relative;inset:auto;transform:none;flex:0 0 min(70vw,260px);aspect-ratio:3/4;scroll-snap-align:center;opacity:1!important;filter:none!important}
+html:not(.js) .c-floor,#ring.flat .c-floor{display:none}
+@media(max-width:700px){.c-head{grid-template-columns:1fr}.c-count{text-align:start}.c-ring{--cw:clamp(140px,40vw,200px)}}
+
+/* ---------------- thesis ---------------- */
+.thesis{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(2.4rem,7vw,7rem);align-items:center}
+@media(max-width:860px){.thesis{grid-template-columns:1fr}}
+.arch{margin:0;max-width:390px;position:relative;isolation:isolate}
+.arch img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:999px 999px 6px 6px;box-shadow:0 44px 70px -30px rgba(70,20,20,.7),0 12px 24px -10px rgba(70,20,20,.3);filter:saturate(.88)}
+.arch::before,.arch::after{content:"";position:absolute;border:1px solid var(--gold-line);border-radius:999px 999px 6px 6px;z-index:-1}
+.arch::before{inset:-14px;opacity:.8}.arch::after{inset:-28px;opacity:.35}
+.thesis-copy{display:grid;gap:1.8rem;justify-items:start}
+.statement{font-size:clamp(2rem,4vw,3.3rem);line-height:1.12;font-weight:300;max-width:17ch}
+.statement em{color:var(--accent)}
+.pull{font-family:var(--display);font-style:italic;font-size:clamp(1.2rem,2vw,1.5rem);line-height:1.55;color:var(--accent);margin:0;max-width:34ch;padding:.2rem 0;padding-inline-start:1.4rem;border-inline-start:1px solid var(--gold-line)}
+
+/* ---------------- dialect ---------------- */
+#dialect{background:linear-gradient(180deg,var(--bg-2),var(--bg));overflow:hidden}
+#dialect::before{content:"ك";position:absolute;inset-inline-end:-2rem;top:4rem;font-family:var(--ar-display);font-size:clamp(18rem,40vw,36rem);line-height:1;color:var(--gold-line);opacity:.08;pointer-events:none}
+.dialect-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:2rem;position:relative}
+.dialect-head h2{font-size:clamp(2rem,4vw,3.2rem);line-height:1.1;font-weight:300;max-width:16ch;margin-block:.9rem 0}
+.toggle{display:inline-flex;padding:4px;border-radius:999px;border:1px solid var(--rule);background:var(--panel)}
+.toggle button{font-family:var(--sans);font-size:.72rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;min-height:44px;padding:.5rem 1.2rem;border:0;border-radius:999px;background:transparent;color:var(--muted);cursor:pointer;transition:background .3s,color .3s}
+.toggle button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.words{margin-top:2.6rem;padding:clamp(1.2rem,3vw,2.4rem);position:relative}
+.word,.word-head{display:grid;grid-template-columns:.8fr 1.1fr 1.1fr;gap:1.4rem}
+.word-head{padding-bottom:.9rem;font-size:.66rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.word{align-items:baseline;padding:1.15rem .6rem;border-top:1px solid var(--rule);border-radius:10px;transition:background .3s}
+.word:hover{background:rgba(198,165,94,.1)}
+.word .en{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.word .side{display:flex;flex-direction:column;transition:opacity .4s}
+.word .scr{font-family:var(--ar);font-size:clamp(1.5rem,2.8vw,1.95rem);line-height:1.5;direction:rtl;text-align:left}
+html[dir="rtl"] .word .scr{text-align:right}
+.word .tr{font-family:var(--display);font-style:italic;font-size:.95rem;color:var(--muted)}
+.word .msa .scr{color:var(--muted)}.word .emi .scr{color:var(--accent)}
+.words[data-show="emirati"] .msa{opacity:.22}.words[data-show="msa"] .emi{opacity:.22}
+@media(max-width:720px){.word,.word-head{grid-template-columns:1fr 1fr}.word .en,.word-head span:first-child{grid-column:1/-1}}
+.sound{margin-top:clamp(2.4rem,5vw,4rem);display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(1.5rem,4vw,3.5rem);align-items:center;padding:clamp(1.4rem,3vw,2.4rem);position:relative}
+@media(max-width:700px){.sound{grid-template-columns:1fr}}
+.stage{position:relative;width:170px;height:140px;perspective:600px}
+.stage span{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--ar-display);font-size:6rem;line-height:1;direction:rtl;transition:transform .7s cubic-bezier(.3,.8,.2,1),opacity .5s;backface-visibility:hidden}
+.stage .k{color:var(--muted)}.stage .ch{color:var(--accent);transform:rotateY(-180deg);opacity:0}
+.sound.on .stage .k{transform:rotateY(180deg);opacity:0}.sound.on .stage .ch{transform:none;opacity:1}
+.sound h3{font-size:1.5rem;font-weight:400;margin-bottom:.5rem}
+.sound p{color:var(--muted);max-width:50ch}
+.sound .say{margin-top:1rem;min-height:46px;padding:.4rem 1.3rem;border-radius:999px;background:transparent;border:1px solid var(--gold-line);color:var(--accent);cursor:pointer;font-family:var(--sans);font-size:.72rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;transition:background .25s,color .25s}
+.sound .say:hover{background:var(--accent);color:#fff}
+.sound .readout{margin-top:.8rem;font-family:var(--display);font-style:italic;font-size:1.1rem;color:var(--fg);min-height:1.7em}
+
+/* ---------------- courses ---------------- */
+.head-split{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:1.5rem 4rem;margin-bottom:3rem}
+.head-split h2{font-size:clamp(2.1rem,4.4vw,3.5rem);line-height:1.08;font-weight:300}
+.ledger{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.row{position:relative;overflow:hidden;display:grid;grid-template-columns:7.5rem minmax(0,1fr) minmax(0,1.4fr);gap:1rem 2.5rem;align-items:center;padding:1.8rem clamp(1.2rem,3vw,2.2rem);transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s}
+.row::before{content:attr(data-n);position:absolute;inset-inline-end:1.2rem;top:50%;transform:translateY(-52%);font-family:var(--ar-display);font-size:7.5rem;line-height:1;color:var(--gold-line);opacity:.13;pointer-events:none;transition:opacity .4s,transform .6s}
+.row:hover{transform:translateY(-5px);box-shadow:0 1px 0 #fff inset,0 44px 70px -26px rgba(80,38,28,.62),0 12px 24px -10px rgba(80,38,28,.25)}
+.row:hover::before{opacity:.22;transform:translateY(-52%) scale(1.06)}
+.row .no{font-family:var(--display);font-style:italic;font-size:1.05rem;color:var(--gold)}
+.row h3{font-size:clamp(1.4rem,2.2vw,1.8rem);line-height:1.2;font-weight:400}
+.row .ar-sub{font-family:var(--ar);font-size:1.1rem;color:var(--gold);direction:rtl;text-align:left}
+html[dir="rtl"] .row .ar-sub{text-align:right}
+.row p.d{color:var(--muted);max-width:46ch;position:relative}
+@media(max-width:760px){.row{grid-template-columns:1fr}.row::before{font-size:5rem;top:1rem;transform:none}}
+
+/* ---------------- how ---------------- */
+#how{background:linear-gradient(180deg,var(--bg-2),var(--bg))}
+.path{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1.4rem,3vw,2.6rem);margin-top:3rem}
+.stop{padding:1.8rem;display:grid;gap:.6rem;align-content:start;justify-items:start;position:relative}
+.stop::before{content:"";position:absolute;top:0;inset-inline:1.8rem;height:2px;background:linear-gradient(90deg,var(--gold-line),transparent)}
+.stop i{font-family:var(--display);font-style:italic;font-size:1.05rem;color:var(--gold)}
+.stop h3{font-size:1.5rem;font-weight:400}.stop p{color:var(--muted);max-width:34ch}
+@media(max-width:800px){.path{grid-template-columns:1fr}}
+
+/* ---------------- teachers ---------------- */
+.teach{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(2rem,6vw,6rem);align-items:center}
+@media(max-width:860px){.teach{grid-template-columns:1fr}}
+.teach h2{font-size:clamp(1.9rem,3.8vw,3rem);line-height:1.12;font-weight:300;margin-block:1rem 1.4rem}
+.teach figure{margin:0;position:relative;isolation:isolate}
+.teach img{width:100%;aspect-ratio:5/4;object-fit:cover;border-radius:18px;filter:saturate(.9);box-shadow:0 44px 70px -30px rgba(70,20,20,.7),0 12px 24px -10px rgba(70,20,20,.3)}
+.teach figure::before{content:"";position:absolute;inset:18px -18px -18px 18px;border:1px solid var(--gold-line);border-radius:18px;z-index:-1;opacity:.7}
+
+/* ---------------- trial + contact ---------------- */
+#trial{background:var(--bg-2)}
+.trial{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2rem 4rem;align-items:center;padding:clamp(2rem,5vw,4rem);border-radius:26px;border:1px solid transparent;
+  background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(130deg,#e9d49b,#b08c42 40%,#f3e4b2 70%,#a98338) border-box;
+  box-shadow:0 40px 80px -40px rgba(120,80,30,.45),0 0 0 8px rgba(198,165,94,.07)}
+@media(max-width:800px){.trial{grid-template-columns:1fr}}
+.trial h2{font-size:clamp(2rem,4.4vw,3.5rem);line-height:1.08;font-weight:300;margin-block:.9rem 1rem}
+.trial .acts{display:grid;gap:1rem;justify-items:start}
+.contact{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:clamp(2rem,6vw,6rem);align-items:start}
+@media(max-width:800px){.contact{grid-template-columns:1fr}}
+.contact h2{font-size:clamp(1.9rem,3.6vw,2.8rem);line-height:1.12;font-weight:300;margin-block:.9rem 1rem}
+.numline{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem 1.2rem;margin-top:1.4rem}
+.number{font-family:var(--display);font-size:clamp(1.7rem,3.6vw,2.4rem);font-variant-numeric:lining-nums tabular-nums;direction:ltr;unicode-bidi:isolate}
+.copy{font-family:var(--sans);font-size:.68rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;min-height:44px;padding:.4rem 1.1rem;border-radius:999px;border:1px solid var(--rule);background:transparent;color:var(--muted);cursor:pointer}
+.copy:hover,.copy.ok{border-color:var(--gold-line);color:var(--gold)}
+.facts{padding:.4rem 1.6rem}
+.fact{padding-block:1rem;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:6rem 1fr;gap:1rem;align-items:baseline}
+.fact:last-child{border-bottom:0}
+.fact .k{font-size:.66rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.fact .v{font-family:var(--display);font-size:1.15rem}
+
+footer{background:var(--bg-2);box-shadow:0 -22px 30px -24px var(--sec-shadow);color:var(--muted);padding-block:3rem calc(6rem + env(safe-area-inset-bottom,0px));font-size:.82rem;border-top:1px solid var(--rule)}
+footer .wrap{display:grid;gap:1.4rem}
+.f-top{display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap}
+.f-top .mk{width:18px;height:36px;background:var(--logo);-webkit-mask:url("img/mark-gold.png") center/contain no-repeat;mask:url("img/mark-gold.png") center/contain no-repeat}
+.concept{margin-inline-start:auto;border:1px solid var(--rule);border-radius:999px;padding:.45rem 1rem;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+footer small{display:block;line-height:1.8;font-size:.76rem;max-width:90ch}
+footer a{color:var(--accent);text-decoration:none}
+footer hr{border:0;height:1px;background:var(--rule);margin:0}
+
+#fab{position:fixed;z-index:70;inset-inline-end:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .4s,transform .4s}
+#fab.show{opacity:1;transform:none;pointer-events:auto}
+#fab a{width:56px;height:56px;border-radius:50%;background:var(--wa);color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px rgba(0,0,0,.3);transition:background .25s}
+#fab a:hover{background:var(--wa-hover)}#fab svg{width:28px;height:28px;fill:currentColor}
+#prog{position:fixed;top:0;left:0;height:2px;width:100%;transform:scaleX(0);transform-origin:left;background:var(--gold-line);z-index:99;pointer-events:none}
+
+/* motion */
+.reveal{opacity:1;transform:none}
+html.js .reveal{opacity:0;transform:translateY(22px);transition:opacity .9s cubic-bezier(.22,.7,.3,1),transform .9s cubic-bezier(.22,.7,.3,1)}
+html.js .reveal.in{opacity:1;transform:none}
+@keyframes wipe{from{clip-path:inset(-10% 0 -10% 100%)}to{clip-path:inset(-10% -6% -10% -6%)}}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+html.js .hero-word .big{animation:wipe 1.7s cubic-bezier(.65,0,.2,1) .1s both}
+html.js .hero-copy>*{animation:rise 1s cubic-bezier(.22,.7,.3,1) both}
+html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-child(2){animation-delay:.42s}html.js .hero-copy>:nth-child(3){animation-delay:.54s}html.js .hero-copy>:nth-child(4){animation-delay:.66s}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.001ms!important}html.js .reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+
+<div id="prog"></div>
+<svg id="grain" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+
+<header id="top"><div class="wrap nav">
+  <a class="brand" href="#hero" aria-label="Al Lahjah Institute, top of page"><span class="mark" role="img" aria-label="Al Lahjah monogram"></span></a>
+  <nav aria-label="Sections">
+    <a href="#ring" data-ar="الإمارات">The Emirates</a>
+    <a href="#thesis" data-ar="اللهجة">The dialect</a>
+    <a href="#courses" data-ar="البرامج">Courses</a>
+    <a href="#how" data-ar="كيف تبدأ">How it works</a>
+    <a href="#contact" data-ar="تواصل">Contact</a>
+  </nav>
+  <button class="chip" id="langbtn" type="button" aria-label="Switch language, عربي / English"><span id="langt">عربي</span></button>
+  <button class="chip" id="themebtn" type="button" aria-label="Switch between light and dark">
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+  </button>
+</div></header>
+
+<section id="hero">
+  <div class="layer h-photo" data-d="0.15" aria-hidden="true"></div>
+  <div class="layer h-star" data-d="0.1" aria-hidden="true"></div>
+  <div class="layer h-sun" data-d="0.3" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="label" data-ar="اللهجة الإماراتية · دبي">Emirati Arabic &middot; Dubai</span>
+        <h1 data-ar="العربية كما يتحدّثها أهلها">Learn the Arabic people <em>actually</em> speak</h1>
+        <p class="hero-sub" data-ar="يُدرّسها إماراتيون. ليست عربية الكتب، بل اللهجة التي تسمعها في المجلس والسوق والمكتب.">Taught by Emiratis. Not the Arabic of the textbook, but the dialect you will hear in the majlis, the souk and the office.</p>
+        <div class="hero-cta">
+          <a class="wa-btn" href="https://wa.me/971545500072?text=Hello%2C%20I%27d%20like%20to%20book%20a%20free%20trial%20Emirati%20Arabic%20class." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span data-ar="راسلنا على واتساب">Message us on WhatsApp</span></a>
+          <a class="link" href="#ring" data-ar="تصفّح الإمارات">Explore the Emirates</a>
+        </div>
+      </div>
+      <div class="hero-word layer-word" data-d="0.5"><p class="big" lang="ar" dir="rtl" data-t="اللهجة">اللهجة</p><span class="cap" data-ar="اللهجة">al-lahjah, the dialect</span></div>
+    </div>
+  </div>
+  <div class="layer dune far" data-d="0.45" aria-hidden="true"><svg viewBox="0 0 1440 380" preserveAspectRatio="none"><defs><linearGradient id="gf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--d-far)"/><stop offset="1" stop-color="var(--d-mid)"/></linearGradient></defs><path d="M0 190C150 120 290 140 480 190S830 250 1050 180S1340 90 1440 140V380H0Z" fill="url(#gf)"/><path d="M0 190C150 120 290 140 480 190S830 250 1050 180S1340 90 1440 140" fill="none" stroke="var(--rim)" stroke-width="1.5" opacity=".7"/></svg></div>
+  <div class="layer dune mid" data-d="0.7" aria-hidden="true"><svg viewBox="0 0 1440 300" preserveAspectRatio="none"><defs><linearGradient id="gm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--d-mid)"/><stop offset="1" stop-color="var(--d-near)"/></linearGradient></defs><path d="M0 130C220 70 400 90 600 150S980 230 1180 150S1380 90 1440 110V300H0Z" fill="url(#gm)"/><path d="M0 130C220 70 400 90 600 150S980 230 1180 150S1380 90 1440 110" fill="none" stroke="var(--rim)" stroke-width="1.5" opacity=".7"/></svg></div>
+  <div class="layer dune near" data-d="1" aria-hidden="true"><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><defs><linearGradient id="gn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--d-near)"/><stop offset="1" stop-color="var(--d-near)"/></linearGradient></defs><path d="M0 90C260 40 460 60 700 110S1130 160 1300 100S1400 70 1440 80V220H0Z" fill="url(#gn)"/><path d="M0 90C260 40 460 60 700 110S1130 160 1300 100S1400 70 1440 80" fill="none" stroke="var(--rim)" stroke-width="1.5" opacity=".7"/></svg></div>
+</section>
+
+<section id="ring" aria-label="Photographs of the Emirates">
+  <div class="c-stick">
+    <div class="wrap c-head">
+      <div><span class="label" data-ar="الإمارات">The Emirates</span><h2 data-ar="حيث تعيش اللهجة">Where the language lives</h2></div>
+      <div class="c-count" aria-hidden="true"><b id="c-n">01</b> / 09 <div id="c-name" style="font-size:1rem;color:var(--muted)"></div></div>
+    </div>
+    <div class="c-scene">
+      <div class="c-ring" id="cring">
+        <figure class="c-card" style="--i:0"><img src="img/mosque-arch.jpg" alt="The domes of the Sheikh Zayed Grand Mosque seen through an arch" loading="lazy"><figcaption data-en="Sheikh Zayed Grand Mosque" data-arx="مسجد الشيخ زايد الكبير">Sheikh Zayed Grand Mosque<span lang="ar">مسجد الشيخ زايد الكبير</span></figcaption></figure>
+        <figure class="c-card" style="--i:1"><img src="img/burj-al-arab.jpg" alt="Burj Al Arab on the Dubai shore" loading="lazy" style="object-position:35% 50%"><figcaption>Burj Al Arab<span lang="ar">برج العرب</span></figcaption></figure>
+        <figure class="c-card" style="--i:2"><img src="img/burj-khalifa.jpg" alt="Burj Khalifa silhouetted against a dusk sky" loading="lazy"><figcaption>Burj Khalifa<span lang="ar">برج خليفة</span></figcaption></figure>
+        <figure class="c-card" style="--i:3"><img src="img/dunes-sunset.jpg" alt="Sunset over the dunes outside Dubai" loading="lazy"><figcaption>The dunes<span lang="ar">الكثبان الرملية</span></figcaption></figure>
+        <figure class="c-card" style="--i:4"><img src="img/camel.jpg" alt="A camel resting on the sand at dusk" loading="lazy"><figcaption>The camel<span lang="ar">الجمل</span></figcaption></figure>
+        <figure class="c-card" style="--i:5"><img src="img/calligraphy.jpg" alt="Gilded Arabic calligraphy on a dark panel" loading="lazy"><figcaption>The script<span lang="ar">الخط العربي</span></figcaption></figure>
+        <figure class="c-card" style="--i:6"><img src="img/colonnade.jpg" alt="A white colonnade with gold capitals" loading="lazy"><figcaption>The colonnade<span lang="ar">الأروقة</span></figcaption></figure>
+        <figure class="c-card" style="--i:7"><img src="img/tile.jpg" alt="Glazed tiles with an eight-pointed star" loading="lazy" style="object-position:50% 45%"><figcaption>Geometry<span lang="ar">الهندسة</span></figcaption></figure>
+        <figure class="c-card" style="--i:8"><img src="img/tradition.jpg" alt="A boy in a white kandura sitting on a rug" loading="lazy"><figcaption>Tradition<span lang="ar">التراث</span></figcaption></figure>
+      </div>
+      <div class="c-floor" aria-hidden="true"></div>
+    </div>
+    <div class="wrap c-foot">
+      <div class="c-hint"><span data-ar="مرّر لتدوير الحلقة">Scroll to turn the ring</span><span class="c-bar"><i id="c-bar"></i></span></div>
+      <a class="ig-btn" id="igbtn" href="https://www.instagram.com/lahja_ae/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></svg>
+        <span data-ar="تابعنا على إنستغرام">Follow us on Instagram</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="thesis"><div class="wrap thesis">
+  <figure class="arch reveal"><img src="img/manuscript.jpg" alt="Leaves from a handwritten Arabic manuscript" width="1100" height="1375" loading="lazy"></figure>
+  <div class="thesis-copy">
+    <h2 class="statement reveal" data-ar="الكتاب يعلّمك أن تقرأ. اللهجة تعلّمك أن تنتمي.">A textbook teaches you to read. A dialect teaches you to <em>belong.</em></h2>
+    <p class="lede reveal" data-ar="العربية الفصحى هي لغة الصحيفة والنشرة الإخبارية، وليست لغةً أمّاً لأحد. أمّا ما يتحدّثه الناس في البيت والدكان وبين الأصدقاء في الخليج فشيء آخر.">Modern Standard Arabic, <span class="ar" lang="ar">الفصحى</span>, is the Arabic of the newspaper and the news bulletin. It is nobody's mother tongue. What people speak at home, in the shop and among friends across the Gulf is something else.</p>
+    <blockquote class="pull reveal" data-ar="اسأل عن الطريق بالفصحى يفهمونك. اسأل باللهجة يجيبونك كما يجيبون أهلهم.">Ask for directions in <span class="ar" lang="ar">الفصحى</span> and you will be understood. Ask in <span class="ar" lang="ar">اللهجة</span> and you will be answered the way they answer their own.</blockquote>
+  </div>
+</div></section>
+
+<section id="dialect"><div class="wrap">
+  <div class="dialect-head reveal">
+    <div><span class="label" data-ar="جنباً إلى جنب">Side by side</span><h2 data-ar="المعنى نفسه، ولغتان مختلفتان">The same meaning, two different languages</h2></div>
+    <div class="toggle" role="group" aria-label="Which column to emphasise">
+      <button type="button" data-show="both" aria-pressed="true" data-ar="الاثنتان">Both</button>
+      <button type="button" data-show="msa" aria-pressed="false" data-ar="الفصحى">Textbook</button>
+      <button type="button" data-show="emirati" aria-pressed="false" data-ar="الإماراتية">Emirati</button>
+    </div>
+  </div>
+  <div class="words glass reveal" data-show="both">
+    <div class="word-head"><span data-ar="بالإنجليزية">Meaning</span><span data-ar="الفصحى">Modern Standard</span><span data-ar="الإماراتية">Emirati</span></div>
+    <div class="word"><span class="en">How are you?</span><span class="side msa"><span class="scr" lang="ar" dir="rtl">كيف حالك؟</span><span class="tr">kayfa ḥāluk</span></span><span class="side emi"><span class="scr" lang="ar" dir="rtl">شحالك؟</span><span class="tr">sh-ḥālak</span></span></div>
+    <div class="word"><span class="en">What?</span><span class="side msa"><span class="scr" lang="ar" dir="rtl">ماذا؟</span><span class="tr">māthā</span></span><span class="side emi"><span class="scr" lang="ar" dir="rtl">شو؟</span><span class="tr">shū</span></span></div>
+    <div class="word"><span class="en">Very, a lot</span><span class="side msa"><span class="scr" lang="ar" dir="rtl">كثيراً</span><span class="tr">kathīran</span></span><span class="side emi"><span class="scr" lang="ar" dir="rtl">وايد</span><span class="tr">wāyid</span></span></div>
+    <div class="word"><span class="en">Good, fine</span><span class="side msa"><span class="scr" lang="ar" dir="rtl">جيّد</span><span class="tr">jayyid</span></span><span class="side emi"><span class="scr" lang="ar" dir="rtl">زين</span><span class="tr">zēn</span></span></div>
+    <div class="word"><span class="en">Now</span><span class="side msa"><span class="scr" lang="ar" dir="rtl">الآن</span><span class="tr">al-ān</span></span><span class="side emi"><span class="scr" lang="ar" dir="rtl">الحين</span><span class="tr">al-ḥīn</span></span></div>
+    <div class="word"><span class="en">Let&#x27;s go</span><span class="side msa"><span class="scr" lang="ar" dir="rtl">هيّا بنا</span><span class="tr">hayyā binā</span></span><span class="side emi"><span class="scr" lang="ar" dir="rtl">يلّا</span><span class="tr">yallā</span></span></div>
+  </div>
+  <div class="sound glass reveal" id="sound">
+    <div class="stage" aria-hidden="true"><span class="k" lang="ar">كم</span><span class="ch" lang="ar">چم</span></div>
+    <div>
+      <h3 data-ar="صوتٌ واحد يكشف أهل الخليج">One sound gives the Gulf away</h3>
+      <p data-ar="فحيث تكتب الفصحى <b class='ar' lang='ar'>ك</b>، تقول الإماراتية <b class='ar' lang='ar'>چ</b> غالباً. لا يعلّمها كتاب، وكلّ إماراتي يلاحظ حين تُصيبها.">Where the written language has <b class="ar" lang="ar">ك</b>, Emirati often says <b class="ar" lang="ar">چ</b>. No textbook teaches it, and every Emirati notices when you get it right.</p>
+      <button class="say" id="say" type="button" aria-pressed="false">Say it the Emirati way</button>
+      <p class="readout" id="readout" aria-live="polite"></p>
+    </div>
+  </div>
+</div></section>
+
+<section id="courses"><div class="wrap">
+  <div class="head-split reveal"><h2 data-ar="أربعة مداخل">Four ways in</h2><p class="lede" data-ar="يبدأ كلّ طالب بحصة تجريبية مجانية، فنضعك في مستواك بما تستطيع قوله، لا بما سبق أن درسته.">Every student starts with a free trial class, so we place you by what you can already say, not by what you have already studied.</p></div>
+  <ol class="ledger">
+    <li class="row glass reveal" data-n="١"><span class="no" data-ar="المستوى الأول">Stage I</span><div><h3 data-ar="الأساس">Foundations</h3><p class="ar-sub" lang="ar" dir="rtl">الأساس</p></div><p class="d" data-ar="الأصوات والتحيّات والعبارات المئة أو نحوها التي يقوم عليها يومٌ عادي. لا يُفترض أيّ إلمام سابق بالعربية.">The sounds, the greetings and the hundred or so phrases that carry an ordinary day. No Arabic assumed.</p></li>
+    <li class="row glass reveal" data-n="٢"><span class="no" data-ar="المستوى الثاني">Stage II</span><div><h3 data-ar="المحادثة">Conversation</h3><p class="ar-sub" lang="ar" dir="rtl">المحادثة</p></div><p class="d" data-ar="أن تمسك طرفك من حوارٍ حقيقي: في المجلس والدكان وسيارة الأجرة وممرّ العمل.">Holding your side of a real exchange: the majlis, the shop, the taxi, the corridor at work.</p></li>
+    <li class="row glass reveal" data-n="٣"><span class="no" data-ar="المستوى الثالث">Stage III</span><div><h3 data-ar="الطلاقة">Fluency</h3><p class="ar-sub" lang="ar" dir="rtl">الطلاقة</p></div><p class="d" data-ar="التعابير والأمثال والنكتة، والأساليب التي تتبدّل بين الأهل والأصدقاء وزملاء العمل.">Idiom, proverb and humour, and how the register shifts between family, friends and colleagues.</p></li>
+    <li class="row glass reveal" data-n="+"><span class="no" data-ar="لجميع المستويات">Any stage</span><div><h3 data-ar="خاص ومؤسسي">Private &amp; corporate</h3><p class="ar-sub" lang="ar" dir="rtl">خاص ومؤسسي</p></div><p class="d" data-ar="برامج فرديّة وبرامج للفِرق، تُجدوَل حسب وقتك، في مقرّكم أو عبر الإنترنت.">One-to-one and team programmes, scheduled around you, on site or online.</p></li>
+  </ol>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <h2 class="statement reveal" style="max-width:20ch" data-ar="ثلاث خطوات، أولاها مجانية">Three steps, and the first one is free</h2>
+  <div class="path">
+    <div class="stop glass reveal"><i data-ar="الأولى">One</i><h3 data-ar="راسلنا">Message us</h3><p data-ar="أخبرنا من أين تبدأ تقريباً. «من الصفر» جواب ممتاز.">Tell us roughly where you are starting from. Complete beginner is a perfectly good answer.</p></div>
+    <div class="stop glass reveal"><i data-ar="الثانية">Two</i><h3 data-ar="احضر حصة تجريبية مجانية">Sit a free class</h3><p data-ar="دون تكلفة ودون التزام. وهي أيضاً الطريقة التي نضعك بها في مستواك.">No cost, no commitment. It is also how we place you.</p></div>
+    <div class="stop glass reveal"><i data-ar="الثالثة">Three</i><h3 data-ar="ابدأ">Start</h3><p data-ar="انضمّ إلى مجموعة في مستواك، أو خذ حصصاً فرديّة بإيقاعك أنت.">Join a group at your level, or take one-to-one classes at your own pace.</p></div>
+  </div>
+</div></section>
+
+<section id="teachers"><div class="wrap teach">
+  <div>
+    <span class="label reveal" data-ar="من يُدرّس">Who teaches</span>
+    <h2 class="reveal" data-ar="يُدرّسها إماراتيون، لأنّ اللهجة مِلك أهلها">Taught by Emiratis, because a dialect belongs to the people who speak it</h2>
+    <p class="lede reveal" data-ar="النطق والتعبير والقواعد غير المكتوبة التي تحكم متى تستعمل أيّ أسلوب، كلّها أمور لا يسلّمها كتاب قواعد. تُلتقط ممّن نشأوا داخل اللغة. ومعلّمونا نشأوا فيها.">Pronunciation, idiom and the unwritten rules of which register to use are not things a grammar book can hand over. You pick them up from people who grew up inside the language. Our teachers did.</p>
+  </div>
+  <figure class="reveal"><img src="img/coffee.jpg" alt="A boy in a white kandura sitting on a rug by the sea" width="1400" height="1050" loading="lazy"></figure>
+</div></section>
+
+<section id="trial"><div class="wrap">
+  <div class="trial reveal">
+    <div><span class="label" data-ar="حصة تجريبية مجانية">Free trial class</span><h2 data-ar="احضر حصة واحدة، ثم قرّر">Sit one class. Then decide.</h2><p class="lede" data-ar="دون تكلفة ودون التزام. راسلنا بمستواك ومواعيدك المناسبة.">It costs nothing and commits you to nothing. Message us your level and when you are free.</p></div>
+    <div class="acts"><a class="wa-btn" href="https://wa.me/971545500072?text=Hello%2C%20I%27d%20like%20to%20book%20a%20free%20trial%20Emirati%20Arabic%20class." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span data-ar="راسلنا على واتساب">Message us on WhatsApp</span></a><a class="ar-btn" href="#contact" lang="ar"><span>احجز حصتك المجانية</span><svg viewBox="0 0 24 12" aria-hidden="true"><path d="M23 6H2M7 1L2 6l5 5"/></svg></a></div>
+  </div>
+</div></section>
+
+<section id="contact"><div class="wrap contact">
+  <div class="reveal"><span class="label" data-ar="تواصل">Contact</span><h2 data-ar="يسجّل معظم الطلاب برسالة">Most students enrol by message</h2><p class="lede" data-ar="أرسل لنا رسالة على واتساب بمستواك ومواعيدك المناسبة، ونضعك في المجموعة الملائمة.">Send a WhatsApp with your level and when you are free, and we will place you.</p>
+    <div class="numline"><span class="number" id="wa">+971 54 550 0072</span><button class="copy" type="button" data-copy="+971545500072" data-ar="نسخ الرقم">Copy number</button></div></div>
+  <div class="facts glass reveal">
+    <div class="fact"><span class="k" data-ar="المكان">Where</span><span class="v" data-ar="دبي، الإمارات العربية المتحدة">Dubai, United Arab Emirates</span></div>
+    <div class="fact"><span class="k" data-ar="الحصص">Classes</span><span class="v" data-ar="مجموعات وحصص فردية">Group &amp; one&#8209;to&#8209;one</span></div>
+    <div class="fact"><span class="k" data-ar="المستويات">Levels</span><span class="v" data-ar="من المبتدئ تماماً فما فوق">Complete beginner upwards</span></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="f-top"><span class="mk" role="img" aria-label="Al Lahjah Institute"></span><span class="concept" data-ar="تصميم مقترح">Design concept</span></div>
+  <hr>
+  <small data-ar="هذه الصفحة تصميم مقترح أُعدّ لمعهد اللهجة من <a href='#contact'>Nexa Media Studio</a>، وليست الموقع الرسمي للمعهد. النصوص وبنية البرامج توضيحية، كُتبت لتُستبدل بنصوص المعهد نفسه. الصور من مصادر مرخّصة للاستخدام التجاري (CC0 وCC BY) عبر Openverse، وقد عولجت ألوانها لتناسب الهوية.">This page is a design concept prepared for Al&nbsp;Lahjah Institute by <a href="#contact">Nexa Media Studio</a>. It is not the institute's live website. Copy and course structure are illustrative and written to be replaced with the institute's own.<br>Photography is commercially licensed stock (CC0 and Creative Commons BY via Openverse), regraded for the brand. Attribution travels with the handover files.</small>
+</div></footer>
+
+<div id="fab"><a href="https://wa.me/971545500072?text=Hello%2C%20I%27d%20like%20to%20book%20a%20free%20trial%20Emirati%20Arabic%20class." target="_blank" rel="noopener" aria-label="Message Al Lahjah on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a></div>
+
+<script>
+(function(){
+  var root=document.documentElement;root.classList.add("js");
+  var reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /* Instagram account of the institute, without the @. */
+  var IG_HANDLE="lahja_ae";
+  var igb=document.getElementById("igbtn");
+  if(IG_HANDLE)igb.href="https://www.instagram.com/"+IG_HANDLE+"/";
+
+  /* ---- language: English <-> Arabic (full page, right-to-left) ---- */
+  var T={
+    en:{say:"Say it the Emirati way",back:"Back to the textbook",lang:"عربي",
+        r0:'كم &middot; <i>kam</i>, how much, in the textbook',r1:'چم &middot; <i>cham</i>, how much, as you hear it in Dubai'},
+    ar:{say:"انطقها كما يقولها الإماراتيون",back:"العودة إلى الفصحى",lang:"EN",
+        r0:'كم &middot; <i>kam</i>، كما في الكتب',r1:'چم &middot; <i>cham</i>، كما تسمعها في دبي'}
+  };
+  var nodes=[].slice.call(document.querySelectorAll("[data-ar]"));
+  nodes.forEach(function(n){n.__en=n.innerHTML});
+  var cap=[].slice.call(document.querySelectorAll(".c-card figcaption"));
+  var lang="en",sound=document.getElementById("sound"),say=document.getElementById("say"),out=document.getElementById("readout");
+  function paint(){
+    var on=sound.classList.contains("on");
+    say.textContent=on?T[lang].back:T[lang].say;
+    out.innerHTML=on?T[lang].r1:T[lang].r0;
+    document.getElementById("langt").textContent=T[lang].lang;
+  }
+  function setLang(l){
+    lang=l;var ar=l==="ar";
+    root.setAttribute("lang",l);root.setAttribute("dir",ar?"rtl":"ltr");
+    nodes.forEach(function(n){n.innerHTML=ar?n.getAttribute("data-ar"):n.__en});
+    paint();updateRing(true);
+  }
+  document.getElementById("langbtn").addEventListener("click",function(){setLang(lang==="en"?"ar":"en")});
+  say.addEventListener("click",function(){var on=sound.classList.toggle("on");say.setAttribute("aria-pressed",String(on));paint()});
+
+  /* ---- reveal ---- */
+  var items=[].slice.call(document.querySelectorAll(".reveal"));
+  if(!("IntersectionObserver" in window)||reduce){items.forEach(function(e){e.classList.add("in")})}
+  else{
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){
+      if(!e.isIntersecting)return;
+      var sibs=[].slice.call(e.target.parentNode.children).filter(function(n){return n.classList&&n.classList.contains("reveal")});
+      e.target.style.transitionDelay=(Math.max(0,sibs.indexOf(e.target))*110)+"ms";
+      e.target.classList.add("in");io.unobserve(e.target)})},{rootMargin:"0px 0px -8% 0px",threshold:.08});
+    items.forEach(function(e){io.observe(e)});
+    requestAnimationFrame(function(){items.forEach(function(e){if(e.getBoundingClientRect().top<innerHeight*.95)e.classList.add("in")})});
+  }
+
+  /* ---- hero layers: scroll depth + pointer parallax ---- */
+  var layers=[].slice.call(document.querySelectorAll("#hero [data-d]")),hero=document.getElementById("hero"),px=0,py=0,tx=0,ty=0;
+  hero.addEventListener("pointermove",function(e){var r=hero.getBoundingClientRect();tx=(e.clientX-r.left)/r.width-.5;ty=(e.clientY-r.top)/r.height-.5});
+  hero.addEventListener("pointerleave",function(){tx=0;ty=0});
+  function heroFrame(y){
+    if(reduce||y>hero.offsetHeight+200)return;
+    px+=(tx-px)*.08;py+=(ty-py)*.08;
+    layers.forEach(function(l){
+      var d=parseFloat(l.getAttribute("data-d"));
+      var isDune=l.classList.contains("dune"),sy=isDune?-y*(d-.4)*.25:y*d*.22;
+      l.style.transform="translate3d("+(px*d*-26).toFixed(1)+"px,"+(sy+py*d*-14).toFixed(1)+"px,0)";
+    });
+  }
+
+  /* ---- the ring ---- */
+  var ring=document.getElementById("ring"),cring=document.getElementById("cring"),cards=[].slice.call(cring.children),
+      N=cards.length,STEP=360/N,cn=document.getElementById("c-n"),cname=document.getElementById("c-name"),cbar=document.getElementById("c-bar"),lastIdx=-1;
+  if(reduce)ring.classList.add("flat");
+  function updateRing(force){
+    if(ring.classList.contains("flat"))return;
+    var r=ring.getBoundingClientRect(),span=ring.offsetHeight-innerHeight,p=Math.min(1,Math.max(0,-r.top/span));
+    var a=-p*(N-1)*STEP;
+    cring.style.setProperty("--a",a.toFixed(2)+"deg");
+    cards.forEach(function(c,i){
+      var d=((i*STEP+a)%360+540)%360-180,ad=Math.abs(d);
+      c.style.opacity=(ad>100?.28:1-ad/140).toFixed(2);
+      c.style.filter="brightness("+(ad>100?.55:1-ad/330).toFixed(2)+") saturate("+(1-ad/500).toFixed(2)+")";
+    });
+    var idx=Math.round(p*(N-1));
+    if(idx!==lastIdx||force){
+      lastIdx=idx;cn.textContent=("0"+(idx+1)).slice(-2);
+      var f=cards[idx].querySelector("figcaption"),ar=lang==="ar",s=f.querySelector("span");
+      cname.textContent=ar?s.textContent:f.firstChild.textContent;
+    }
+    cbar.style.transform="scaleX("+p.toFixed(3)+")";
+  }
+
+  /* ---- scroll plumbing ---- */
+  var top=document.getElementById("top"),prog=document.getElementById("prog"),fab=document.getElementById("fab"),tick=false;
+  function frame(){
+    var y=scrollY,h=document.body.scrollHeight-innerHeight;
+    top.classList.toggle("stuck",y>12);
+    prog.style.transform="scaleX("+(h>0?Math.min(1,y/h):0)+")";
+    fab.classList.toggle("show",y>520);
+    heroFrame(y);updateRing();tick=false;
+  }
+  addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(frame)}},{passive:true});
+  addEventListener("resize",frame);
+  (function loop(){heroFrame(scrollY);requestAnimationFrame(loop)})();
+  frame();updateRing(true);paint();
+
+  /* ---- theme ---- */
+  document.getElementById("themebtn").addEventListener("click",function(){
+    var d=root.getAttribute("data-theme")==="dark"||(!root.getAttribute("data-theme")&&matchMedia("(prefers-color-scheme: dark)").matches);
+    root.setAttribute("data-theme",d?"light":"dark");
+  });
+
+  /* ---- dialect emphasis ---- */
+  var words=document.querySelector(".words");
+  [].forEach.call(document.querySelectorAll(".toggle button"),function(b){b.addEventListener("click",function(){
+    [].forEach.call(b.parentNode.children,function(o){o.setAttribute("aria-pressed",String(o===b))});words.setAttribute("data-show",b.dataset.show)})});
+
+  /* ---- copy the number ---- */
+  [].forEach.call(document.querySelectorAll(".copy"),function(b){b.addEventListener("click",function(){
+    var o=b.innerHTML;
+    function done(){b.textContent=lang==="ar"?"تم النسخ":"Copied";b.classList.add("ok");setTimeout(function(){b.innerHTML=o;b.classList.remove("ok")},1600)}
+    function pick(){var n=document.getElementById("wa"),r=document.createRange();r.selectNodeContents(n);var s=getSelection();s.removeAllRanges();s.addRange(r)}
+    try{navigator.clipboard.writeText(b.dataset.copy).then(done,pick)}catch(e){pick()}})});
+
+  /* ---- in-page links ---- */
+  [].forEach.call(document.querySelectorAll('a[href^="#"]'),function(a){a.addEventListener("click",function(e){
+    var t=document.querySelector(a.getAttribute("href"));if(!t)return;e.preventDefault();
+    t.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"})})});
+})();
+</script>
+</body>
+</html>
