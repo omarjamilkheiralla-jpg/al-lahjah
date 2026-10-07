@@ -153,9 +153,9 @@ html[dir="rtl"] .ar-btn svg{transform:scaleX(-1)}html[dir="rtl"] .ar-btn:hover s
 .c-count{font-family:var(--display);font-style:italic;font-size:1.1rem;color:var(--gold);text-align:end;font-variant-numeric:lining-nums tabular-nums}
 .c-count b{font-weight:400;font-size:2.4rem;color:var(--fg);font-style:normal}
 .c-scene{position:relative;perspective:1500px;perspective-origin:50% 40%;display:grid;place-items:center;min-height:0}
-.c-ring{--cw:clamp(150px,21vw,270px);--ch:calc(var(--cw)*1.32);--r:calc(var(--cw)*1.85);position:relative;width:var(--cw);height:var(--ch);transform-style:preserve-3d;transform:translateZ(calc(var(--r)*-1)) rotateY(var(--a,0deg));margin-top:-2vh}
-.c-card{position:absolute;inset:0;margin:0;transform:rotateY(calc(var(--i)*40deg)) translateZ(var(--r));border-radius:16px;overflow:hidden;background:var(--bg-2);backface-visibility:hidden;-webkit-backface-visibility:hidden;
-  box-shadow:0 30px 60px -24px rgba(40,10,10,.55),0 0 0 1px rgba(255,255,255,.18) inset;transition:filter .2s}
+.c-ring{--cw:clamp(150px,21vw,270px);--ch:calc(var(--cw)*1.32);--r:calc(var(--cw)*1.85);position:relative;width:var(--cw);height:var(--ch);transform-style:preserve-3d;transform:translateZ(calc(var(--r)*-1)) rotateY(var(--a,0deg));margin-top:-2vh;will-change:transform}
+.c-card{position:absolute;inset:0;margin:0;transform:rotateY(calc(var(--i)*40deg)) translateZ(var(--r));border-radius:16px;overflow:hidden;background:var(--bg-2);backface-visibility:hidden;-webkit-backface-visibility:hidden;will-change:opacity;
+  box-shadow:0 30px 60px -24px rgba(40,10,10,.55),0 0 0 1px rgba(255,255,255,.18) inset}
 .c-card img{width:100%;height:100%;object-fit:cover;transform:scale(1.04)}
 .c-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(20,4,4,.7)),linear-gradient(120deg,rgba(255,255,255,.18),transparent 35%);pointer-events:none}
 .c-card figcaption{position:absolute;inset-inline:0;bottom:0;z-index:2;padding:.9rem 1rem 1rem;color:#fff;font-family:var(--display);font-size:clamp(.9rem,1.3vw,1.1rem);line-height:1.2;display:grid;gap:.1rem}
@@ -452,6 +452,7 @@ html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-chi
 <section id="contact"><div class="wrap contact">
   <div class="reveal"><span class="label" data-ar="تواصل">Contact</span><h2 data-ar="يسجّل معظم الطلاب برسالة">Most students enrol by message</h2><p class="lede" data-ar="أرسل لنا رسالة على واتساب بمستواك ومواعيدك المناسبة، ونضعك في المجموعة الملائمة.">Send a WhatsApp with your level and when you are free, and we will place you.</p>
     <div class="numline"><span class="number" id="wa">+971 54 550 0072</span><button class="copy" type="button" data-copy="+971545500072" data-ar="نسخ الرقم">Copy number</button></div></div>
+    <a class="ig-btn ig-low" href="https://www.instagram.com/lahja_ae/" target="_blank" rel="noopener" style="margin-top:1.2rem"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></svg><span data-ar="تابعنا على إنستغرام">Follow us on Instagram</span></a></div>
   <div class="facts glass reveal">
     <div class="fact"><span class="k" data-ar="المكان">Where</span><span class="v" data-ar="دبي، الإمارات العربية المتحدة">Dubai, United Arab Emirates</span></div>
     <div class="fact"><span class="k" data-ar="الحصص">Classes</span><span class="v" data-ar="مجموعات وحصص فردية">Group &amp; one&#8209;to&#8209;one</span></div>
@@ -474,7 +475,7 @@ html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-chi
   /* Instagram account of the institute, without the @. */
   var IG_HANDLE="lahja_ae";
   var igb=document.getElementById("igbtn");
-  if(IG_HANDLE)igb.href="https://www.instagram.com/"+IG_HANDLE+"/";
+  if(IG_HANDLE)[].forEach.call(document.querySelectorAll(".ig-btn"),function(a){a.href="https://www.instagram.com/"+IG_HANDLE+"/"});
 
   /* ---- language: English <-> Arabic (full page, right-to-left) ---- */
   var T={
@@ -533,15 +534,18 @@ html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-chi
   var ring=document.getElementById("ring"),cring=document.getElementById("cring"),cards=[].slice.call(cring.children),
       N=cards.length,STEP=360/N,cn=document.getElementById("c-n"),cname=document.getElementById("c-name"),cbar=document.getElementById("c-bar"),lastIdx=-1;
   if(reduce)ring.classList.add("flat");
-  function updateRing(force){
-    if(ring.classList.contains("flat"))return;
-    var r=ring.getBoundingClientRect(),span=ring.offsetHeight-innerHeight,p=Math.min(1,Math.max(0,-r.top/span));
+  var ringTarget=0,ringCur=0;
+  function ringTargetNow(){
+    var r=ring.getBoundingClientRect(),span=ring.offsetHeight-innerHeight;
+    return Math.min(1,Math.max(0,-r.top/span));
+  }
+  /* paint the ring at progress p (0..1) */
+  function paintRing(p,force){
     var a=-p*(N-1)*STEP;
     cring.style.setProperty("--a",a.toFixed(2)+"deg");
     cards.forEach(function(c,i){
       var d=((i*STEP+a)%360+540)%360-180,ad=Math.abs(d);
-      c.style.opacity=(ad>100?.28:1-ad/140).toFixed(2);
-      c.style.filter="brightness("+(ad>100?.55:1-ad/330).toFixed(2)+") saturate("+(1-ad/500).toFixed(2)+")";
+      c.style.opacity=(ad>100?.3:1-ad/150).toFixed(2);
     });
     var idx=Math.round(p*(N-1));
     if(idx!==lastIdx||force){
@@ -550,6 +554,18 @@ html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-chi
       cname.textContent=ar?s.textContent:f.firstChild.textContent;
     }
     cbar.style.transform="scaleX("+p.toFixed(3)+")";
+  }
+  /* scroll only sets the target; the ring eases toward it every frame, so wheel steps never jerk it */
+  function updateRing(force){
+    if(ring.classList.contains("flat"))return;
+    ringTarget=ringTargetNow();
+    if(force){ringCur=ringTarget;paintRing(ringCur,true)}
+  }
+  function easeRing(){
+    if(ring.classList.contains("flat"))return;
+    var d=ringTarget-ringCur;
+    if(Math.abs(d)<.0004){if(d!==0){ringCur=ringTarget;paintRing(ringCur)}return}
+    ringCur+=d*.085;paintRing(ringCur);
   }
 
   /* ---- scroll plumbing ---- */
@@ -563,7 +579,7 @@ html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-chi
   }
   addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(frame)}},{passive:true});
   addEventListener("resize",frame);
-  (function loop(){heroFrame(scrollY);requestAnimationFrame(loop)})();
+  (function loop(){heroFrame(scrollY);easeRing();requestAnimationFrame(loop)})();
   frame();updateRing(true);paint();
 
   /* ---- theme ---- */
