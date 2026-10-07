@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice">
+<defs>
+<g id="camel" fill="currentColor">
+  <path d="M14 46C10 40 12 33 18 30C30 25 44 28 58 28C74 28 88 30 96 38C100 44 98 52 90 56C84 60 70 61 56 61C40 61 24 61 18 56C16 53 14 50 14 46Z"/>
+  <path d="M40 34C42 14 52 8 60 14C68 18 70 30 70 36Z"/>
+  <path d="M86 40C90 30 92 20 98 10L110 12C106 22 106 34 104 48Z"/>
+  <path d="M96 10C102 4 114 4 124 10C128 12 128 16 124 18L114 18L106 20Z"/>
+  <path d="M20 40C12 44 10 52 12 64C14 62 16 52 22 46Z"/>
+  <path d="M24 56L32 56L30 84L33 100L27 100L25 84Z"/>
+  <path d="M40 56L48 56L46 84L49 100L43 100L41 84Z"/>
+  <path d="M78 56L86 56L88 82L90 100L84 100L82 84Z"/>
+  <path d="M90 54L98 54L98 80L102 100L96 100L92 82Z"/>
+</g>
+</defs>
+<defs><linearGradient id="rg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a2c40"/><stop offset="1" stop-color="#2e1424"/></linearGradient></defs><path d="M0 286C220 282 420 262 600 232S940 190 1120 150S1360 120 1440 126V300H0Z" fill="url(#rg)"/>
+<g color="#150a10" transform="translate(880 80) scale(.95)"><use href="#camel"/></g>
+<g color="#150a10" transform="translate(1030 52) scale(.82)"><use href="#camel"/></g>
+<g color="#150a10" transform="translate(1150 34) scale(.7)"><use href="#camel"/></g>
+</svg>
