@@ -18,12 +18,12 @@
 :root{
   --nav-h:84px;
   /* pearl (light) */
-  --bg:#f7f4ef; --bg-2:#e8e1d5; --surface:#fffefb; --sec-shadow:rgba(70,36,26,.30);
-  --fg:#34161a; --muted:#7b6560;
+  --bg:#f7f4ef; --bg-2:#e8e1d5; --surface:#fffefb; --sec-shadow:rgba(30,22,22,.30);
+  --fg:#1c1517; --muted:#6c6567;
   --accent:#721011; --gold:#86651f; --gold-line:#c6a55e;
-  --rule:rgba(114,16,17,.16);
-  --panel:rgba(255,255,255,.92); --panel-edge:rgba(114,16,17,.10);
-  --panel-shadow:0 1px 0 #fff inset,0 0 0 1px rgba(255,255,255,.7) inset,0 34px 60px -26px rgba(80,38,28,.52),0 10px 22px -10px rgba(80,38,28,.22),0 2px 4px rgba(80,38,28,.10);
+  --rule:rgba(28,21,23,.14);
+  --panel:rgba(255,255,255,.92); --panel-edge:rgba(28,21,23,.09);
+  --panel-shadow:0 1px 0 #fff inset,0 0 0 1px rgba(255,255,255,.7) inset,0 34px 60px -26px rgba(30,22,22,.46),0 10px 22px -10px rgba(30,22,22,.20),0 2px 4px rgba(30,22,22,.10);
   --logo:#721011; --toggle:rgba(114,16,17,.06);
   --band:var(--bg-2); --band-fg:var(--fg); --band-muted:var(--muted); --band-gold:var(--gold); --band-rule:var(--rule);
   --sky-a:#fdfcf9; --sky-b:#efe8dc; --sun:rgba(232,196,112,.6); --sun-core:rgba(255,246,214,.95);
@@ -40,7 +40,7 @@
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#1a0304; --bg-2:#230506; --surface:#2b0809; --sec-shadow:rgba(0,0,0,.55); --fg:#f4ede2; --muted:rgba(244,237,226,.68);
+    --bg:#0f0809; --bg-2:#160c0d; --surface:#1f1213; --sec-shadow:rgba(0,0,0,.55); --fg:#f4ede2; --muted:rgba(244,237,226,.68);
     --accent:#d27073; --gold:#dcc283; --gold-line:#b99a57; --rule:rgba(220,194,131,.2);
     --panel:rgba(255,255,255,.045); --panel-edge:rgba(220,194,131,.2);
     --panel-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 28px 60px -28px rgba(0,0,0,.85),0 3px 10px rgba(0,0,0,.3);
@@ -52,7 +52,7 @@
   }
 }
 :root[data-theme="dark"]{
-  --bg:#1a0304; --bg-2:#230506; --surface:#2b0809; --sec-shadow:rgba(0,0,0,.55); --fg:#f4ede2; --muted:rgba(244,237,226,.68);
+  --bg:#0f0809; --bg-2:#160c0d; --surface:#1f1213; --sec-shadow:rgba(0,0,0,.55); --fg:#f4ede2; --muted:rgba(244,237,226,.68);
   --accent:#d27073; --gold:#dcc283; --gold-line:#b99a57; --rule:rgba(220,194,131,.2);
   --panel:rgba(255,255,255,.045); --panel-edge:rgba(220,194,131,.2);
   --panel-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 28px 60px -28px rgba(0,0,0,.85),0 3px 10px rgba(0,0,0,.3);
@@ -274,14 +274,16 @@ html[dir="rtl"] .row .ar-sub{text-align:right}
 .fact .k{font-size:.66rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
 .fact .v{font-family:var(--display);font-size:1.15rem}
 
-footer{background:var(--bg-2);box-shadow:0 -22px 30px -24px var(--sec-shadow);color:var(--muted);padding-block:3rem calc(6rem + env(safe-area-inset-bottom,0px));font-size:.82rem;border-top:1px solid var(--rule)}
-footer .wrap{display:grid;gap:1.4rem}
+footer{--w:clamp(460px,62vw,880px);position:relative;overflow:hidden;background:#120b0c;box-shadow:0 -22px 30px -24px var(--sec-shadow);color:rgba(244,237,226,.68);padding-block:3.5rem calc(6rem + env(safe-area-inset-bottom,0px));min-height:calc(var(--w)*.72 + 4rem);font-size:.82rem;border-top:1px solid rgba(220,194,131,.22)}
+footer .wrap{display:grid;gap:1.4rem;position:relative;z-index:1;align-content:start}
+/* giant monogram bleeding off the bottom-right corner: only its top-left ~35% shows */
+.f-big{position:absolute;z-index:0;width:var(--w);aspect-ratio:290/574;left:calc(100% - var(--w)*.35);top:calc(100% - var(--w)*.69);background:linear-gradient(160deg,#f1dc9c,#c9a24e 60%,#8d6a26);opacity:.9;-webkit-mask:url("img/mark-gold.png") center/contain no-repeat;mask:url("img/mark-gold.png") center/contain no-repeat;pointer-events:none}
 .f-top{display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap}
-.f-top .mk{width:18px;height:36px;background:var(--logo);-webkit-mask:url("img/mark-gold.png") center/contain no-repeat;mask:url("img/mark-gold.png") center/contain no-repeat}
-.concept{margin-inline-start:auto;border:1px solid var(--rule);border-radius:999px;padding:.45rem 1rem;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
-footer small{display:block;line-height:1.8;font-size:.76rem;max-width:90ch}
-footer a{color:var(--accent);text-decoration:none}
-footer hr{border:0;height:1px;background:var(--rule);margin:0}
+.f-top .mk{width:18px;height:36px;background:#dcc283;-webkit-mask:url("img/mark-gold.png") center/contain no-repeat;mask:url("img/mark-gold.png") center/contain no-repeat}
+.concept{margin-inline-start:auto;border:1px solid rgba(220,194,131,.3);border-radius:999px;padding:.45rem 1rem;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:#dcc283}
+footer small{display:block;line-height:1.8;font-size:.76rem;max-width:min(90ch,60%)}
+footer a{color:#e8cf8e;text-decoration:none}
+footer hr{border:0;height:1px;background:rgba(220,194,131,.2);margin:0;max-width:60%}
 
 #fab{display:flex;flex-direction:column;align-items:center;gap:12px;position:fixed;z-index:70;inset-inline-end:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .4s,transform .4s}
 #fab.show{opacity:1;transform:none;pointer-events:auto}
@@ -463,7 +465,7 @@ html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-chi
   </div>
 </div></section>
 
-<footer><div class="wrap">
+<footer><span class="f-big" aria-hidden="true"></span><div class="wrap">
   <div class="f-top"><span class="mk" role="img" aria-label="Al Lahjah Institute"></span><span class="concept" data-ar="تصميم مقترح">Design concept</span></div>
   <hr>
   <small data-ar="هذه الصفحة تصميم مقترح أُعدّ لمعهد اللهجة من <a href='#contact'>Nexa Media Studio</a>، وليست الموقع الرسمي للمعهد. النصوص وبنية البرامج توضيحية، كُتبت لتُستبدل بنصوص المعهد نفسه. الصور من مصادر مرخّصة للاستخدام التجاري (CC0 وCC BY) عبر Openverse، وقد عولجت ألوانها لتناسب الهوية.">This page is a design concept prepared for Al&nbsp;Lahjah Institute by <a href="#contact">Nexa Media Studio</a>. It is not the institute's live website. Copy and course structure are illustrative and written to be replaced with the institute's own.<br>Photography is commercially licensed stock (CC0 and Creative Commons BY via Openverse), regraded for the brand. Attribution travels with the handover files.</small>
