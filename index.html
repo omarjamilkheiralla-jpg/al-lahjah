@@ -131,9 +131,9 @@ html[dir="rtl"] .ar-btn svg{transform:scaleX(-1)}html[dir="rtl"] .ar-btn:hover s
 .hero-sub{color:var(--hero-muted);max-width:40ch;font-size:1.08rem}
 .hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:1rem 2rem;margin-top:.5rem}
 .hero-word{position:relative;z-index:2;justify-self:center;text-align:center;line-height:1}
-.hero-word .big{position:relative;font-family:var(--ar-display);font-size:clamp(7.5rem,22vw,20rem);line-height:1.12;direction:rtl;margin:0;isolation:isolate;
-  background:var(--word);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 0 var(--word-glint))}
-.hero-word .big::before{content:attr(data-t);position:absolute;inset:0;z-index:-1;transform:translate(.045em,.06em);color:var(--word-shade);-webkit-text-fill-color:var(--word-shade);background:none;filter:blur(7px)}
+.hero-word .big{position:relative;font-family:var(--ar-display);font-size:clamp(6rem,17vw,15rem);line-height:1.12;direction:rtl;margin:0;isolation:isolate;opacity:.78;
+  background:var(--word);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 0 var(--word-glint))}
+.hero-word .big::before{content:attr(data-t);position:absolute;inset:0;z-index:-1;transform:translate(.025em,.035em);color:var(--word-shade);-webkit-text-fill-color:var(--word-shade);background:none;filter:blur(12px);opacity:.55}
 .hero-word .cap{display:block;margin-top:-.6rem;font-family:var(--display);font-style:italic;color:var(--hero-muted);font-size:1.05rem}
 .dune{left:-48px;right:-48px;bottom:-2px;display:block;z-index:3}
 .dune svg{display:block;width:100%;height:100%}
@@ -141,7 +141,7 @@ html[dir="rtl"] .ar-btn svg{transform:scaleX(-1)}html[dir="rtl"] .ar-btn:hover s
 @media(max-width:860px){
   .hero-grid{grid-template-columns:1fr;padding-bottom:clamp(10rem,40vw,14rem)}
   .hero-word{order:-1;justify-self:start;text-align:start}
-  .hero-word .big{font-size:clamp(6.5rem,34vw,11rem);line-height:1.08}
+  .hero-word .big{font-size:clamp(5.5rem,28vw,9rem);line-height:1.08}
 }
 
 /* ---------------- the ring: a scroll-driven 3D carousel ---------------- */
