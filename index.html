@@ -145,26 +145,30 @@ html[dir="rtl"] .ar-btn svg{transform:scaleX(-1)}html[dir="rtl"] .ar-btn:hover s
 }
 
 /* ---------------- the ring: a scroll-driven 3D carousel ---------------- */
-#ring{padding:0;height:560vh;background:linear-gradient(180deg,var(--bg-2),var(--bg) 38%,var(--bg-2) 100%)}
+#ring{color:var(--fg);--cw:clamp(170px,19vw,260px);--gap:18px;--pad:18px;padding:0;height:560vh;background:#0d0708;
+  --fg:#f4ede2;--muted:rgba(244,237,226,.72);--gold:#dcc283;--gold-line:#b99a57;--rule:rgba(220,194,131,.25);--surface:#1f1213;--panel:rgba(255,255,255,.05);--sun:rgba(220,194,131,.22)}
 .c-stick{position:sticky;top:0;height:100vh;height:100svh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding-top:calc(var(--nav-h) + .6rem);overflow:hidden}
-.c-stick::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 55% at 50% 52%,var(--sun) 0,transparent 70%);opacity:.6;pointer-events:none}
+.c-stick::before{content:"";position:absolute;inset:0;background:url("img/night-desert.jpg") center bottom/cover no-repeat;pointer-events:none}
+.c-stick::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 55%,var(--sun) 0,transparent 70%),linear-gradient(180deg,rgba(13,7,8,.55),transparent 28%,transparent 70%,rgba(13,7,8,.7));pointer-events:none}
+#ring::before,#ring::after{content:"";position:absolute;left:0;right:0;height:clamp(60px,10vw,140px);z-index:3;pointer-events:none}
+#ring::before{top:0;background:linear-gradient(180deg,var(--bg),transparent)}
+#ring::after{bottom:0;background:linear-gradient(0deg,var(--bg),transparent)}
 .c-head{position:relative;z-index:2;width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1rem 2rem;align-items:end}
 .c-head h2{font-size:clamp(1.9rem,4vw,3.2rem);line-height:1.08;font-weight:300;margin-top:.6rem}
 .c-count{font-family:var(--display);font-style:italic;font-size:1.1rem;color:var(--gold);text-align:end;font-variant-numeric:lining-nums tabular-nums}
 .c-count b{font-weight:400;font-size:2.4rem;color:var(--fg);font-style:normal}
-.c-scene{position:relative;perspective:1500px;perspective-origin:50% 40%;display:grid;place-items:center;min-height:0}
-.c-ring{--cw:clamp(150px,21vw,270px);--ch:calc(var(--cw)*1.32);--r:calc(var(--cw)*1.85);position:relative;width:var(--cw);height:var(--ch);transform-style:preserve-3d;transform:translateZ(calc(var(--r)*-1)) rotateY(var(--a,0deg));margin-top:-2vh;will-change:transform}
-.c-card{position:absolute;inset:0;margin:0;transform:rotateY(calc(var(--i)*40deg)) translateZ(var(--r));border-radius:16px;overflow:hidden;background:var(--bg-2);backface-visibility:hidden;-webkit-backface-visibility:hidden;will-change:opacity;
-  box-shadow:0 30px 60px -24px rgba(40,10,10,.55),0 0 0 1px rgba(255,255,255,.18) inset}
-.c-card img{width:100%;height:100%;object-fit:cover;transform:scale(1.04)}
+.c-scene{position:relative;display:grid;place-items:center;min-height:0;padding-inline:var(--gut)}
+.c-window{position:relative;width:min(100%,calc(var(--cw)*1.5 + var(--gap) + var(--pad)*2));padding:var(--pad);border-radius:44px;overflow:hidden;background:rgba(255,255,255,.045);border:1px solid rgba(220,194,131,.28);box-shadow:0 40px 80px -36px rgba(0,0,0,.8),0 1px 0 rgba(255,255,255,.08) inset;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.c-ring{display:flex;gap:var(--gap);width:max-content;transform:translate3d(calc(var(--p,0)*-8*(var(--cw) + var(--gap))),0,0);will-change:transform}
+.c-card{position:relative;flex:0 0 var(--cw);height:calc(var(--cw)*1.32);margin:0;border-radius:30px;overflow:hidden;background:#1a0d0e;will-change:opacity,transform;
+  box-shadow:0 24px 44px -22px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.14) inset}
+.c-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 /* real photos with feathered borders that melt into the card */
-.c-card.soft{border-radius:30px}
 .c-card.soft img{-webkit-mask-image:radial-gradient(ellipse 74% 72% at 50% 48%,#000 42%,transparent 100%);mask-image:radial-gradient(ellipse 74% 72% at 50% 48%,#000 42%,transparent 100%)}
 .c-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(20,4,4,.7)),linear-gradient(120deg,rgba(255,255,255,.18),transparent 35%);pointer-events:none}
 .c-card figcaption{position:absolute;inset-inline:0;bottom:0;z-index:2;padding:.9rem 1rem 1rem;color:#fff;font-family:var(--display);font-size:clamp(.9rem,1.3vw,1.1rem);line-height:1.2;display:grid;gap:.1rem}
 .c-card figcaption span{font-family:var(--ar);font-size:1.1em;opacity:.9;direction:rtl}
 html[dir="rtl"] .c-card figcaption span{direction:rtl}
-.c-floor{position:absolute;left:50%;bottom:6%;width:min(78vw,900px);height:80px;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,rgba(60,20,20,.32),transparent 70%);filter:blur(8px);pointer-events:none}
 .c-foot{position:relative;z-index:3;width:100%;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem 2rem;padding-block:1.2rem calc(1.4rem + env(safe-area-inset-bottom,0px))}
 .c-hint{display:flex;align-items:center;gap:1rem;font-size:.7rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
 .c-bar{width:clamp(90px,16vw,200px);height:2px;background:var(--rule);position:relative;overflow:hidden}
@@ -173,11 +177,17 @@ html[dir="rtl"] .c-bar i{transform-origin:right}
 /* no-JS / reduced motion: the ring lays flat into a scroll strip */
 html:not(.js) #ring,#ring.flat{height:auto}
 html:not(.js) .c-stick,#ring.flat .c-stick{position:static;height:auto;padding-block:calc(var(--nav-h) * .4) 2rem}
-html:not(.js) .c-scene,#ring.flat .c-scene{perspective:none;display:block}
-html:not(.js) .c-ring,#ring.flat .c-ring{width:auto;height:auto;transform:none;display:flex;gap:1rem;overflow-x:auto;padding-block:1rem 2rem;scroll-snap-type:x mandatory;margin:0}
-html:not(.js) .c-card,#ring.flat .c-card{position:relative;inset:auto;transform:none;flex:0 0 min(70vw,260px);aspect-ratio:3/4;scroll-snap-align:center;opacity:1!important;filter:none!important}
-html:not(.js) .c-floor,#ring.flat .c-floor{display:none}
-@media(max-width:700px){.c-head{grid-template-columns:1fr}.c-count{text-align:start}.c-ring{--cw:clamp(140px,40vw,200px)}}
+html:not(.js) .c-scene,#ring.flat .c-scene{display:block;padding-inline:0}
+html:not(.js) .c-window,#ring.flat .c-window{width:100%;overflow:visible;background:none;border:0;box-shadow:none;padding:0;border-radius:0;-webkit-backdrop-filter:none;backdrop-filter:none}
+html:not(.js) .c-ring,#ring.flat .c-ring{width:auto;transform:none;display:flex;gap:1rem;overflow-x:auto;padding-block:1rem 2rem;scroll-snap-type:x mandatory;margin:0}
+html:not(.js) .c-card,#ring.flat .c-card{height:auto;transform:none;flex:0 0 min(70vw,260px);aspect-ratio:3/4;scroll-snap-align:center;opacity:1!important;filter:none!important}
+@media(max-width:700px){.c-head{grid-template-columns:1fr}.c-count{text-align:start}#ring{--cw:clamp(150px,52vw,220px)}}
+
+/* ---------------- ghost calligraphy: a few big words on the edges ---------------- */
+section[data-ghost]{overflow:hidden}
+section[data-ghost]::after{content:attr(data-ghost);position:absolute;z-index:0;top:var(--gy,12%);right:var(--gx,-3rem);font-family:var(--ar-display);font-size:clamp(9rem,24vw,22rem);line-height:1.1;unicode-bidi:plaintext;color:var(--gold-line);opacity:.09;pointer-events:none;user-select:none;white-space:nowrap}
+section[data-ghost-side="start"]::after{right:auto;left:var(--gx,-3rem)}
+section[data-ghost]>.wrap{position:relative;z-index:1}
 
 /* ---------------- thesis ---------------- */
 .thesis{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(2.4rem,7vw,7rem);align-items:center}
@@ -361,7 +371,7 @@ html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-chi
       <div class="c-count" aria-hidden="true"><b id="c-n">01</b> / 09 <div id="c-name" style="font-size:1rem;color:var(--muted)"></div></div>
     </div>
     <div class="c-scene">
-      <div class="c-ring" id="cring">
+      <div class="c-window"><div class="c-ring" id="cring">
         <figure class="c-card" style="--i:0"><img src="img/mosque-arch.jpg" alt="The domes of the Sheikh Zayed Grand Mosque seen through an arch" loading="lazy"><figcaption data-en="Sheikh Zayed Grand Mosque" data-arx="مسجد الشيخ زايد الكبير">Sheikh Zayed Grand Mosque<span lang="ar">مسجد الشيخ زايد الكبير</span></figcaption></figure>
         <figure class="c-card soft" style="--i:1"><img src="img/falcon.jpg" alt="A saker falcon, close up" loading="lazy"><figcaption>The falcon<span lang="ar">الصقر</span></figcaption></figure>
         <figure class="c-card" style="--i:2"><img src="img/camel.jpg" alt="A camel resting on the sand at dusk" loading="lazy"><figcaption>The camel<span lang="ar">الجمل</span></figcaption></figure>
@@ -371,8 +381,7 @@ html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-chi
         <figure class="c-card" style="--i:6"><img src="img/tile.jpg" alt="Glazed tiles with an eight-pointed star" loading="lazy"><figcaption>Geometry<span lang="ar">الهندسة</span></figcaption></figure>
         <figure class="c-card soft" style="--i:7"><img src="img/dhow.jpg" alt="Traditional wooden dhows moored on Dubai Creek" loading="lazy"><figcaption>The dhow<span lang="ar">السفينة الشراعية</span></figcaption></figure>
         <figure class="c-card" style="--i:8"><img src="img/tradition.jpg" alt="A boy in a white kandura sitting on a rug" loading="lazy"><figcaption>Tradition<span lang="ar">التراث</span></figcaption></figure>
-      </div>
-      <div class="c-floor" aria-hidden="true"></div>
+      </div></div>
     </div>
     <div class="wrap c-foot">
       <div class="c-hint"><span data-ar="مرّر لتدوير الحلقة">Scroll to turn the ring</span><span class="c-bar"><i id="c-bar"></i></span></div>
@@ -384,7 +393,7 @@ html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-chi
   </div>
 </section>
 
-<section id="thesis"><div class="wrap thesis">
+<section id="thesis" data-ghost="هلا" data-ghost-side="end" style="--gy:8%"><div class="wrap thesis">
   <figure class="arch reveal"><img src="img/manuscript.jpg" alt="Leaves from a handwritten Arabic manuscript" width="1100" height="1375" loading="lazy"></figure>
   <div class="thesis-copy">
     <h2 class="statement reveal" data-ar="الكتاب يعلّمك أن تقرأ. اللهجة تعلّمك أن تنتمي.">A textbook teaches you to read. A dialect teaches you to <em>belong.</em></h2>
@@ -422,7 +431,7 @@ html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-chi
   </div>
 </div></section>
 
-<section id="courses"><div class="wrap">
+<section id="courses" data-ghost="وايد" data-ghost-side="start" style="--gy:30%"><div class="wrap">
   <div class="head-split reveal"><h2 data-ar="أربعة مداخل">Four ways in</h2><p class="lede" data-ar="يبدأ كلّ طالب بحصة تجريبية مجانية، فنضعك في مستواك بما تستطيع قوله، لا بما سبق أن درسته.">Every student starts with a free trial class, so we place you by what you can already say, not by what you have already studied.</p></div>
   <ol class="ledger">
     <li class="row glass reveal" data-n="١"><span class="no" data-ar="المستوى الأول">Stage I</span><div><h3 data-ar="الأساس">Foundations</h3><p class="ar-sub" lang="ar" dir="rtl">الأساس</p></div><p class="d" data-ar="الأصوات والتحيّات والعبارات المئة أو نحوها التي يقوم عليها يومٌ عادي. لا يُفترض أيّ إلمام سابق بالعربية.">The sounds, the greetings and the hundred or so phrases that carry an ordinary day. No Arabic assumed.</p></li>
@@ -432,7 +441,7 @@ html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-chi
   </ol>
 </div></section>
 
-<section id="how"><div class="wrap">
+<section id="how" data-ghost="زين" data-ghost-side="end" style="--gy:35%"><div class="wrap">
   <h2 class="statement reveal" style="max-width:20ch" data-ar="ثلاث خطوات، أولاها مجانية">Three steps, and the first one is free</h2>
   <div class="path">
     <div class="stop glass reveal"><i data-ar="الأولى">One</i><h3 data-ar="راسلنا">Message us</h3><p data-ar="أخبرنا من أين تبدأ تقريباً. «من الصفر» جواب ممتاز.">Tell us roughly where you are starting from. Complete beginner is a perfectly good answer.</p></div>
@@ -441,7 +450,7 @@ html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-chi
   </div>
 </div></section>
 
-<section id="teachers"><div class="wrap teach">
+<section id="teachers" data-ghost="الحين" data-ghost-side="start" style="--gy:12%"><div class="wrap teach">
   <div>
     <span class="label reveal" data-ar="من يُدرّس">Who teaches</span>
     <h2 class="reveal" data-ar="يُدرّسها إماراتيون، لأنّ اللهجة مِلك أهلها">Taught by Emiratis, because a dialect belongs to the people who speak it</h2>
@@ -457,7 +466,7 @@ html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-chi
   </div>
 </div></section>
 
-<section id="contact"><div class="wrap contact">
+<section id="contact" data-ghost="يلّا" data-ghost-side="end" style="--gy:10%"><div class="wrap contact">
   <div class="reveal"><span class="label" data-ar="تواصل">Contact</span><h2 data-ar="يسجّل معظم الطلاب برسالة">Most students enrol by message</h2><p class="lede" data-ar="أرسل لنا رسالة على واتساب بمستواك ومواعيدك المناسبة، ونضعك في المجموعة الملائمة.">Send a WhatsApp with your level and when you are free, and we will place you.</p>
     <div class="numline"><span class="number" id="wa">+971 54 550 0072</span><button class="copy" type="button" data-copy="+971545500072" data-ar="نسخ الرقم">Copy number</button></div></div>
     <a class="ig-btn ig-low" href="https://www.instagram.com/lahja_ae/" target="_blank" rel="noopener" style="margin-top:1.2rem"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></svg><span data-ar="تابعنا على إنستغرام">Follow us on Instagram</span></a></div>
@@ -550,13 +559,14 @@ html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-chi
   }
   /* paint the ring at progress p (0..1) */
   function paintRing(p,force){
-    var a=-p*(N-1)*STEP;
-    cring.style.setProperty("--a",a.toFixed(2)+"deg");
+    cring.style.setProperty("--p",p.toFixed(4));
+    var pos=p*(N-1);
     cards.forEach(function(c,i){
-      var d=((i*STEP+a)%360+540)%360-180,ad=Math.abs(d);
-      c.style.opacity=(ad>100?.3:1-ad/150).toFixed(2);
+      var d=Math.abs(i-pos);
+      c.style.opacity=(1-Math.min(d,1.7)*.3).toFixed(2);
+      c.style.transform="scale("+(1-Math.min(d,1)*.07).toFixed(3)+")";
     });
-    var idx=Math.round(p*(N-1));
+    var idx=Math.round(pos);
     if(idx!==lastIdx||force){
       lastIdx=idx;cn.textContent=("0"+(idx+1)).slice(-2);
       var f=cards[idx].querySelector("figcaption"),ar=lang==="ar",s=f.querySelector("span");
