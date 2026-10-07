@@ -118,7 +118,7 @@ html[dir="rtl"] .ar-btn svg{transform:scaleX(-1)}html[dir="rtl"] .ar-btn:hover s
 .ig-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6}
 .ig-btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px -14px rgba(225,48,108,.55)}
 
-/* ---------------- hero: the desert at dusk, with the Gulf's own things in silhouette ---------------- */
+/* ---------------- hero: the desert at dusk ---------------- */
 #hero{--fg:#fbf1dc;--muted:rgba(251,241,220,.78);--gold:#f0cf84;--gold-line:#d9b45c;
   --word:linear-gradient(176deg,#fff6d2 0%,#f4d686 38%,#d9a647 72%,#a87722 100%);--word-shade:rgba(30,8,20,.7);
   position:relative;overflow:hidden;isolation:isolate;padding:0;color:var(--fg);min-height:max(640px,calc(100vh - var(--nav-h)));min-height:max(640px,calc(100svh - var(--nav-h)));display:grid;place-items:start center;
@@ -127,12 +127,10 @@ html[dir="rtl"] .ar-btn svg{transform:scaleX(-1)}html[dir="rtl"] .ar-btn:hover s
 .layer img{display:block;width:100%;height:auto}
 .h-stars{inset:0 0 50%;opacity:.8}
 .h-sun{left:2%;bottom:calc(30% - min(35vw,450px));width:min(70vw,900px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,244,205,.95) 0,rgba(255,214,130,.55) 14%,rgba(255,170,90,.22) 36%,transparent 66%)}
-.h-sea{left:-3%;right:-3%;bottom:19%}
 .h-ridge{left:-3%;right:-3%;bottom:11%}
 .h-dune{left:-3%;right:-3%;bottom:-1px;height:clamp(150px,22vw,320px)}
 .h-dune svg{display:block;width:100%;height:100%}
 .h-sand{left:0;right:0;bottom:0;height:34%;background:linear-gradient(180deg,transparent 0,rgba(42,21,17,.2) 35%,#2a1511 100%),url("img/dunes.jpg") center 70%/cover no-repeat;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 40%);mask-image:linear-gradient(180deg,transparent 0,#000 40%);opacity:.9;mix-blend-mode:normal}
-.h-props{left:-3%;right:-3%;bottom:2.5%}
 #hero::after{content:"";position:absolute;inset:auto 0 0;height:16%;z-index:3;pointer-events:none;background:linear-gradient(180deg,transparent,#2a1511)}
 .hero-center{position:relative;z-index:4;display:grid;justify-items:center;gap:clamp(.8rem,1.8vw,1.3rem);text-align:center;padding:clamp(3rem,7vw,5.5rem) var(--gut) 0;margin-top:0}
 .hero-center .label{color:var(--gold);text-shadow:0 1px 12px rgba(20,8,24,.5)}
@@ -145,8 +143,7 @@ html[dir="rtl"] .ar-btn svg{transform:scaleX(-1)}html[dir="rtl"] .ar-btn:hover s
 .hero-line em{font-style:italic;color:var(--gold)}
 .hero-small{font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;color:var(--fg);text-decoration:none;border-bottom:1px solid rgba(240,207,132,.5);padding-block:.7rem .35rem;margin-top:.4rem;transition:color .25s,border-color .25s;text-shadow:0 1px 10px rgba(40,10,30,.5)}
 .hero-small:hover{color:#fff;border-color:var(--gold)}
-@media(max-width:700px){.h-sea{bottom:22%}.h-ridge{bottom:13%}.h-props{bottom:3%}}
-
+@media(max-width:700px){
 /* sparkles: a few small stars scattered down the page */
 .spark{position:absolute;z-index:1;width:var(--s,12px);height:var(--s,12px);pointer-events:none;color:var(--gold-line);opacity:.0;
   background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0c.6 6.6 4.8 10.8 12 12-7.2 1.2-11.4 5.4-12 12-.6-6.6-4.8-10.8-12-12 7.2-1.2 11.4-5.4 12-12z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0c.6 6.6 4.8 10.8 12 12-7.2 1.2-11.4 5.4-12 12-.6-6.6-4.8-10.8-12-12 7.2-1.2 11.4-5.4 12-12z'/%3E%3C/svg%3E") center/contain no-repeat;
@@ -352,11 +349,9 @@ html.js .hero-word .big{animation:wipe 1.7s cubic-bezier(.65,0,.2,1) .1s both}
 <section id="hero">
   <div class="layer h-stars" aria-hidden="true"></div>
   <div class="layer h-sun" data-d="0.25" aria-hidden="true"></div>
-  <div class="layer h-sea" data-d="0.35" aria-hidden="true"><img src="img/h-sea.svg" alt=""></div>
-  <div class="layer h-ridge" data-d="0.5" aria-hidden="true"><img src="img/h-caravan.svg" alt=""></div>
+  <div class="layer h-ridge" data-d="0.5" aria-hidden="true"><img src="img/h-ridge.svg" alt=""></div>
   <div class="layer h-dune" data-d="0.75" aria-hidden="true"><svg viewBox="0 0 1440 260" preserveAspectRatio="none"><defs><linearGradient id="hd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a1a2a"/><stop offset="1" stop-color="#1a0b12"/></linearGradient></defs><path d="M0 120C200 70 380 60 560 110S940 190 1160 120S1380 60 1440 80V260H0Z" fill="url(#hd)"/><path d="M0 120C200 70 380 60 560 110S940 190 1160 120S1380 60 1440 80" fill="none" stroke="#ffcf8a" stroke-opacity=".35" stroke-width="1.5"/></svg></div>
   <div class="layer h-sand" aria-hidden="true"></div>
-  <div class="layer h-props" data-d="0.95" aria-hidden="true"><img src="img/h-props.svg" alt=""></div>
   <div class="hero-center">
     <span class="label" data-ar="اللهجة الإماراتية · دبي والشارقة وأبوظبي">Emirati Arabic &middot; Dubai, Sharjah &amp; Abu Dhabi</span>
     <svg class="hero-orn" viewBox="0 0 260 12" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M0 6h104M156 6h104"/><path d="M130 0l5 6-5 6-5-6z" fill="currentColor"/><circle cx="112" cy="6" r="1.6" fill="currentColor"/><circle cx="148" cy="6" r="1.6" fill="currentColor"/></svg>
