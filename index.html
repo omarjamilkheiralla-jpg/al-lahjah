@@ -118,31 +118,22 @@ html[dir="rtl"] .ar-btn svg{transform:scaleX(-1)}html[dir="rtl"] .ar-btn:hover s
 .ig-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6}
 .ig-btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px -14px rgba(225,48,108,.55)}
 
-/* ---------------- hero: a desert at first light, in layers ---------------- */
-#hero{position:relative;overflow:hidden;isolation:isolate;padding:0;color:var(--hero-fg);background:linear-gradient(180deg,var(--sky-a),var(--sky-b))}
+/* ---------------- hero: a still desert night, one word ---------------- */
+#hero{--fg:#f4ede2;--muted:rgba(244,237,226,.66);--gold:#dcc283;--gold-line:#b99a57;--word:linear-gradient(172deg,#ffffff 0%,#f6efe4 50%,#dccfb8 100%);--word-shade:rgba(0,0,0,.6);--word-glint:rgba(255,255,255,.25);
+  position:relative;overflow:hidden;isolation:isolate;padding:0;color:var(--fg);background:#070a12;min-height:calc(100vh - var(--nav-h));min-height:calc(100svh - var(--nav-h));display:grid;place-items:center}
 .layer{position:absolute;pointer-events:none;will-change:transform}
-.h-sun{right:6%;top:-8%;width:min(62vw,820px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,var(--sun-core) 0,var(--sun) 24%,transparent 66%);filter:blur(6px);z-index:0}
-.h-photo{inset:-4% 0 0;background:url("img/dunes.jpg") center 55%/cover no-repeat;opacity:.16;z-index:0;-webkit-mask-image:linear-gradient(180deg,#000 30%,transparent 90%);mask-image:linear-gradient(180deg,#000 30%,transparent 90%)}
-.h-star{inset:0;background:var(--star) 0 0/72px 72px;opacity:.09;z-index:0;-webkit-mask-image:radial-gradient(60% 70% at 78% 30%,#000,transparent 75%);mask-image:radial-gradient(60% 70% at 78% 30%,#000,transparent 75%)}
-.hero-grid{position:relative;z-index:4;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(1rem,4vw,4rem);align-items:center;padding-block:clamp(3rem,6vw,5.5rem) clamp(11rem,22vw,17rem)}
-.hero-copy{display:grid;gap:1.5rem;justify-items:start;position:relative;z-index:6}
-#hero h1{font-size:clamp(2.5rem,5.2vw,4.4rem);line-height:1.06;font-weight:300;max-width:13ch;color:var(--hero-fg)}
-#hero h1 em{font-style:italic;color:var(--accent)}
-.hero-sub{color:var(--hero-muted);max-width:40ch;font-size:1.08rem}
-.hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:1rem 2rem;margin-top:.5rem}
-.hero-word{position:relative;z-index:2;justify-self:center;text-align:center;line-height:1}
-.hero-word .big{position:relative;font-family:var(--ar-display);font-size:clamp(6rem,17vw,15rem);line-height:1.12;direction:rtl;margin:0;isolation:isolate;opacity:.78;
-  background:var(--word);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 0 var(--word-glint))}
-.hero-word .big::before{content:attr(data-t);position:absolute;inset:0;z-index:-1;transform:translate(.025em,.035em);color:var(--word-shade);-webkit-text-fill-color:var(--word-shade);background:none;filter:blur(12px);opacity:.55}
-.hero-word .cap{display:block;margin-top:-.6rem;font-family:var(--display);font-style:italic;color:var(--hero-muted);font-size:1.05rem}
-.dune{left:-48px;right:-48px;bottom:-2px;display:block;z-index:3}
-.dune svg{display:block;width:100%;height:100%}
-.dune.far{height:clamp(180px,30vw,380px)}.dune.mid{height:clamp(150px,24vw,300px);z-index:4}.dune.near{height:clamp(110px,17vw,220px);z-index:5}
-@media(max-width:860px){
-  .hero-grid{grid-template-columns:1fr;padding-bottom:clamp(10rem,40vw,14rem)}
-  .hero-word{order:-1;justify-self:start;text-align:start}
-  .hero-word .big{font-size:clamp(5.5rem,28vw,9rem);line-height:1.08}
-}
+.h-sky{inset:-3% -2% -3%;background:url("img/night-hero.jpg") center 60%/cover no-repeat;opacity:.62;z-index:0}
+#hero::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(55% 46% at 50% 44%,rgba(7,10,18,.55),transparent 75%),linear-gradient(180deg,rgba(7,10,18,.35),transparent 30%,transparent 62%,#0d0708 100%)}
+.hero-center{position:relative;z-index:2;display:grid;justify-items:center;gap:clamp(.9rem,2vw,1.4rem);text-align:center;padding:clamp(3rem,8vw,6rem) var(--gut) clamp(5rem,12vw,9rem)}
+.hero-center .label{color:var(--gold)}
+.hero-word{position:relative;line-height:1}
+.hero-word .big{position:relative;font-family:var(--ar-display);font-size:clamp(7rem,22vw,17rem);line-height:1.15;direction:rtl;margin:0;isolation:isolate;
+  background:var(--word);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 28px rgba(220,194,131,.18))}
+.hero-word .big::before{content:attr(data-t);position:absolute;inset:0;z-index:-1;transform:translate(.02em,.03em);color:var(--word-shade);-webkit-text-fill-color:var(--word-shade);background:none;filter:blur(14px);opacity:.5}
+.hero-line{font-family:var(--display);font-weight:300;font-size:clamp(1.15rem,2.2vw,1.65rem);line-height:1.5;max-width:30ch;color:var(--fg);text-wrap:balance}
+.hero-line em{font-style:italic;color:var(--gold)}
+.hero-small{font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);text-decoration:none;border-bottom:1px solid rgba(220,194,131,.3);padding-block:.7rem .35rem;margin-top:.6rem;transition:color .25s,border-color .25s}
+.hero-small:hover{color:var(--fg);border-color:var(--gold-line)}
 
 /* ---------------- the ring: a scroll-driven 3D carousel ---------------- */
 #ring{color:var(--fg);--cw:clamp(170px,19vw,260px);--gap:18px;--pad:18px;padding:0;height:560vh;background:#0d0708;
@@ -151,7 +142,7 @@ html[dir="rtl"] .ar-btn svg{transform:scaleX(-1)}html[dir="rtl"] .ar-btn:hover s
 .c-stick::before{content:"";position:absolute;inset:0;background:url("img/night-desert.jpg") center bottom/cover no-repeat;pointer-events:none}
 .c-stick::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 55%,var(--sun) 0,transparent 70%),linear-gradient(180deg,rgba(13,7,8,.55),transparent 28%,transparent 70%,rgba(13,7,8,.7));pointer-events:none}
 #ring::before,#ring::after{content:"";position:absolute;left:0;right:0;height:clamp(60px,10vw,140px);z-index:3;pointer-events:none}
-#ring::before{top:0;background:linear-gradient(180deg,var(--bg),transparent)}
+#ring::before{display:none}
 #ring::after{bottom:0;background:linear-gradient(0deg,var(--bg),transparent)}
 .c-head{position:relative;z-index:2;width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1rem 2rem;align-items:end}
 .c-head h2{font-size:clamp(1.9rem,4vw,3.2rem);line-height:1.08;font-weight:300;margin-top:.6rem}
@@ -314,8 +305,6 @@ html.js .reveal.in{opacity:1;transform:none}
 @keyframes wipe{from{clip-path:inset(-10% 0 -10% 100%)}to{clip-path:inset(-10% -6% -10% -6%)}}
 @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 html.js .hero-word .big{animation:wipe 1.7s cubic-bezier(.65,0,.2,1) .1s both}
-html.js .hero-copy>*{animation:rise 1s cubic-bezier(.22,.7,.3,1) both}
-html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-child(2){animation-delay:.42s}html.js .hero-copy>:nth-child(3){animation-delay:.54s}html.js .hero-copy>:nth-child(4){animation-delay:.66s}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.001ms!important}html.js .reveal{opacity:1;transform:none}}
 </style>
 </head>
@@ -342,26 +331,13 @@ html.js .hero-copy>:nth-child(1){animation-delay:.3s}html.js .hero-copy>:nth-chi
 </div></header>
 
 <section id="hero">
-  <div class="layer h-photo" data-d="0.15" aria-hidden="true"></div>
-  <div class="layer h-star" data-d="0.1" aria-hidden="true"></div>
-  <div class="layer h-sun" data-d="0.3" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="hero-grid">
-      <div class="hero-copy">
-        <span class="label" data-ar="اللهجة الإماراتية · دبي والشارقة وأبوظبي">Emirati Arabic &middot; Dubai, Sharjah &amp; Abu Dhabi</span>
-        <h1 data-ar="العربية كما يتحدّثها أهلها">Learn the Arabic people <em>actually</em> speak</h1>
-        <p class="hero-sub" data-ar="يُدرّسها إماراتيون. ليست عربية الكتب، بل اللهجة التي تسمعها في المجلس والسوق والمكتب.">Taught by Emiratis. Not the Arabic of the textbook, but the dialect you will hear in the majlis, the souk and the office.</p>
-        <div class="hero-cta">
-          <a class="wa-btn" href="https://wa.me/971545500072?text=Hello%2C%20I%27d%20like%20to%20book%20a%20free%20trial%20Emirati%20Arabic%20class." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span data-ar="راسلنا على واتساب">Message us on WhatsApp</span></a>
-          <a class="link" href="#ring" data-ar="تصفّح الإمارات">Explore the Emirates</a>
-        </div>
-      </div>
-      <div class="hero-word layer-word" data-d="0.5"><p class="big" lang="ar" dir="rtl" data-t="اللهجة">اللهجة</p><span class="cap" data-ar="اللهجة">al-lahjah, the dialect</span></div>
-    </div>
+  <div class="layer h-sky" data-d="0.2" aria-hidden="true"></div>
+  <div class="hero-center">
+    <span class="label" data-ar="اللهجة الإماراتية · دبي والشارقة وأبوظبي">Emirati Arabic &middot; Dubai, Sharjah &amp; Abu Dhabi</span>
+    <div class="hero-word"><p class="big" lang="ar" dir="rtl" data-t="اللهجة">اللهجة</p></div>
+    <p class="hero-line" data-ar="لا عربية الكتب، بل عربية <em>البيت</em>.">Not the Arabic of the book, but the Arabic of <em>home</em>.</p>
+    <a class="hero-small" href="https://wa.me/971545500072?text=Hello%2C%20I%27d%20like%20to%20book%20a%20free%20trial%20Emirati%20Arabic%20class." target="_blank" rel="noopener" data-ar="احجز حصتك المجانية">Book a free class</a>
   </div>
-  <div class="layer dune far" data-d="0.45" aria-hidden="true"><svg viewBox="0 0 1440 380" preserveAspectRatio="none"><defs><linearGradient id="gf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--d-far)"/><stop offset="1" stop-color="var(--d-mid)"/></linearGradient></defs><path d="M0 190C150 120 290 140 480 190S830 250 1050 180S1340 90 1440 140V380H0Z" fill="url(#gf)"/><path d="M0 190C150 120 290 140 480 190S830 250 1050 180S1340 90 1440 140" fill="none" stroke="var(--rim)" stroke-width="1.5" opacity=".7"/></svg></div>
-  <div class="layer dune mid" data-d="0.7" aria-hidden="true"><svg viewBox="0 0 1440 300" preserveAspectRatio="none"><defs><linearGradient id="gm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--d-mid)"/><stop offset="1" stop-color="var(--d-near)"/></linearGradient></defs><path d="M0 130C220 70 400 90 600 150S980 230 1180 150S1380 90 1440 110V300H0Z" fill="url(#gm)"/><path d="M0 130C220 70 400 90 600 150S980 230 1180 150S1380 90 1440 110" fill="none" stroke="var(--rim)" stroke-width="1.5" opacity=".7"/></svg></div>
-  <div class="layer dune near" data-d="1" aria-hidden="true"><svg viewBox="0 0 1440 220" preserveAspectRatio="none"><defs><linearGradient id="gn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--d-near)"/><stop offset="1" stop-color="var(--d-near)"/></linearGradient></defs><path d="M0 90C260 40 460 60 700 110S1130 160 1300 100S1400 70 1440 80V220H0Z" fill="url(#gn)"/><path d="M0 90C260 40 460 60 700 110S1130 160 1300 100S1400 70 1440 80" fill="none" stroke="var(--rim)" stroke-width="1.5" opacity=".7"/></svg></div>
 </section>
 
 <section id="ring" aria-label="Photographs of the Emirates">
