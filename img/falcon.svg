@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 396">
+<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3e4c0"/><stop offset="1" stop-color="#d9bd86"/></linearGradient>
+<linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a1c1e"/><stop offset="1" stop-color="#4a0b0d"/></linearGradient></defs>
+<rect width="300" height="396" fill="url(#g)"/>
+<circle cx="150" cy="150" r="92" fill="#fff6dc" opacity=".8"/>
+<circle cx="150" cy="150" r="92" fill="none" stroke="#c9a24e" stroke-width="1.5"/>
+<!-- perch -->
+<path d="M40 330h220" stroke="#5b2a1a" stroke-width="9" stroke-linecap="round"/>
+<!-- tail -->
+<path d="M128 300L118 366L146 360L152 304Z" fill="#3a0709"/><path d="M146 304L158 364L180 352L168 300Z" fill="#4a0b0d"/>
+<!-- body -->
+<path d="M100 150C80 190 76 262 112 318C132 336 176 336 192 316C220 270 214 190 190 148C172 120 120 120 100 150Z" fill="url(#b)"/>
+<!-- chest -->
+<path d="M118 196C112 240 122 290 150 312C176 290 184 240 176 196C164 176 130 176 118 196Z" fill="#f3e4c0"/>
+<g stroke="#8a1c1e" stroke-width="3" stroke-linecap="round" fill="none"><path d="M132 214h14"/><path d="M152 214h16"/><path d="M128 238h14"/><path d="M150 238h18"/><path d="M130 262h14"/><path d="M152 262h14"/><path d="M138 286h12"/></g>
+<!-- wing -->
+<path d="M96 160C70 200 70 280 106 322C94 262 104 200 130 168Z" fill="#2c0506"/>
+<g stroke="#c9a24e" stroke-width="2" fill="none" stroke-linecap="round"><path d="M92 214c8 6 14 6 20 0"/><path d="M90 242c8 6 16 6 22 0"/><path d="M92 270c8 6 14 6 20 0"/></g>
+<!-- head -->
+<path d="M122 150C120 112 142 92 168 96C190 100 198 120 190 142C186 154 174 162 160 162C142 164 126 160 122 150Z" fill="#4a0b0d"/>
+<path d="M158 120C176 112 196 124 192 146C186 154 176 158 164 156C168 148 168 134 158 120Z" fill="#f3e4c0"/>
+<!-- beak -->
+<path d="M190 128C208 126 218 138 214 152C210 150 204 146 198 148C196 142 194 134 190 128Z" fill="#e8c97a" stroke="#b58a32" stroke-width="1.5" stroke-linejoin="round"/>
+<!-- eye -->
+<circle cx="170" cy="128" r="9" fill="#fff6dc"/><circle cx="172" cy="128" r="5.2" fill="#1a0203"/><circle cx="174" cy="126" r="1.7" fill="#fff"/>
+<path d="M156 118c10-8 22-8 28-2" stroke="#1a0203" stroke-width="3" fill="none" stroke-linecap="round"/>
+<!-- malar stripe -->
+<path d="M168 138C166 148 168 156 172 162" stroke="#1a0203" stroke-width="5" stroke-linecap="round" fill="none"/>
+<!-- talons -->
+<g stroke="#e8c97a" stroke-width="5" stroke-linecap="round" fill="none"><path d="M118 322l-6 14"/><path d="M130 326l-2 14"/><path d="M158 326l2 14"/><path d="M170 322l6 14"/></g>
+<g fill="none" stroke="#c9a24e" stroke-width="1.2"><path d="M30 52h240"/><path d="M30 358h240"/></g>
+</svg>
