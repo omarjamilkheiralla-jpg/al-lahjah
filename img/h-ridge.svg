@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice">
+
+<defs><linearGradient id="rg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a2c40"/><stop offset="1" stop-color="#2e1424"/></linearGradient></defs><path d="M0 286C220 282 420 262 600 232S940 190 1120 150S1360 120 1440 126V300H0Z" fill="url(#rg)"/>
+</svg>
