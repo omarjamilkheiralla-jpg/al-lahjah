@@ -146,3 +146,40 @@ Variants:
 - Don't add a call to action or outro.
 - Don't use realistic/3D characters. The characters stay flat 2D-style stick people.
 - Don't pile multiple facts into one video. One fact, one analogy, one payoff.
+
+
+---
+
+# APPROVED HOUSE STYLE v2: "Painted 3D world" (user approved, saved. Follow this for every new video)
+
+Approved by the user on the "Cut Every Tail" street shots: *"very nice, this is what I want, remember this style."*
+Reference implementation: `video/src/rats/` (scenes), `video/src/full/` (characters, nature, fonts), `video/src/hotel/` (kit, PostFX).
+
+## 1. World: always a real, deep 3D place, never a flat plaza
+- **Long streets / spaces that recede to a hazy horizon.** Shopfronts on BOTH sides running away from the camera (`StreetCanyon` in `src/rats/scenes.tsx`), 5-7 buildings deep per side, roofs (gable or false-front), awnings, signs, flower boxes, glowing windows.
+- **Foreground, midground, background in every shot.** Foreground: stones, flags, a stall edge, a lamp. Midground: characters and the story prop. Background: shops, trees, hazy town, steeple, lake.
+- **Scale and atmosphere:** soft gradient sky with real painted clouds (`SkyDome`), warm key light from the upper left, soft shadows, fog colour matched to the horizon, bloom, film grain, vignette, depth-of-field focused on the subject (`PostFX`).
+- **Ground has texture and scatter:** painted cobbles/mud with ruts and puddles that mirror the sky, plus instanced small stones (`Scatter`, size about 0.04, never big rocks).
+- **Life and set dressing in every location:** market stalls with fruit, lanterns with glow, bunting flags overhead, clocks with moving hands, framed pictures, shelves with books and jars, plants, hanging lamps, window light bars, dust motes. Interiors are furnished, never an empty box.
+- **Signs and text are painted inside the world** (Rye for signs, Playfair for plates, Lilita One for chalk and captions), at the true proportions of the board. Never stretched or squashed.
+
+## 2. Characters
+- Painted 2D characters standing inside the 3D world (`Person2`, `Rat`): big round pale head, calm half-lidded eyes, thin tapered ink limbs, hand-inked outline that redraws 5 times a second (calm boil), shaded two-tone clothes, soft contact shadow plus a long soft shadow away from the key light.
+- Each role is recognisable by costume (pith helmet official, conical-hat locals, bowler, cap, top hat).
+- 8+ expressions that change with the story (deadpan, smug, worried, shock, grin, laugh, angry, proud, think), with sweat drops and blush. Blink every 3-4 s, breathing bob, head nod.
+- **Feet and legs are one unit** (feet are children of the legs; no X-crossing). No object may pass through a character: keep desks, rails, fences and walls clear (stand people on the balcony/behind the desk, never inside).
+
+## 3. Camera
+- **Every shot has its own angle and the camera never stops:** long dolly down a street, crane down onto a crowd, low hero angle, top-down diagram, tilted close-up, side track, high pull-back.
+- Cuts land 0.1 s before each spoken line with a small zoom punch and a soft flash.
+- 60 fps, ease in/out (monotone time warp), tiny natural sway, slight roll on tense shots.
+
+## 4. Audio
+- Narration: Kokoro, **no pitch shifting or phase-vocoder (it makes echo and a sinking tone)**. Use ONE voice with a near-constant speed; emotion comes from wording, punctuation, pauses and small gain changes. Check the median pitch of each shot stays within about 1 semitone.
+- **Voice choice:** the user found `am_liam` (about 127 Hz) too deep. Current voice is **`am_eric` (about 162 Hz): lighter, friendly, inviting.** Keep it unless the user asks otherwise.
+- Original score that changes with the story, sound effects on every action, about -14 LUFS, music about 10 dB under the voice and ducked.
+
+## 5. QA before telling the user it is ready
+1. Render about 30 frames spread across the WHOLE video and look at every one (not just the changed shots).
+2. Look specifically for: things passing through each other, cut-off hats or props, parts floating or detached, text running off boards, objects blocking faces, flat empty ground.
+3. State plainly what was checked and what was not (I cannot hear audio).

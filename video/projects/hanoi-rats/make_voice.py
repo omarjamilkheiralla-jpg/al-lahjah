@@ -6,7 +6,7 @@ import numpy as np, soundfile as sf, librosa
 from kokoro_onnx import Kokoro
 
 onnx, bins, out = sys.argv[1], sys.argv[2], sys.argv[3]
-voice = sys.argv[4] if len(sys.argv) > 4 else "am_liam"
+voice = sys.argv[4] if len(sys.argv) > 4 else "am_eric"
 k = Kokoro(onnx, bins)
 # per shot: list of (text, speed, pitch_semitones, gain_db, gap_after_seconds)
 SHOTS = [
