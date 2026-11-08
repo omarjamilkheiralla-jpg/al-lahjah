@@ -130,8 +130,8 @@ export const Person2: React.FC<PersonProps> = ({
         </group>
         {/* head */}
         <group position={[0, 1.52, 0.03]} rotation={[0, 0, nod]} scale={[1 + (still ? 0 : Math.sin(t * 2.4 + ph) * 0.006), 1 - (still ? 0 : Math.sin(t * 2.4 + ph) * 0.006), 1]}>
-          <mesh material={headMat}>
-            <planeGeometry args={[1.12, 1.12]} />
+          <mesh material={headMat} position={[0, 0.12, 0]}>
+            <planeGeometry args={[1.43, 1.43]} />
           </mesh>
         </group>
         {/* front arm (screen-right) */}

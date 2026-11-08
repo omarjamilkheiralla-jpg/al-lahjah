@@ -78,6 +78,8 @@ export const headTexture = (look: Look, expr: Expr, key: string, v = 0) => {
   if (hit) return hit;
   const S = 512;
   const { c, g } = mkc(S, S);
+  // draw the head at 78% inside the canvas (anchored at the chin) so tall hats fit without being clipped
+  g.save(); g.translate(S / 2, S * 0.9); g.scale(0.78, 0.78); g.translate(-S / 2, -S * 0.905);
   const cx = S / 2, cy = S * 0.5, rx = S * 0.41, ry = S * 0.405;
   const outline = blob(cx, cy, rx, ry, 100, 0.012, 5 + v * 7);
 
@@ -277,6 +279,7 @@ export const headTexture = (look: Look, expr: Expr, key: string, v = 0) => {
     g.quadraticCurveTo(cx + 40, cy + ry * 0.56, cx + 96, cy + ry * 0.5); g.quadraticCurveTo(cx + 70, cy + ry * 0.28, cx, cy + ry * 0.4); g.fill();
     g.lineWidth = 9; g.strokeStyle = INKD; g.stroke();
   }
+  g.restore();
   const t = tex(c);
   headCache.set(id, t);
   return t;

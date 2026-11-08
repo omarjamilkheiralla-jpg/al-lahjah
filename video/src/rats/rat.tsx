@@ -122,12 +122,16 @@ export const Rat: React.FC<RatProps> = ({ t, position = [0, 0, 0], yaw = 0, scal
   return (
     <group position={position} rotation={[0, yaw, 0]} scale={[scale * flip, scale, scale]}>
       <group position={[0, bob, 0]}>
-        {tail ? <group position={[0.16, 0.12, -0.01]} rotation={[0, 0, Math.sin(t * 3 + ph) * 0.1]}><Ink geometry={tailGeo} material={tailMat} px={1.4} cast={false} /></group> : null}
+        {tail ? <group position={[0.12, 0.27, -0.03]} rotation={[0, 0, Math.sin(t * 3 + ph) * 0.1]}><Ink geometry={tailGeo} material={tailMat} px={1.4} cast={false} /></group> : null}
         <mesh geometry={legG} material={inkM} position={[-0.09, 0.3, 0.001]} rotation={[0, 0, walk ? st * 0.5 : 0]} /><mesh geometry={legG} material={inkM} position={[0.09, 0.3, 0.001]} rotation={[0, 0, walk ? -st * 0.5 : 0]} />
         <mesh position={[-0.13, 0.02, 0.003]} scale={[1.25, 0.6, 1]}><circleGeometry args={[0.07, 14]} /><meshBasicMaterial color={INKD} /></mesh><mesh position={[0.13, 0.02, 0.003]} scale={[1.25, 0.6, 1]}><circleGeometry args={[0.07, 14]} /><meshBasicMaterial color={INKD} /></mesh>
         {arm(-1, aL)}
         <mesh material={bm} position={[0, 0.5, 0]}><planeGeometry args={[0.48, 0.61]} /></mesh>
-        {bowtie ? <group position={[0, 0.74, 0.04]}><mesh position={[-0.05, 0, 0]} rotation={[0, 0, 0.3]}><circleGeometry args={[0.05, 3]} /><meshBasicMaterial color="#c8403a" /></mesh><mesh position={[0.05, 0, 0]} rotation={[0, 0, Math.PI + 0.3]}><circleGeometry args={[0.05, 3]} /><meshBasicMaterial color="#c8403a" /></mesh></group> : null}
+        {bowtie ? <group position={[0, 0.6, 0.02]}>
+          <mesh position={[-0.075, 0, 0]} rotation={[0, 0, Math.PI / 6]}><circleGeometry args={[0.085, 3]} /><meshBasicMaterial color="#c8403a" /></mesh>
+          <mesh position={[0.075, 0, 0]} rotation={[0, 0, Math.PI + Math.PI / 6]}><circleGeometry args={[0.085, 3]} /><meshBasicMaterial color="#c8403a" /></mesh>
+          <mesh position={[0, 0, 0.003]}><circleGeometry args={[0.032, 14]} /><meshBasicMaterial color="#9a2a26" /></mesh>
+        </group> : null}
         <group position={[0, 0.98, 0.03]} rotation={[0, 0, Math.sin(t * 2 + ph) * 0.05]}><mesh material={hm}><planeGeometry args={[0.86, 0.86]} /></mesh></group>
         {arm(1, aR)}
       </group>

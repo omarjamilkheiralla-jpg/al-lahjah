@@ -208,7 +208,7 @@ export const S3Office: React.FC<SceneProps> = ({ t, cam }) => {
       </group>
       <Ink geometry={new THREE.CylinderGeometry(0.16, 0.2, 0.22, 12)} material={toon("#2a2a34")} position={[0.1, 1.6, 0.4]} px={1.6} />
       {/* the engineer, behind the desk */}
-      <Person2 look="engineer" stripes expr={emote as any} t={t} position={[0.4, 0.2, 0.0]} yaw={0.05} scale={1.5} seed={3} pose="hold" handR={null} />
+      <Person2 look="engineer" stripes expr={emote as any} t={t} position={[0.4, 0.2, -0.75]} yaw={0.05} scale={1.5} seed={3} pose="hold" handR={null} />
     </group>
   );
 };

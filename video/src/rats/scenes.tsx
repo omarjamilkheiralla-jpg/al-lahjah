@@ -100,38 +100,42 @@ const HanoiRow: React.FC<{ z?: number; xs?: number[] }> = ({ z = -6, xs = [-14, 
 /* ---- shot 1: they cut the tail off, then let the rat go ---- */
 export const R1Hook: React.FC<SceneProps> = ({ t, cam }) => {
   const r = rx();
-  const snip = t > 0.9;
-  const fall = Math.max(0, t - 0.95);
+  const xs = [-1.4, -0.55, 0.3, 1.15];
+  const T = [0.9, 1.45, 2.0, 2.55]; // snip times
+  // the catcher works his way along the row, behind the table
+  const catcherX = (() => { let x = xs[0] + 0.5; for (let i = 1; i < 4; i++) { const k = clamp((t - (T[i - 1] + 0.1)) / 0.35); x = xs[i - 1] + 0.5 + (xs[i] - xs[i - 1]) * easeInOut(k) * (t > T[i - 1] ? 1 : 0); if (t < T[i] ) break; x = xs[i] + 0.5; } return x; })();
+  const snipping = T.some((tt) => t > tt - 0.28 && t < tt);
   const scissors = (
-    <group rotation={[0, 0, 0.3]}>
-      {[1, -1].map((s) => <Ink key={s} geometry={box(0.04, 0.34, 0.02)} material={toon("#aab6c8")} position={[0, -0.12, 0]} rotation={[0, 0, s * (0.18 + 0.2 * Math.abs(Math.sin(t * 22)) * (t > 0.6 && t < 1.0 ? 1 : 0.2))]} px={1.4} />)}
+    <group rotation={[0, 0, 0.5]}>
+      {[1, -1].map((s) => <Ink key={s} geometry={box(0.045, 0.4, 0.02)} material={toon("#aab6c8")} position={[0, -0.14, 0]} rotation={[0, 0, s * (snipping ? 0.04 : 0.26)]} px={1.4} />)}
     </group>
   );
-  const walkers = [0, 1, 2, 3].map((i) => {
-    const start = 1.1 + i * 0.5; const k = clamp((t - start) / 1.3);
-    return { i, x: -0.2 - k * 3.2, show: t >= start - 0.6 };
-  });
   return (
     <group>
       <SceneEnv bg="#e9d2a8" fog={["#e9d2a8", 18, 60]} />
       <Lights color="#ffd9a0" intensity={2.4} pos={[-5, 8, 8]} shadowSize={10} extra={<pointLight position={[0, 2.5, 2]} intensity={10} color="#ffcf8a" distance={9} />} />
       <Ink geometry={box(16, 8, 0.3)} material={toon(r.wallCream)} position={[0, 4, -2.4]} px={2.4} />
       <Ink geometry={box(16, 0.3, 10)} material={toon(r.floor)} position={[0, -0.15, 2]} px={2.4} />
-      <Ink geometry={box(5.2, 0.18, 2.2)} material={toon("#9a5a34")} position={[-0.4, 1.1, 0]} px={2.6} />
-      <Ink geometry={box(5.0, 1.0, 2.0)} material={toon("#7a4624")} position={[-0.4, 0.5, 0]} px={2.4} />
-      <mesh position={[-0.4, 1.2, 0.8]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[5.1, 0.25]} /><meshBasicMaterial color="#c8403a" /></mesh>
-      {/* wire cage on the left, door open */}
-      <group position={[-2.3, 1.2, -0.2]}>
-        {[0, 1, 2, 3, 4].map((i) => <Ink key={i} geometry={box(0.04, 0.9, 0.04)} material={toon("#6a7488")} position={[-0.5 + i * 0.25, 0.45, 0.4]} px={1.2} cast={false} />)}
-        <Ink geometry={box(1.2, 0.05, 0.9)} material={toon("#6a7488")} position={[0, 0.9, 0]} px={1.4} cast={false} />
-      </group>
-      {/* the main rat, tail snipped at 0.9 s */}
-      <Rat t={t} position={[t < 1.1 ? -0.2 : walkers[0].x, 1.2, 0.3]} scale={1.15} expr={t < 0.9 ? "deadpan" : t < 1.4 ? "shock" : "smug"} tail={!snip} pose={t < 1.1 ? "idle" : "walk"} flip={t < 1.1 ? 1 : -1} seed={2} />
-      {walkers.slice(1).map((w) => w.show ? <Rat key={w.i} t={t} position={[w.x, 1.2, 0.35 + w.i * 0.02]} scale={1.1} expr={w.i % 2 ? "smug" : "grin"} tail={false} pose="walk" flip={-1} seed={w.i + 4} fur={w.i === 2 ? "brown" : "grey"} /> : null)}
-      {/* the snipped tail drops to the table */}
-      {snip ? <TailProp p={[-0.1 + fall * 0.4, Math.max(1.22, 1.9 - 4.9 * fall * fall), 0.4]} rot={[0, 0, -0.6 + fall * 3]} s={1.2} /> : null}
-      {/* the catcher with tiny scissors */}
-      <Person look="catcher" p={[1.7, 0, -0.4]} cam={cam} t={t} s={1.7} expr={emo(t, [[0, "smug"], [0.9, "grin"], [2.0, "proud"]])} pose="point" seed={5} handR={scissors} />
+      {/* the table: front half only, so nobody stands inside it */}
+      <Ink geometry={box(6.4, 0.18, 1.7)} material={toon("#9a5a34")} position={[-0.3, 1.1, 0.7]} px={2.6} />
+      <Ink geometry={box(6.2, 1.0, 1.5)} material={toon("#7a4624")} position={[-0.3, 0.5, 0.7]} px={2.4} />
+      <mesh position={[-0.3, 1.2, 1.5]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[6.3, 0.22]} /><meshBasicMaterial color="#c8403a" /></mesh>
+      {xs.map((x, i) => {
+        const since = t - T[i];
+        const walk = since > 0.4 ? (since - 0.4) * 1.9 : 0;
+        const rx2 = x - walk;
+        const off = rx2 < -3.4;
+        const snipped = t >= T[i];
+        const fall = Math.max(0, since - 0.02);
+        return (
+          <React.Fragment key={i}>
+            {!off ? <Rat t={t} position={[rx2, 1.19, 0.75]} scale={1.15} expr={!snipped ? (i === 0 ? "worried" : "deadpan") : since < 0.4 ? "shock" : "smug"} tail={!snipped} pose={since > 0.4 ? "walk" : "idle"} flip={since > 0.4 ? -1 : 1} seed={i + 2} fur={i === 2 ? "brown" : "grey"} /> : null}
+            {snipped && since < 1.6 ? <TailProp p={[x + 0.2, Math.max(1.24, 1.9 - 4.9 * fall * fall), 0.85]} rot={[0, 0, -0.5 + fall * 2.6 + (fall > 0.55 ? 0 : 0)]} s={1.1} /> : null}
+          </React.Fragment>
+        );
+      })}
+      {/* the catcher, standing behind the table with tiny scissors */}
+      <Person look="catcher" p={[catcherX, 0, -0.9]} cam={cam} t={t} s={1.75} expr={emo(t, [[0, "smug"], [0.9, "grin"], [2.8, "proud"]])} pose="point" seed={5} handR={scissors} />
       <Dust t={t} />
     </group>
   );
@@ -139,7 +143,7 @@ export const R1Hook: React.FC<SceneProps> = ({ t, cam }) => {
 
 /* ---- shot 2: Hanoi is crawling with rats ---- */
 export const R2Setup: React.FC<SceneProps> = ({ t, cam }) => {
-  const rats = useMemo(() => { const g = rng(13); return Array.from({ length: 22 }, (_, i) => ({ a: g() * Math.PI * 2, spd: 0.8 + g() * 1.4, t0: g() * 2.8, off: g() })); }, []);
+  const rats = useMemo(() => { const g = rng(13); return Array.from({ length: 22 }, (_, i) => ({ a: g() * Math.PI * 2, spd: 0.8 + g() * 1.4, t0: 0.2 + g() * 3.4, off: g() })); }, []);
   const grate = useMemo(() => box(2.2, 0.12, 1.6), []);
   return (
     <group>
@@ -151,10 +155,13 @@ export const R2Setup: React.FC<SceneProps> = ({ t, cam }) => {
       <Ink geometry={grate} material={toon("#3a3a46")} position={[0, 0.03, 0.2]} px={2} />
       <mesh position={[0, 0.1, 0.2]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[1.9, 1.3]} /><meshBasicMaterial color="#14101a" /></mesh>
       {rats.map((r, i) => {
-        const k = Math.max(0, t - r.t0); if (k <= 0) return null;
-        const d = Math.min(6.5, k * r.spd * 1.6);
-        const x = Math.cos(r.a) * d, z = 0.2 + Math.sin(r.a) * d * 0.8 + 0.2;
-        return <Rat key={i} t={t} position={[x, 0, z]} scale={0.5} expr={i % 3 ? "deadpan" : "smug"} pose="walk" flip={Math.cos(r.a) > 0 ? -1 : 1} seed={i + 3} fur={i % 4 === 0 ? "brown" : "grey"} />;
+        const k = t - r.t0; if (k <= 0) return null;
+        const rise = clamp(k / 0.55);                       // climb up out of the hole
+        const d = Math.max(0, k - 0.45) * r.spd * 1.5;       // then scurry away
+        const jx = (r.off - 0.5) * 1.2, jz = (r.off - 0.5) * 0.6;
+        const x = jx + Math.cos(r.a) * d, z = 0.2 + jz + Math.sin(r.a) * d * 0.8;
+        const inHole = d < 0.01;
+        return <Rat key={i} t={t} position={[x, -1.05 + 1.05 * easeInOut(rise), z]} scale={0.5} expr={i % 3 ? "deadpan" : "smug"} pose={inHole ? "idle" : "walk"} flip={Math.cos(r.a) > 0 ? -1 : 1} seed={i + 3} fur={i % 4 === 0 ? "brown" : "grey"} />;
       })}
       <Person look="official" p={[-3.4, 0, 2.2]} cam={cam} t={t} s={1.35} expr={emo(t, [[0, "deadpan"], [2.0, "shock"], [3.6, "worried"]])} pose="idle" seed={7} emph={t > 2.0 ? 1 : 0} />
       <Person look="catcher" p={[3.8, 0, 2.6]} cam={cam} t={t} s={1.15} expr="worried" seed={9} />
@@ -196,10 +203,10 @@ export const R4But: React.FC<SceneProps> = ({ t, cam }) => {
       <Lights color="#ffdba8" intensity={2.3} pos={[-6, 9, 8]} shadowSize={10} extra={<pointLight position={[1, 3, 3]} intensity={9} color="#ffcf8a" distance={9} />} />
       <Ink geometry={box(18, 9, 0.3)} material={toon(r.wallGreen)} position={[0, 4.5, -2.6]} px={2.4} />
       <Ink geometry={box(18, 0.3, 12)} material={toon(r.floor)} position={[0, -0.15, 2]} px={2.4} />
-      <Ink geometry={box(5.6, 0.18, 2.4)} material={toon("#9a5a34")} position={[0.4, 1.35, -0.2]} px={2.6} />
-      <Ink geometry={box(5.4, 1.3, 0.2)} material={toon("#7a4624")} position={[0.4, 0.66, 0.9]} px={2.4} />
+      <Ink geometry={box(5.6, 0.18, 1.5)} material={toon("#9a5a34")} position={[0.4, 1.35, 1.3]} px={2.6} />
+      <Ink geometry={box(5.4, 1.3, 0.2)} material={toon("#7a4624")} position={[0.4, 0.66, 2.0]} px={2.4} />
       {/* messy pile of sacks */}
-      {[[-2.6, 0.35], [-2.0, 0.3], [-3.2, 0.3], [-2.4, 0.9]].map(([sx, sy], i) => <Ink key={i} geometry={new THREE.SphereGeometry(0.55, 14, 10)} material={toon(["#c8a45a", "#b8944a", "#d4b46a", "#c0a050"][i])} position={[sx, sy, 0.6]} scale={[1, 1.1, 1]} px={2} />)}
+      {[[-3.6, 0.35], [-3.0, 0.3], [-4.2, 0.3], [-3.5, 0.9]].map(([sx, sy], i) => <Ink key={i} geometry={new THREE.SphereGeometry(0.55, 14, 10)} material={toon(["#c8a45a", "#b8944a", "#d4b46a", "#c0a050"][i])} position={[sx, sy, 0.6]} scale={[1, 1.1, 1]} px={2} />)}
       <Person look="official" p={[0.5, 0.2, -0.6]} cam={cam} t={t} s={1.7} expr={emo(t, [[0, "angry"], [1.4, "worried"], [2.6, "grin"]])} pose="point" seed={11} handR={t > 1.2 ? tweezers : null} emph={t < 1.4 ? 1 : 0} />
       <Dust t={t} />
     </group>
@@ -380,15 +387,15 @@ export const R11Close: React.FC<SceneProps> = ({ t, cam }) => {
       <Lights color="#ffd9a0" intensity={2.0} pos={[-4, 7, 6]} shadowSize={8} extra={<pointLight position={[0, 3, 3]} intensity={12} color="#ffcf8a" distance={9} />} />
       <Ink geometry={box(16, 8, 0.3)} material={toon(r.wallCream)} position={[0, 4, -2.4]} px={2.4} />
       <Ink geometry={box(16, 0.3, 10)} material={toon(r.floor)} position={[0, -0.15, 2]} px={2.4} />
-      <Ink geometry={box(5.4, 0.2, 2.4)} material={toon("#7a4624")} position={[0, 1.3, 0.2]} px={2.6} />
-      <Ink geometry={box(5.2, 1.3, 0.2)} material={toon("#6a3e20")} position={[0, 0.66, 1.3]} px={2.4} />
+      <Ink geometry={box(5.4, 0.2, 1.5)} material={toon("#7a4624")} position={[0, 1.3, 1.2]} px={2.6} />
+      <Ink geometry={box(5.2, 1.3, 0.2)} material={toon("#6a3e20")} position={[0, 0.66, 1.95]} px={2.4} />
       {/* the plate with one lonely tail */}
-      <group position={[0.2, 1.42, 0.9]}>
+      <group position={[0.2, 1.42, 1.25]}>
         <Ink geometry={new THREE.CylinderGeometry(0.62, 0.55, 0.07, 28)} material={toon("#f4efe4")} px={2} />
         <TailProp p={[-0.28, 0.07, 0]} rot={[0, 0.3, 0]} s={1.0} />
       </group>
       <Person look="official" p={[0.1, 0.2, -0.5]} cam={cam} t={t} s={1.9} expr={emo(t, [[0, "deadpan"], [1.8, "worried"], [3.2, "deadpan"]])} pose="idle" seed={80} />
-      <Rat t={t} position={[3.4, 1.4, 0.5]} scale={0.7} expr="smug" pose="wave" seed={77} />
+      <Rat t={t} position={[2.6, 1.4, 1.2]} scale={0.7} expr="smug" pose="wave" seed={77} />
       <Dust t={t} />
     </group>
   );
