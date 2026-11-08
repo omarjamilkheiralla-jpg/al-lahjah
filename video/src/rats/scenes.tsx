@@ -266,10 +266,10 @@ export const R6Conflict: React.FC<SceneProps> = ({ t, cam }) => {
       <Street t={t} />
       <Facade w={11} floors={2} floor0={3.2} floorH={2.6} cols={[-3.4, 0, 3.4]} map={r.cream} trim="#fff3dd" glass={useAssets().room2} depth={1.2} curtains={["#3f8a5a", "#4a9a68"]} />
       {/* balcony */}
-      <Ink geometry={box(5.2, 0.22, 1.8)} material={toon("#a8693b")} position={[0, 3.3, 1.0]} px={2.4} />
-      {[-2.4, -1.2, 0, 1.2, 2.4].map((x, i) => <Ink key={i} geometry={box(0.09, 0.7, 0.09)} material={toon("#2f3a46")} position={[x, 3.75, 1.85]} px={1.4} />)}
-      <Ink geometry={box(5.2, 0.1, 0.1)} material={toon("#2f3a46")} position={[0, 4.1, 1.85]} px={1.6} />
-      <Person look="official" p={[0, 3.4, -0.2]} cam={cam} t={t} s={1.35} expr={emo(t, [[0, "deadpan"], [1.6, "think"], [3.2, "shock"]])} pose="hold" seed={12} />
+      <Ink geometry={box(5.2, 0.22, 2.3)} material={toon("#a8693b")} position={[0, 3.3, 1.2]} px={2.4} />
+      {[-2.4, -1.2, 0, 1.2, 2.4].map((x, i) => <Ink key={i} geometry={box(0.09, 0.7, 0.09)} material={toon("#2f3a46")} position={[x, 3.75, 2.25]} px={1.4} />)}
+      <Ink geometry={box(5.2, 0.1, 0.1)} material={toon("#2f3a46")} position={[0, 4.1, 2.25]} px={1.6} />
+      <Person look="official" p={[0, 3.4, 0.85]} cam={cam} t={t} s={1.35} expr={emo(t, [[0, "deadpan"], [1.6, "think"], [3.2, "shock"]])} pose="hold" seed={12} />
       {pos.slice(0, n).map((p, i) => <Rat key={i} t={t} position={[p.x + p.dir * t * p.sp, 0, p.z]} scale={0.52} expr={i % 3 ? "smug" : "grin"} tail={false} pose="walk" flip={-p.dir} seed={i + 9} fur={i % 4 === 0 ? "brown" : "grey"} />)}
       <Dust t={t} />
     </group>
@@ -321,14 +321,14 @@ export const R8Farm: React.FC<SceneProps> = ({ t, cam }) => {
       {pens.map((px, i) => (
         <group key={i} position={[px, 0, 0]}>
           {[[-1.5, -1.2], [1.5, -1.2], [-1.5, 1.2], [1.5, 1.2]].map(([x, z], k) => <Ink key={k} geometry={box(0.12, 1.1, 0.12)} material={toon("#8a5a34")} position={[x, 0.55, z]} px={1.6} cast={false} />)}
-          {[0.35, 0.8].map((y, k) => <React.Fragment key={k}><Ink geometry={box(3.1, 0.06, 0.06)} material={toon("#c8b08a")} position={[0, y, 1.2]} px={1.2} cast={false} /><Ink geometry={box(3.1, 0.06, 0.06)} material={toon("#c8b08a")} position={[0, y, -1.2]} px={1.2} cast={false} /></React.Fragment>)}
-          <Ink geometry={box(1.0, 0.7, 0.9)} material={toon(a.wood)} position={[1.0, 0.35, -0.6]} px={2} />
-          <Ink geometry={box(1.2, 0.12, 1.1)} material={toon("#8a5a40")} position={[1.0, 0.76, -0.6]} rotation={[0, 0, 0.12]} px={2} />
-          {[0, 1, 2].map((k) => <Rat key={k} t={t + k} position={[-0.9 + k * 0.7, 0, -0.1 + (k % 2) * 0.6]} scale={0.62} expr={k % 2 ? "grin" : "smug"} tail seed={i * 3 + k + 1} fur={k === 1 ? "brown" : "grey"} pose={k === 2 ? "wave" : "idle"} />)}
+          {[0.35, 0.8].map((y, k) => <React.Fragment key={k}><Ink geometry={box(3.1, 0.06, 0.06)} material={toon("#c8b08a")} position={[0, y, -1.2]} px={1.2} cast={false} /><Ink geometry={box(0.06, 0.06, 2.4)} material={toon("#c8b08a")} position={[-1.5, y, 0]} px={1.2} cast={false} /><Ink geometry={box(0.06, 0.06, 2.4)} material={toon("#c8b08a")} position={[1.5, y, 0]} px={1.2} cast={false} /></React.Fragment>)}
+          <Ink geometry={box(0.9, 0.7, 0.7)} material={toon(a.wood)} position={[1.0, 0.35, -0.8]} px={2} />
+          <Ink geometry={box(1.1, 0.12, 0.9)} material={toon("#8a5a40")} position={[1.0, 0.76, -0.8]} rotation={[0, 0, 0.12]} px={2} />
+          {[0, 1, 2].map((k) => <Rat key={k} t={t + k} position={[-1.0 + k * 0.62, 0, 0.1 + (k % 2) * 0.5]} scale={0.62} expr={k % 2 ? "grin" : "smug"} tail seed={i * 3 + k + 1} fur={k === 1 ? "brown" : "grey"} pose={k === 2 ? "wave" : "idle"} />)}
         </group>
       ))}
       {/* clothesline of harvested tails */}
-      <group position={[0, 0, 3.8]}>
+      <group position={[0, 0, -2.6]}>
         <Ink geometry={box(0.12, 3.2, 0.12)} material={toon(a.woodDark)} position={[-8.5, 1.6, 0]} px={2} /><Ink geometry={box(0.12, 3.2, 0.12)} material={toon(a.woodDark)} position={[8.5, 1.6, 0]} px={2} />
         <Ink geometry={box(17, 0.04, 0.04)} material={toon("#6a4a38")} position={[0, 3.0, 0]} px={1.2} cast={false} />
         {tailsLine.map((i) => <TailProp key={i} p={[-7.6 + i * 1.0, 3.0, 0.02]} rot={[0, 0, -Math.PI / 2 + Math.sin(t * 1.5 + i) * 0.12]} s={1.4} />)}

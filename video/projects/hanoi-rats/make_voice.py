@@ -27,12 +27,9 @@ parts, t, starts = [], 0.0, []
 for sh in SHOTS:
     starts.append(t)
     for text, sp, semi, gdb, gap in sh:
-        r = 2 ** (semi / 12)                       # pitch ratio
-        a, sr = k.create(text, voice=voice, speed=sp / r, lang="en-us"); assert sr == SR   # speak slower/faster first...
+        a, sr = k.create(text, voice=voice, speed=1.0 + (sp - 1.0) * 0.35, lang="en-us"); assert sr == SR   # speed varies only a little, pitch never touched
         a = a.astype(np.float32); nz = np.where(np.abs(a) > 0.01)[0]; a = a[nz[0]:nz[-1] + 1]
-        if abs(semi) > 0.05:                         # ...then resample, so duration is unchanged and pitch moves cleanly (no phase-vocoder smear)
-            n_out = int(round(len(a) / r)); a = np.interp(np.linspace(0, len(a) - 1, n_out), np.arange(len(a)), a).astype(np.float32)
-        a = a * 10 ** (gdb / 20)
+        a = a * 10 ** (min(gdb, 0.8) / 20)
         # soft attack/release so phrases never click
         n = len(a); f = min(n // 8, int(0.012 * SR)); a[:f] *= np.linspace(0, 1, f); a[-f:] *= np.linspace(1, 0, f)
         parts += [a, np.zeros(int(gap * SR), dtype=np.float32)]; t += len(a) / SR + gap
@@ -41,5 +38,10 @@ w = w / np.abs(w).max() * 0.9
 sf.write(f"{out}/voice_rats.wav", w, SR)
 json.dump({"starts": starts, "total": len(w) / SR}, open(f"{out}/lines_rats.json", "w"), indent=1)
 f0, _, _ = librosa.pyin(w, fmin=70, fmax=420, sr=SR); f = f0[~np.isnan(f0)]
+hop = 512 / SR; med = []
+for st, en in zip(starts, starts[1:] + [len(w) / SR]):
+    seg = f0[int(st / hop):int(en / hop)]; seg = seg[~np.isnan(seg)]
+    med.append(round(float(np.median(seg)), 0) if len(seg) else 0)
+print("median pitch per shot (Hz):", med, "| spread: %.1f semitones" % (12 * np.log2(max(med) / min(med))))
 print("total", round(len(w) / SR, 2), "| pitch mean %.0f std %.0f range %.0f-%.0f Hz" % (f.mean(), f.std(), np.percentile(f, 5), np.percentile(f, 95)))
 print([round(s, 2) for s in starts])
