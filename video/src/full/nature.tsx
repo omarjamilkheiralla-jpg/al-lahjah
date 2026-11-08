@@ -269,3 +269,25 @@ export const Glow: React.FC<{ p: [number, number, number]; s?: number }> = ({ p,
 };
 
 export { INK, INKD };
+
+/** instanced stones / gravel scattered on the ground, for texture and scale */
+export const Scatter: React.FC<{ count?: number; w?: number; d?: number; x?: number; z?: number; y?: number; seed?: number; size?: number; colors?: string[]; skip?: [number, number] }> = ({
+  count = 700, w = 40, d = 40, x = 0, z = 0, y = 0, seed = 1, size = 0.1, colors = ["#a8957e", "#8a7866", "#b5a28a", "#6f5d52", "#c2b09a"], skip,
+}) => {
+  const ref = React.useRef<THREE.InstancedMesh>(null);
+  const geo = useMemo(() => new THREE.DodecahedronGeometry(1, 0), []);
+  const mat = useMemo(() => toon("#ffffff"), []);
+  React.useLayoutEffect(() => {
+    const m = ref.current; if (!m) return;
+    const r = rng(seed); const o = new THREE.Object3D(); const c = new THREE.Color();
+    for (let i = 0; i < count; i++) {
+      let px = x + (r() - 0.5) * w, pz = z + (r() - 0.5) * d;
+      if (skip && Math.abs(px) < skip[0] && Math.abs(pz - z) < skip[1]) { px += skip[0] * 2.2 * (px < 0 ? -1 : 1); }
+      const s = size * (0.4 + r() * 1.3);
+      o.position.set(px, y + s * 0.35, pz); o.rotation.set(r() * 3, r() * 3, r() * 3); o.scale.set(s * (0.9 + r() * 0.6), s * 0.6, s * (0.9 + r() * 0.6));
+      o.updateMatrix(); m.setMatrixAt(i, o.matrix); c.set(colors[Math.floor(r() * colors.length)]); m.setColorAt(i, c);
+    }
+    m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true;
+  }, [count, w, d, x, z, y, seed, size, colors, skip]);
+  return <instancedMesh ref={ref} args={[geo, mat, count]} castShadow={false} receiveShadow />;
+};

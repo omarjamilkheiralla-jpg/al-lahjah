@@ -93,3 +93,32 @@ export const Bunting: React.FC<{ a: [number, number, number]; b: [number, number
     </group>
   );
 };
+
+export const MarketStall: React.FC<{ p: [number, number, number]; rot?: number; color?: string; goods?: string[]; t?: number }> = ({ p, rot = 0, color = "#c8403a", goods = ["#e0592f", "#5aa05a", "#e8b53a"], t = 0 }) => {
+  const stripes = useMemo(() => { const c = document.createElement("canvas"); c.width = 256; c.height = 64; const g = c.getContext("2d")!; for (let i = 0; i < 8; i++) { g.fillStyle = i % 2 ? "#fff3dd" : color; g.fillRect(i * 32, 0, 32, 64); } const tx = new THREE.CanvasTexture(c); tx.colorSpace = THREE.SRGBColorSpace; return tx; }, [color]);
+  const fruit = useMemo(() => new THREE.SphereGeometry(0.1, 10, 8), []);
+  const items = useMemo(() => { const r = rng(9); return Array.from({ length: 18 }, (_, i) => ({ x: -0.8 + (i % 6) * 0.32 + (r() - 0.5) * 0.06, z: -0.2 + Math.floor(i / 6) * 0.26, c: goods[i % goods.length], y: 0.06 * (i % 3) })); }, [goods]);
+  return (
+    <group position={p} rotation={[0, rot, 0]}>
+      {[[-1.1, -0.55], [1.1, -0.55], [-1.1, 0.55], [1.1, 0.55]].map(([x, z], i) => <Ink key={i} geometry={box(0.09, i < 2 ? 2.3 : 1.9, 0.09)} material={toon("#6a4a38")} position={[x, i < 2 ? 1.15 : 0.95, z]} px={1.6} cast={false} />)}
+      <Ink geometry={box(2.5, 0.1, 1.5)} material={toon("#a8693b")} position={[0, 0.9, 0]} px={2} />
+      <Ink geometry={box(2.4, 0.9, 1.3)} material={toon("#8a5a34")} position={[0, 0.45, 0]} px={2} />
+      <Ink geometry={box(2.7, 0.08, 1.9)} material={toon(stripes)} position={[0, 2.25 + Math.sin(t * 1.2) * 0.01, -0.1]} rotation={[0.18, 0, 0]} px={2} />
+      {items.map((it, i) => <mesh key={i} geometry={fruit} position={[it.x, 1.0 + it.y, it.z]}><meshToonMaterial color={it.c} /></mesh>)}
+    </group>
+  );
+};
+
+export const Laundry: React.FC<{ a: [number, number, number]; b: [number, number, number]; t?: number }> = ({ a, b, t = 0 }) => {
+  const cols = ["#f4efe4", "#7fb6d9", "#e8a0a0", "#f2d27a", "#a8d8b0"];
+  const L = Math.hypot(b[0] - a[0], b[2] - a[2]);
+  const ang = Math.atan2(b[2] - a[2], b[0] - a[0]);
+  const rope = useMemo(() => new THREE.CylinderGeometry(0.012, 0.012, L, 5), [L]);
+  const cloth = useMemo(() => new THREE.PlaneGeometry(0.34, 0.42), []);
+  return (
+    <group position={[(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2]} rotation={[0, -ang, 0]}>
+      <mesh rotation={[0, 0, Math.PI / 2]} geometry={rope}><meshBasicMaterial color={INKD} /></mesh>
+      {cols.concat(cols).map((c, i) => <mesh key={i} geometry={cloth} position={[-L / 2 + 0.5 + i * (L - 1) / 9, -0.24, 0]} rotation={[Math.sin(t * 1.5 + i) * 0.06, Math.sin(t * 1.1 + i * 2) * 0.35, 0]}><meshToonMaterial color={c} side={THREE.DoubleSide} /></mesh>)}
+    </group>
+  );
+};

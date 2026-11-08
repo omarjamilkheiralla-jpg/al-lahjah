@@ -10,7 +10,8 @@ import { wallTexture, cobbleTexture } from "../full/assets";
 import { emo, Shop } from "../full/scenes";
 import { Rat, type RatExpr } from "./rat";
 import { INKD } from "../full/paint";
-import { Frame, Clock, Plant, Shelf, HangingLamp, SunWindow, Bunting } from "./props";
+import { Frame, Clock, Plant, Shelf, HangingLamp, SunWindow, Bunting, MarketStall, Laundry } from "./props";
+import { Scatter } from "../full/nature";
 import timing from "./timing.json";
 
 /** seconds from the start of shot `shot` (0-based) to the first spoken occurrence of `word` in it */
@@ -97,16 +98,45 @@ const Street: React.FC<{ t: number; tint?: string }> = ({ t }) => (
   </>
 );
 
-const HanoiRow: React.FC<{ z?: number; xs?: number[] }> = ({ z = -6, xs = [-14, -7.2, 0, 7.2, 14] }) => {
+/** a long Hanoi street: shopfronts on both sides running away toward the horizon, stalls, laundry, stones */
+const StreetCanyon: React.FC<{ t: number; len?: number; near?: number }> = ({ t, len = 7, near = 6 }) => {
   const r = rx();
-  const mats = [r.ochre, r.cream, r.terra, r.sage, r.ochre];
-  const signs = useMemo(() => [signTexture("TEA", "#2f8f5a", "#fff3cf", 576, 128), signTexture("RICE", "#c8403a", "#fff3cf", 576, 128), signTexture("SILK", "#7a3d8f", "#fff3cf", 576, 128), signTexture("BAKERY", "#d9453f", "#fff3cf", 576, 128), signTexture("FISH", "#2b6aa8", "#fff3cf", 576, 128)], []);
+  const mats = [r.ochre, r.cream, r.terra, r.sage, r.ochre, r.cream, r.terra];
+  const signs = useMemo(() => ["TEA", "RICE", "SILK", "BAKERY", "FISH", "TAILOR", "SPICES"].map((n, i) => signTexture(n, ["#2f8f5a", "#c8403a", "#7a3d8f", "#d9453f", "#2b6aa8", "#8a5a34", "#e0b23a"][i], i === 6 ? "#2a1a1e" : "#fff3cf", 576, 128)), []);
+  const aw = ["#2f8f5a", "#c8403a", "#e0b23a", "#2b6aa8", "#7a3d8f", "#2f8f5a", "#c8403a"];
   return (
-    <>
-      {xs.map((x, i) => <Shop key={i} x={x} z={z - (i % 2) * 0.6} w={6.2} floors={i % 2 ? 2 : 3} map={mats[i % 5]} sign={signs[i % 5]} roof={i % 2 ? "gable" : "false"} awning={["#2f8f5a", "#c8403a", "#e0b23a", "#2b6aa8", "#7a3d8f"][i % 5]} curtains={["#3f8a5a", "#4a9a68"]} />)}
-    </>
+    <group>
+      {Array.from({ length: len }, (_, i) => {
+        const z = near - i * 6.6;
+        return (
+          <React.Fragment key={i}>
+            <group position={[-7.4, 0, z]} rotation={[0, Math.PI / 2, 0]}><Shop x={0} z={0} w={6.2} floors={2 + (i % 2)} map={mats[i % 7]} sign={signs[i % 7]} roof={i % 2 ? "gable" : "false"} awning={aw[i % 7]} curtains={["#3f8a5a", "#4a9a68"]} /></group>
+            <group position={[7.4, 0, z - 3.3]} rotation={[0, -Math.PI / 2, 0]}><Shop x={0} z={0} w={6.2} floors={3 - (i % 2)} map={mats[(i + 3) % 7]} sign={signs[(i + 2) % 7]} roof={i % 2 ? "false" : "gable"} awning={aw[(i + 2) % 7]} curtains={["#3f8a5a", "#4a9a68"]} /></group>
+          </React.Fragment>
+        );
+      })}
+            <Scatter count={1100} w={13} d={52} z={-18} seed={3} size={0.04} />
+      <MarketStall p={[-5.0, 0, 1.0]} rot={0.9} color="#c8403a" t={t} />
+      <MarketStall p={[5.2, 0, -5.8]} rot={-0.9} color="#2f8f5a" goods={["#d9453f", "#f2d27a", "#7aa85a"]} t={t} />
+      <MarketStall p={[-5.2, 0, -14]} rot={0.9} color="#e0b23a" goods={["#a8693b", "#e8b53a", "#c8403a"]} t={t} />
+      <Laundry a={[-6.4, 6.2, -13]} b={[6.4, 6.4, -13]} t={t} />
+      <Lamp p={[-4.6, 0, -4.2]} a={useAssets()} /><Lamp p={[4.6, 0, -11]} a={useAssets()} /><Lamp p={[-4.6, 0, -20]} a={useAssets()} />
+      <Tree p={[-5.4, 0, -26]} s={1.6} seed={4} /><Tree p={[5.4, 0, -30]} s={1.6} seed={9} />
+      <Bunting a={[-7.2, 7.6, -8.5]} b={[7.2, 7.6, -8.5]} t={t} sag={0.9} /><Bunting a={[-7.2, 7.8, -21]} b={[7.2, 7.8, -21]} t={t} sag={1.1} />
+    </group>
   );
 };
+
+const StreetLong: React.FC<{ t: number }> = ({ t }) => (
+  <>
+    <SceneEnv bg="#f4e6cf" fog={["#f1e3cc", 22, 90]} />
+    <Lights color="#ffdca8" intensity={2.5} shadowSize={14} />
+    <SkyDome t={t} /><Horizon t={t} z={-66} />
+    <Terrain kind="cobble" w={20} d={120} z={-30} tile={7} />
+    <Terrain kind="mud" w={200} d={160} z={-30} y={-0.02} tile={14} />
+    <StreetCanyon t={t} />
+  </>
+);
 
 /* ---- shot 1: they cut the tail off, then let the rat go ---- */
 export const R1Hook: React.FC<SceneProps> = ({ t, cam }) => {
@@ -156,30 +186,24 @@ export const R1Hook: React.FC<SceneProps> = ({ t, cam }) => {
 
 /* ---- shot 2: Hanoi is crawling with rats ---- */
 export const R2Setup: React.FC<SceneProps> = ({ t, cam }) => {
-  const rats = useMemo(() => { const g = rng(13); return Array.from({ length: 22 }, (_, i) => ({ a: g() * Math.PI * 2, spd: 0.8 + g() * 1.4, t0: 0.2 + g() * 3.4, off: g() })); }, []);
+  const a = useAssets();
+  const rats = useMemo(() => { const g = rng(13); return Array.from({ length: 26 }, (_, i) => ({ a: g() * Math.PI * 2, spd: 0.8 + g() * 1.4, t0: 0.2 + g() * 3.4, off: g() })); }, []);
   const grate = useMemo(() => box(2.2, 0.12, 1.6), []);
   return (
     <group>
-      <Street t={t} />
-      <HanoiRow />
-      <Pole p={[-11, 0, 3.4]} /><Pole p={[11, 0, 3.4]} /><Bunting a={[-11, 6.6, 3.4]} b={[11, 6.6, 3.4]} t={t} sag={0.9} />
-      <Tree p={[-9, 0, -2]} s={1.5} seed={2} /><Tree p={[10, 0, -3]} s={1.7} seed={6} />
-      <Lamp p={[-4.8, 0, 2.6]} a={useAssets()} />
-      {/* the drain */}
-      <Ink geometry={grate} material={toon("#3a3a46")} position={[0, 0.03, 0.2]} px={2} />
-      <mesh position={[0, 0.1, 0.2]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[1.9, 1.3]} /><meshBasicMaterial color="#14101a" /></mesh>
+      <StreetLong t={t} />
+      <Ink geometry={grate} material={toon("#3a3a46")} position={[0, 0.03, -2.4]} px={2} />
+      <mesh position={[0, 0.1, -2.4]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[1.9, 1.3]} /><meshBasicMaterial color="#14101a" /></mesh>
       {rats.map((r, i) => {
         const k = t - r.t0; if (k <= 0) return null;
-        const rise = clamp(k / 0.55);                       // climb up out of the hole
-        const d = Math.max(0, k - 0.45) * r.spd * 1.5;       // then scurry away
+        const rise = clamp(k / 0.55); const d = Math.max(0, k - 0.45) * r.spd * 1.5;
         const jx = (r.off - 0.5) * 1.2, jz = (r.off - 0.5) * 0.6;
-        const x = jx + Math.cos(r.a) * d, z = 0.2 + jz + Math.sin(r.a) * d * 0.8;
-        const inHole = d < 0.01;
-        return <Rat key={i} t={t} position={[x, -1.05 + 1.05 * easeInOut(rise), z]} scale={0.5} expr={i % 3 ? "deadpan" : "smug"} pose={inHole ? "idle" : "walk"} flip={Math.cos(r.a) > 0 ? -1 : 1} seed={i + 3} fur={i % 4 === 0 ? "brown" : "grey"} />;
+        const x = jx + Math.cos(r.a) * d, z = -2.4 + jz + Math.sin(r.a) * d * 0.9;
+        return <Rat key={i} t={t} position={[Math.max(-5.5, Math.min(5.5, x)), -1.05 + 1.05 * easeInOut(rise), z]} scale={0.5} expr={i % 3 ? "deadpan" : "smug"} pose={d < 0.01 ? "idle" : "walk"} flip={Math.cos(r.a) > 0 ? -1 : 1} seed={i + 3} fur={i % 4 === 0 ? "brown" : "grey"} />;
       })}
-      <Person look="official" p={[-3.4, 0, 2.2]} cam={cam} t={t} s={1.35} expr={emo(t, [[0, "deadpan"], [2.0, "shock"], [3.6, "worried"]])} pose="idle" seed={7} emph={t > 2.0 ? 1 : 0} />
-      <Person look="catcher" p={[3.8, 0, 2.6]} cam={cam} t={t} s={1.15} expr="worried" seed={9} />
-      <Person look="vendor" p={[5.6, 0, 3.4]} cam={cam} t={t} s={1.1} expr={emo(t, [[0, "deadpan"], [2.4, "shock"]])} seed={10} />
+      <Person look="official" p={[-3.2, 0, -0.2]} cam={cam} t={t} s={1.35} expr={emo(t, [[0, "deadpan"], [2.0, "shock"], [3.6, "worried"]])} seed={7} emph={t > 2.0 ? 1 : 0} />
+      <Person look="catcher" p={[3.4, 0, -0.6]} cam={cam} t={t} s={1.15} expr="worried" seed={9} />
+      <Person look="vendor" p={[-4.6, 0, -7]} cam={cam} t={t} s={1.1} expr={emo(t, [[0, "deadpan"], [2.4, "shock"]])} seed={10} />
       <Dust t={t} />
     </group>
   );
@@ -187,18 +211,14 @@ export const R2Setup: React.FC<SceneProps> = ({ t, cam }) => {
 
 /* ---- shot 3: they hire rat catchers ---- */
 export const R3Plan: React.FC<SceneProps> = ({ t, cam }) => {
-  const sack = (
-    <group position={[0.05, -0.12, 0]}><Ink geometry={new THREE.SphereGeometry(0.2, 12, 10)} material={toon("#c8a45a")} scale={[1, 1.2, 1]} px={1.8} /></group>
-  );
+  const sack = <group position={[0.05, -0.12, 0]}><Ink geometry={new THREE.SphereGeometry(0.2, 12, 10)} material={toon("#c8a45a")} scale={[1, 1.2, 1]} px={1.8} /></group>;
   return (
     <group>
-      <Street t={t} /><HanoiRow z={-7} />
-      <Pole p={[-11, 0, 4.4]} /><Pole p={[11, 0, 4.4]} /><Bunting a={[-11, 6.4, 4.4]} b={[11, 6.4, 4.4]} t={t} sag={0.9} />
-      <Lamp p={[6.2, 0, 2.4]} a={useAssets()} />
-      {[0, 1, 2, 3].map((i) => <Person key={i} look={i % 2 ? "farmer" : "catcher"} p={[-5 + i * 2.6 + Math.min(t, 2.6) * 0.15, 0, 1.6 + (i % 2) * 0.35]} cam={cam} t={t} s={1.3} expr={i === 1 ? "grin" : "smug"} pose={i === 0 ? "idle" : "hold"} seed={20 + i} handR={i % 2 ? sack : null} />)}
-      <Person look="official" p={[4.4, 0, 1.7]} cam={cam} t={t} s={1.4} expr="proud" pose="point" seed={30} />
-      <CoinStack p={[3.4, 0.9, 2.3]} n={Math.min(6, 1 + Math.floor(t * 3))} />
-      <Barrel p={[-6.4, 0, 3.4]} /><Dust t={t} />
+      <StreetLong t={t} />
+      {[0, 1, 2, 3].map((i) => <Person key={i} look={i % 2 ? "farmer" : "catcher"} p={[-3 + (i % 2) * 2.4, 0, 1.0 - i * 3.0 - Math.min(t, 3) * 0.22]} cam={cam} t={t} s={1.3} expr={i === 1 ? "grin" : "smug"} pose={i === 0 ? "idle" : "hold"} seed={20 + i} handR={i % 2 ? sack : null} />)}
+      <Person look="official" p={[3.4, 0, 1.4]} cam={cam} t={t} s={1.4} expr="proud" pose="point" seed={30} />
+      <CoinStack p={[2.4, 0.9, 1.9]} n={Math.min(6, 1 + Math.floor(t * 3))} />
+      <Barrel p={[-4.2, 0, 2.4]} /><Dust t={t} />
     </group>
   );
 };
@@ -233,23 +253,20 @@ export const R4But: React.FC<SceneProps> = ({ t, cam }) => {
 export const R5Then: React.FC<SceneProps> = ({ t, cam }) => {
   const r = rx(); const a = useAssets();
   const crowd = [0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => {
-    const start = -10 + (i % 5) * 1.3 - (i > 4 ? 3 : 0);
-    const x = Math.min(start + t * (2.4 + (i % 3) * 0.3), 2.2 + (i % 4) * 0.7 - 1.5 + (i % 3));
-    return { i, x, z: 2.2 + (i % 3) * 0.9, look: ["catcher", "farmer", "vendor", "woman", "glasses", "bowler", "cap", "baker", "farmer"][i] };
+    const x = -3.4 + (i % 4) * 2.2 + (i > 3 ? 0.6 : 0); const z0 = 5 - i * 1.5;
+    const arrive = clamp((t - i * 0.12) / 1.4); const zz = z0 + (1 - easeInOut(arrive)) * 7;
+    return { i, x, z: zz - 2.5, arrived: arrive > 0.97, look: ["catcher", "farmer", "vendor", "woman", "glasses", "bowler", "cap", "baker", "farmer"][i] };
   });
   const bannerMats = useMemo(() => [toon("#2b1a1d"), toon("#2b1a1d"), toon("#2b1a1d"), toon("#2b1a1d"), toon(r.banner), toon("#2b1a1d")], [r]);
   return (
     <group>
-      <Street t={t} />
-      <Pole p={[-9, 0, -2.6]} /><Pole p={[9, 0, -2.6]} /><Bunting a={[-9, 7.4, -2.6]} b={[9, 7.4, -2.6]} t={t} sag={0.9} />
-      <Shop x={5.2} z={-4} w={7} floors={3} map={r.cream} sign={r.office} roof="false" awning="#2b4a8a" curtains={["#3f8a5a", "#4a9a68"]} />
-      <Shop x={-6.2} z={-4.4} w={6.2} floors={2} map={r.ochre} sign={rx().ochre ? signTexture("TEA", "#2f8f5a", "#fff3cf", 576, 128) : r.office} roof="gable" awning="#c8403a" curtains={["#3f8a5a"]} />
-      <group position={[0, 0, 0.2]}>
-        <Ink geometry={box(0.22, 5.6, 0.22)} material={toon(a.woodDark)} position={[-3.1, 2.8, 0]} px={2.2} /><Ink geometry={box(0.22, 5.6, 0.22)} material={toon(a.woodDark)} position={[3.1, 2.8, 0]} px={2.2} />
-        <Ink geometry={box(6.0, 1.12, 0.12)} material={bannerMats} position={[0, 4.9 + Math.sin(t * 2) * 0.02, 0]} px={2.4} />
+      <StreetLong t={t} />
+      <group position={[0, 0, -3.2]}>
+        <Ink geometry={box(0.22, 6.0, 0.22)} material={toon(a.woodDark)} position={[-3.6, 3.0, 0]} px={2.2} /><Ink geometry={box(0.22, 6.0, 0.22)} material={toon(a.woodDark)} position={[3.6, 3.0, 0]} px={2.2} />
+        <Ink geometry={box(7.2, 1.2, 0.12)} material={bannerMats} position={[0, 5.3 + Math.sin(t * 2) * 0.02, 0]} px={2.4} />
       </group>
-      {crowd.map((c) => <Person key={c.i} look={c.look} p={[c.x, 0, c.z]} cam={cam} t={t} s={1.15} expr={c.i % 2 ? "grin" : "shock"} pose={c.x < 1.8 ? "walk" : "cheer"} seed={40 + c.i} />)}
-      {t > 0.6 ? [0, 1, 2, 3, 4, 5].map((i) => <Coin key={i} p={[-2.6 + i * 1.0, 3.2 - ((t * 1.6 + i * 0.3) % 3) , 0.6]} r={0.14} />) : null}
+      {crowd.map((c) => <Person key={c.i} look={c.look} p={[c.x, 0, c.z]} cam={cam} t={t} s={1.15} expr={c.i % 2 ? "grin" : "shock"} pose={c.arrived ? "cheer" : "walk"} seed={40 + c.i} />)}
+      {t > 0.6 ? [0, 1, 2, 3, 4, 5].map((i) => <Coin key={i} p={[-2.8 + i * 1.1, 4.2 - ((t * 1.6 + i * 0.3) % 3.4), -2.6]} r={0.14} />) : null}
       <Dust t={t} />
     </group>
   );
