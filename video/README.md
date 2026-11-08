@@ -27,3 +27,8 @@ npm run transcribe -- public/narration.mp3 en   # auto-captions (whisper.cpp) ->
 - `render_full.bat` renders the final 1080x1920 video with your GPU; `test_render_full.bat` renders the first 3 seconds.
 - Voice: `projects/chicago-hotel/make_voice.py` (Kokoro). Music + SFX + mix: `make_audio_full.py`. Word timings: `src/full/timing.json`.
 - Fonts in `public/fonts` are SIL Open Font License (Lilita One, Rye, Playfair Display).
+
+## "Cut Every Tail" (Hanoi rat bounty, about 52 s)
+- Composition id `Rats` (`src/rats/`). Script, shot table, facts and sources: `projects/hanoi-rats/SCRIPT.md`.
+- `render_rats.bat` renders the final video; `test_render_rats.bat` renders the first 3 seconds.
+- Voice: `projects/hanoi-rats/make_voice.py` (Kokoro). Score + SFX + mix: `projects/hanoi-rats/make_audio.py`. Timings: `src/rats/timing.json`.

@@ -89,9 +89,10 @@ type FacadeProps = {
   arch?: boolean;
   shutters?: string;
   rooms?: THREE.Texture[];
+  curtains?: string[];
 };
 
-export const Facade: React.FC<FacadeProps> = ({ w, floors, floor0, floorH, cols, map, trim, glass, door, depth = 0.9, arch, shutters, rooms }) => {
+export const Facade: React.FC<FacadeProps> = ({ w, floors, floor0, floorH, cols, map, trim, glass, door, depth = 0.9, arch, shutters, rooms, curtains }) => {
   const h = floor0 + floors * floorH;
   const { wall, holes, trimMat, woodMat } = useMemo(() => {
     const holes: { x: number; y: number; w: number; h: number; arch?: boolean }[] = [];
@@ -118,7 +119,7 @@ export const Facade: React.FC<FacadeProps> = ({ w, floors, floor0, floorH, cols,
   const corniceGeos = useMemo(() => [box(w + 0.7, 0.28, 1.15), box(w + 0.35, 0.22, 0.95), box(w, 0.9, 0.8)], [w]);
   const parapetMat = useMemo(() => toon(trim === "#f3e3c3" ? "#b8452f" : "#d9b88a"), [trim]);
   const curtainGeo = useMemo(() => box(0.2, 1.6, 0.05), []);
-  const curtainMat = useMemo(() => [toon("#d9453f"), toon("#f2c53d"), toon("#7a3d8f")], []);
+  const curtainMat = useMemo(() => (curtains ?? ["#d9453f", "#f2c53d", "#7a3d8f"]).map((c) => toon(c)), [curtains]);
 
   return (
     <group>

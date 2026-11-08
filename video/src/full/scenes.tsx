@@ -14,7 +14,7 @@ import { INKD } from "./paint";
 import { SkyDome, Terrain, Horizon, Tree, Fence, Pole, GableRoof, Glow, tex } from "./nature";
 
 type V3 = [number, number, number];
-const emo = <T,>(t: number, tl: [number, T][]): T => { let v = tl[0][1]; for (const [k, e] of tl) if (t >= k) v = e; return v; };
+export const emo = <T,>(t: number, tl: [number, T][]): T => { let v = tl[0][1]; for (const [k, e] of tl) if (t >= k) v = e; return v; };
 export type SceneProps = { t: number; cam: V3 };
 
 let _x: any = null;
@@ -60,8 +60,8 @@ const Wheel: React.FC<{ r?: number; t?: number }> = ({ r = 0.55, t = 0 }) => {
 
 const awningTex = (() => { const m = new Map<string, THREE.Texture>(); return (c: string) => { if (!m.has(c)) { const cv = document.createElement("canvas"); cv.width = 256; cv.height = 64; const g = cv.getContext("2d")!; for (let i = 0; i < 8; i++) { g.fillStyle = i % 2 ? "#fff3dd" : c; g.fillRect(i * 32, 0, 32, 64); } g.fillStyle = "rgba(42,26,30,.12)"; g.fillRect(0, 44, 256, 20); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; m.set(c, t); } return m.get(c)!; }; })();
 
-type ShopProps = { x: number; z?: number; w?: number; floors?: number; map: THREE.Texture; sign: THREE.Texture; roof?: "gable" | "false" | "flat"; awning?: string; rooms?: THREE.Texture[]; lift?: number };
-const Shop: React.FC<ShopProps> = ({ x, z = 0, w = 5.6, floors = 2, map, sign, roof = "gable", awning = "#c8403a", rooms, lift = 0 }) => {
+type ShopProps = { x: number; z?: number; w?: number; floors?: number; map: THREE.Texture; sign: THREE.Texture; roof?: "gable" | "false" | "flat"; awning?: string; rooms?: THREE.Texture[]; lift?: number; curtains?: string[] };
+export const Shop: React.FC<ShopProps> = ({ x, z = 0, w = 5.6, floors = 2, map, sign, roof = "gable", awning = "#c8403a", rooms, lift = 0, curtains }) => {
   const a = useAssets();
   const cols = w > 5.2 ? [-w * 0.26, w * 0.26] : [0];
   const h = 3.0 + floors * 2.4;
@@ -78,7 +78,7 @@ const Shop: React.FC<ShopProps> = ({ x, z = 0, w = 5.6, floors = 2, map, sign, r
   const flowers = useMemo(() => [toon("#ff5f6d"), toon("#ffd23f"), toon("#f78fb3")], []);
   return (
     <group position={[x, lift, z]}>
-      <Facade w={w} floors={floors} floor0={3.0} floorH={2.4} cols={cols} map={map} trim="#fff3dd" glass={a.room2} depth={1.2} rooms={rooms} />
+      <Facade w={w} floors={floors} floor0={3.0} floorH={2.4} cols={cols} map={map} trim="#fff3dd" glass={a.room2} depth={1.2} rooms={rooms} curtains={curtains} />
       {cols.length === 2 ? <Ink geometry={door} material={doorM} position={[0, 1.25, 0.04]} px={2.2} /> : null}
       <Ink geometry={awnG} material={toon(awningTex(awning))} position={[0, 3.0, 1.0]} rotation={[0.26, 0, 0]} px={2.2} />
       <Ink geometry={post} material={toon("#6a4a38")} position={[-w * 0.4, 1.45, 1.75]} px={1.8} /><Ink geometry={post} material={toon("#6a4a38")} position={[w * 0.4, 1.45, 1.75]} px={1.8} />
