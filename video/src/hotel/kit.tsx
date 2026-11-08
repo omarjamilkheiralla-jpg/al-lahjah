@@ -120,9 +120,9 @@ export const mudTexture = (seed = 11) =>
       const x = r() * w, y = r() * h, rx = 50 + r() * 80, ry = 18 + r() * 28;
       g.fillStyle = "#35242a";
       g.beginPath(); g.ellipse(x, y, rx + 6, ry + 5, 0, 0, 7); g.fill();
-      g.fillStyle = "#f0c9a4";
+      g.fillStyle = "#b9ccd8";
       g.beginPath(); g.ellipse(x, y, rx, ry, 0, 0, 7); g.fill();
-      g.fillStyle = "#e7a98f";
+      g.fillStyle = "#e3c9b0";
       g.beginPath(); g.ellipse(x, y + ry * 0.25, rx * 0.8, ry * 0.5, 0, 0, 7); g.fill();
     }
     // wheel ruts
@@ -173,29 +173,48 @@ export const plasterTexture = (base: string, seed = 2) =>
     for (let y = 0; y < h; y += 64) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
   });
 
+/** Painted sign board. The canvas keeps the aspect ratio (w:h) of the board it goes on, and the
+ *  lettering is auto-fitted without ever being stretched. */
 export const signTexture = (text: string, bg: string, fg: string, w = 1024, h = 256, sub?: string) =>
   mk(w, h, (g) => {
-    g.fillStyle = INK;
-    g.fillRect(0, 0, w, h);
-    g.fillStyle = bg;
-    g.fillRect(10, 10, w - 20, h - 20);
-    g.strokeStyle = fg;
-    g.lineWidth = 5;
-    g.strokeRect(24, 24, w - 48, h - 48);
-    g.fillStyle = fg;
-    g.textAlign = "center";
-    g.textBaseline = "middle";
-    const size = Math.min(h * (sub ? 0.46 : 0.58), (w * 0.86) / (text.length * 0.62));
-    g.font = `900 ${size}px "Arial Black", Impact, sans-serif`;
-    g.fillText(text, w / 2, sub ? h * 0.42 : h * 0.52);
+    const r = rng(text.length * 13 + 5);
+    const rad = h * 0.1;
+    // dark frame, painted board with a soft vertical gradient and wood-grain streaks
+    g.fillStyle = INK; g.beginPath(); g.roundRect(0, 0, w, h, rad); g.fill();
+    const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, bg); gr.addColorStop(1, "rgba(0,0,0,0.0)");
+    g.fillStyle = bg; g.beginPath(); g.roundRect(h * 0.05, h * 0.05, w - h * 0.1, h - h * 0.1, rad * 0.7); g.fill();
+    g.fillStyle = "rgba(255,255,255,0.10)"; g.beginPath(); g.roundRect(h * 0.05, h * 0.05, w - h * 0.1, (h - h * 0.1) * 0.45, rad * 0.7); g.fill();
+    g.fillStyle = "rgba(42,26,30,0.14)"; g.fillRect(h * 0.05, h * 0.62, w - h * 0.1, h * 0.33);
+    g.strokeStyle = "rgba(42,26,30,0.10)"; g.lineWidth = 2;
+    for (let i = 0; i < 9; i++) { const y = h * (0.1 + r() * 0.8); g.beginPath(); g.moveTo(h * 0.08, y); g.lineTo(w - h * 0.08, y + (r() - 0.5) * 6); g.stroke(); }
+    // gold keyline + corner studs
+    g.strokeStyle = fg; g.globalAlpha = 0.9; g.lineWidth = Math.max(2, h * 0.018);
+    g.beginPath(); g.roundRect(h * 0.13, h * 0.13, w - h * 0.26, h - h * 0.26, rad * 0.4); g.stroke(); g.globalAlpha = 1;
+    g.fillStyle = fg; for (const [x, y] of [[0.1, 0.1], [0.1, 0.9], [0.9, 0.1], [0.9, 0.9]] as const) { g.beginPath(); g.arc(h * x * (w / h > 2 ? 1 : 1) + (x > 0.5 ? w - h : 0), h * y, h * 0.025, 0, 7); g.fill(); }
+    // lettering
+    const family = "Rye, Georgia, 'Times New Roman', serif";
+    const avail = w - h * 0.5;
+    let size = h * (sub ? 0.4 : 0.52);
+    g.font = `${size}px ${family}`;
+    const mw = g.measureText(text).width;
+    if (mw > avail) size *= avail / mw;
+    g.font = `${size}px ${family}`;
+    g.textAlign = "center"; g.textBaseline = "middle";
+    const ty = sub ? h * 0.43 : h * 0.52;
+    g.lineJoin = "round";
+    g.fillStyle = "rgba(42,26,30,0.55)"; g.fillText(text, w / 2, ty + h * 0.035);          // drop shadow
+    g.strokeStyle = INK; g.lineWidth = Math.max(3, h * 0.045); g.strokeText(text, w / 2, ty); // ink edge
+    const tg = g.createLinearGradient(0, ty - size / 2, 0, ty + size / 2); tg.addColorStop(0, "#ffffff"); tg.addColorStop(0.25, fg); tg.addColorStop(1, fg);
+    g.fillStyle = tg; g.fillText(text, w / 2, ty);
     if (sub) {
-      g.font = `700 ${h * 0.16}px "Arial Black", Impact, sans-serif`;
-      g.fillText(sub, w / 2, h * 0.76);
+      let s2 = h * 0.15; const f2 = "'Lilita One', Impact, sans-serif"; g.font = `${s2}px ${f2}`;
+      (g as any).letterSpacing = `${Math.round(h * 0.02)}px`;
+      const m2 = g.measureText(sub).width; if (m2 > avail) { s2 *= avail / m2; g.font = `${s2}px ${f2}`; }
+      g.fillStyle = fg; g.fillText(sub, w / 2, h * 0.76); (g as any).letterSpacing = "0px";
     }
     // wear
-    const r = rng(text.length * 13);
-    g.fillStyle = "rgba(53,31,34,0.22)";
-    for (let i = 0; i < 30; i++) g.fillRect(r() * w, r() * h, 3 + r() * 14, 2 + r() * 4);
+    g.fillStyle = "rgba(42,26,30,0.18)";
+    for (let i = 0; i < 24; i++) g.fillRect(r() * w, r() * h, 2 + r() * 12, 1 + r() * 3);
   });
 
 /** painted measuring pole: one mark per foot, starting at `y0` metres, pole is `len` metres tall */

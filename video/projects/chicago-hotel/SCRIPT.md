@@ -1,6 +1,6 @@
 # "How Chicago Lifted Itself" - full script (about 50 seconds)
 
-**Format:** vertical 9:16, 170 words, about 50 s at the rulebook pace (3.35 words/s; about 44 s at a faster read).
+**Format:** vertical 9:16, 174 words. The finished voice-over runs 52.3 s (about 3.3 words/s with pauses).
 **Style rules used:** `video/STYLE_GUIDE.md` (hook formula "weird deliberate act", the 7-beat skeleton, "You see" pivot, hard stop on the payoff, no outro).
 **Title options:** "Chicago Lifted Itself" / "The Hotel That Was Lifted With Guests Inside" / "Why Chicago Raised Its Streets"
 
@@ -8,7 +8,7 @@
 
 A Chicago hotel was lifted six feet into the air with every guest still inside.
 
-Chicago sat barely above the lake, so its streets were mud and its sewers couldn't drain. After cholera hit in 1854, one engineer proposed raising the streets by up to fourteen feet.
+How is that even possible? Chicago sat barely above the lake, so its streets were mud and its sewers couldn't drain. After cholera hit in 1854, one engineer proposed raising the streets by up to fourteen feet.
 
 But the buildings were already standing there, and nobody wanted to knock them down. Then a young builder named George Pullman said he could lift them with nothing but jackscrews.
 
@@ -27,7 +27,7 @@ That's how Chicago lifted itself out of the mud, one tiny turn at a time.
 | # | Beat | Start | Words | Line | On screen | Camera | Voice direction |
 |---|------|-------|-------|------|-----------|--------|-----------------|
 | 1 | HOOK | 0.0 s | 15 | A Chicago hotel was lifted six feet into the air with every guest still inside. | The hotel already rising on jackscrews, crew cranking, "6 FT" board, sleeping guest in the top window | Low angle wide, then push in; crane up to the guest (the 5-second sample) | Curious, wide-eyed, slight smile on "six feet"; slower and softer on "still inside" |
-| 2 | SETUP | 4.5 s | 16 | Chicago sat barely above the lake, so its streets were mud and its sewers couldn't drain. | Flat 1850s Chicago, lake at the edge of town, a wagon wheel stuck in a mud street, a sewer pipe with water backing up | High angle looking down the street, slow tilt down into the mud | Matter-of-fact storyteller, disgusted on "mud" |
+| 2 | SETUP | 5.0 s | 20 | How is that even possible? Chicago sat barely above the lake, so its streets were mud and its sewers couldn't drain. | Flat 1850s Chicago, lake at the edge of town, a wagon wheel stuck in a mud street, a sewer pipe with water backing up | High angle looking down the street, slow tilt down into the mud | Matter-of-fact storyteller, disgusted on "mud" |
 | 3 | PLAN | 9.3 s | 16 | After cholera hit in 1854, one engineer proposed raising the streets by up to fourteen feet. | Engineer unrolls a plan on a table; ruler against a street post showing 14 FT; lamp swinging | Close-up on the face (raised eyebrow), then side track along the drawing | Serious, then a beat of disbelief on "fourteen feet" |
 | 4 | BUT | 14.0 s | 14 | But the buildings were already standing there, and nobody wanted to knock them down. | Street of brick buildings, people at windows, a bakery, a barber; owners cross their arms | Dutch tilt, whip-pan left to right along the buildings | Flat "but", frustrated |
 | 5 | THEN | 18.2 s | 16 | Then a young builder named George Pullman said he could lift them with nothing but jackscrews. | Pullman steps in, confident smirk, holds up a big jackscrew like a trophy; in-world sign "PULLMAN" | Low angle hero shot, slow push | Confident, a little cheeky |
@@ -70,3 +70,9 @@ That's how Chicago lifted itself out of the mud, one tiny turn at a time.
 
 ## Optional bonus line (not in the 50 s cut)
 After the closing line you could add a fun fact in a longer cut: Pullman later put beds on trains and founded the Pullman Palace Car Company (confirmed on [George Pullman](https://en.wikipedia.org/wiki/George_Pullman)).
+
+## Production notes (full build)
+- **Voice:** Kokoro `am_liam`, synthesised line by line with its own pace and pause (curious hook, deadpan setup, excited payoff, slower warm close). Word timings measured from the audio drive the captions and every cut. Swap in your own recording or ElevenLabs later and re-run `make_voice.py` / retime.
+- **Cuts** land 0.1 s before each line, so the picture leads the voice. Each shot has its own camera angle (low, high, dutch tilt, whip pan, close-up, crane, side track).
+- **Music:** original score that changes with the story (playful, sparse, curious, comic "wah", jaunty, tense, building, music-box lullaby, triumphant, bouncy, warm resolve). No copyrighted audio. Mixed about 10 dB under the voice and ducked while it speaks. Loudness about -14.8 LUFS.
+- **Type:** Lilita One (captions), Rye (old-west signs), Playfair Display (hotel plates). All open-licence, shipped in `public/fonts`.

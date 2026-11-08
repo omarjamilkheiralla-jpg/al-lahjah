@@ -5,6 +5,9 @@ import {
   signTexture, poleMarksTexture, glowTexture, roomTexture, repeatTex, rng, clamp, easeInOut, easeOutBack,
 } from "./kit";
 import { Person, PALETTES, SleepingGuest, ContactShadow, yawToward } from "./chars";
+import { Person2 } from "../full/person";
+import { SceneEnv } from "../full/env";
+import { SkyDome, Terrain, Horizon, Tree, Fence, Pole } from "../full/nature";
 
 /* ------------------------------------------------------------------ */
 /* constants                                                          */
@@ -24,14 +27,13 @@ const PHASE = [0.4, 1.9, 3.3, 4.6];
 export const liftAt = (t: number) => LIFT * easeInOut(clamp((t - 0.7) / 4.0));
 
 export const GUEST_WIN = { col: 2, floor: 2 }; // third upper floor, x = +1.3
-const COLS = [-3.9, -1.3, 1.3, 3.9];
+export const COLS = [-3.9, -1.3, 1.3, 3.9];
 export const guestLocal = (): [number, number, number] => [COLS[GUEST_WIN.col], FLOOR0 + FLOOR * GUEST_WIN.floor + 1.13, -0.38];
 
 /* ------------------------------------------------------------------ */
 /* textures + materials (built once)                                  */
 /* ------------------------------------------------------------------ */
-const useAssets = () =>
-  useMemo(() => {
+const buildAssets = () => {
     const brickRed = brickTexture(["#c4472e", "#b53d28", "#d2563a", "#a8362a", "#c9553a"], "#e9cfae", 3);
     const brickWarm = brickTexture(["#d98a4a", "#cb7a3f", "#e29a58", "#c56f3a"], "#f1dcb8", 8);
     const brickBlue = brickTexture(["#6e86b8", "#5f78ab", "#7b92c2", "#54699c"], "#e9dcc6", 12);
@@ -61,11 +63,14 @@ const useAssets = () =>
       signHotel: signTexture("TREMONT HOUSE", "#2b7a8a", "#fff3cf", 1024, 256, "HOTEL"),
       signChi: signTexture("CHICAGO", "#e0b23a", INK, 1024, 256),
       sign6: signTexture("6 FT", "#d9453f", "#fff3cf", 512, 256),
-      signLift: signTexture("LIFTING CO.", "#7a3d8f", "#fff3cf", 512, 160),
-      signStore: signTexture("BAKERY", "#d9453f", "#fff3cf", 512, 160),
-      signSaloon: signTexture("HARDWARE", "#2f8f5a", "#fff3cf", 512, 160),
+      signLift: signTexture("LIFTING CO.", "#7a3d8f", "#fff3cf", 640, 160),
+      signStore: signTexture("BAKERY", "#d9453f", "#fff3cf", 512, 128),
+      signBlade: signTexture("BAKERY", "#d9453f", "#fff3cf", 256, 256),
+      signSaloon: signTexture("HARDWARE", "#2f8f5a", "#fff3cf", 512, 128),
     };
-  }, []);
+};
+let _a: ReturnType<typeof buildAssets> | null = null;
+export const useAssets = () => (_a ??= buildAssets());
 
 /* ------------------------------------------------------------------ */
 /* facade builder                                                     */
@@ -83,9 +88,10 @@ type FacadeProps = {
   depth?: number;
   arch?: boolean;
   shutters?: string;
+  rooms?: THREE.Texture[];
 };
 
-const Facade: React.FC<FacadeProps> = ({ w, floors, floor0, floorH, cols, map, trim, glass, door, depth = 0.9, arch, shutters }) => {
+export const Facade: React.FC<FacadeProps> = ({ w, floors, floor0, floorH, cols, map, trim, glass, door, depth = 0.9, arch, shutters, rooms }) => {
   const h = floor0 + floors * floorH;
   const { wall, holes, trimMat, woodMat } = useMemo(() => {
     const holes: { x: number; y: number; w: number; h: number; arch?: boolean }[] = [];
@@ -126,6 +132,12 @@ const Facade: React.FC<FacadeProps> = ({ w, floors, floor0, floorH, cols, map, t
         const upper = o.y > floor0 - 0.1;
         return (
           <group key={i} position={[o.x, o.y, -0.08]}>
+            {rooms && upper ? (
+              <mesh position={[0, o.h / 2, -depth + 0.34]}>
+                <planeGeometry args={[o.w + 0.1, o.h + 0.1]} />
+                <meshBasicMaterial map={rooms[i % rooms.length]} />
+              </mesh>
+            ) : null}
             {/* sash cross + frame */}
             
 
@@ -152,8 +164,8 @@ const Facade: React.FC<FacadeProps> = ({ w, floors, floor0, floorH, cols, map, t
 /* ------------------------------------------------------------------ */
 /* the hotel (everything that rises) + the rig                        */
 /* ------------------------------------------------------------------ */
-const Hotel: React.FC<{ t: number; a: ReturnType<typeof useAssets> }> = ({ t, a }) => {
-  const lift = liftAt(t);
+export const Hotel: React.FC<{ t: number; a: ReturnType<typeof useAssets>; lift?: number; guests?: React.ReactNode; defaultGuests?: boolean; rooms?: THREE.Texture[] }> = ({ t, a, lift: liftO, guests, defaultGuests = true, rooms }) => {
+  const lift = liftO ?? liftAt(t);
   const y = BASE_Y + lift;
   const slab = useMemo(() => box(HOTEL_W, 0.4, DEPTH), []);
   const roof = useMemo(() => box(HOTEL_W + 0.4, 0.3, DEPTH), []);
@@ -185,14 +197,14 @@ const Hotel: React.FC<{ t: number; a: ReturnType<typeof useAssets> }> = ({ t, a 
   const bracket = useMemo(() => box(1.1, 0.07, 0.07), []);
   const ironMat = useMemo(() => toon("#2f3a46"), []);
   const blade = useMemo(() => box(1.0, 1.0, 0.1), []);
-  const bladeMats = useMemo(() => [toon("#2b1a1d"), toon("#2b1a1d"), toon("#2b1a1d"), toon("#2b1a1d"), toon(a.signStore), toon("#2b1a1d")], [a]);
+  const bladeMats = useMemo(() => [toon("#2b1a1d"), toon("#2b1a1d"), toon("#2b1a1d"), toon("#2b1a1d"), toon(a.signBlade), toon("#2b1a1d")], [a]);
   const flagPole = useMemo(() => new THREE.CylinderGeometry(0.04, 0.05, 2.4, 8), []);
   const flagGeo = useMemo(() => new THREE.PlaneGeometry(1.2, 0.7), []);
   const flagMat = useMemo(() => new THREE.MeshBasicMaterial({ color: "#d9453f", side: THREE.DoubleSide }), []);
 
   return (
     <group position={[0, y, 0]}>
-      <Facade w={HOTEL_W} floors={N_UP} floor0={FLOOR0} floorH={FLOOR} cols={COLS} map={a.brickRed} trim="#f3e3c3" glass={a.room} door shutters="x" />
+      <Facade w={HOTEL_W} floors={N_UP} floor0={FLOOR0} floorH={FLOOR} cols={COLS} map={a.brickRed} trim="#f3e3c3" glass={a.room} door shutters="x" rooms={rooms} />
       {/* floor slab + roof */}
       <Ink geometry={slab} material={toon(a.woodDark)} position={[0, 0.2, -DEPTH / 2]} px={2.2} />
       <Ink geometry={roof} material={toon("#6b3a38")} position={[0, HOTEL_H + 1.5, -DEPTH / 2]} px={2.2} />
@@ -230,10 +242,13 @@ const Hotel: React.FC<{ t: number; a: ReturnType<typeof useAssets> }> = ({ t, a 
         <Ink geometry={flagPole} material={ironMat} position={[0, 1.2, 0]} px={1.6} />
         <mesh geometry={flagGeo} material={flagMat} position={[0.62, 2.1, 0]} rotation={[0, Math.sin(t * 3) * 0.25, 0]} />
       </group>
-      {/* sleeping guest in the top window */}
-      <SleepingGuest t={t} position={g} scale={0.78} seed={5} />
-      {/* a second guest silhouette (sleeping) lower floor */}
-      <SleepingGuest t={t + 1.4} position={[COLS[0], FLOOR0 + FLOOR * 0 + 1.0, -0.38]} scale={0.78} seed={11} />
+      {defaultGuests ? (
+        <>
+          <Person2 look="guest" expr="sleep" pose="sleep" t={t} position={[COLS[2], FLOOR0 + FLOOR * 2 + 0.55 - 0.55, -0.4]} scale={0.6} seed={5} tint="#ffe9c8" />
+          <Person2 look="guest" expr="sleep" pose="sleep" t={t + 1.4} position={[COLS[0], FLOOR0 + 0.55 - 0.55, -0.4]} scale={0.6} seed={11} tint="#ffe9c8" />
+        </>
+      ) : null}
+      {guests}
     </group>
   );
 };
@@ -241,8 +256,8 @@ const Hotel: React.FC<{ t: number; a: ReturnType<typeof useAssets> }> = ({ t, a 
 /* ------------------------------------------------------------------ */
 /* the jackscrew rig                                                  */
 /* ------------------------------------------------------------------ */
-const Rig: React.FC<{ t: number; a: ReturnType<typeof useAssets> }> = ({ t, a }) => {
-  const lift = liftAt(t);
+export const Rig: React.FC<{ t: number; a: ReturnType<typeof useAssets>; lift?: number; xs?: number[] }> = ({ t, a, lift: liftO, xs }) => {
+  const lift = liftO ?? liftAt(t);
   const beamBottom = BASE_Y + lift - 0.0; // bottom of the slab
   const beamGeo = useMemo(() => box(0.5, 0.42, DEPTH + 0.8), []);
   const baseGeo = useMemo(() => box(0.9, 0.12, 0.9), []);
@@ -263,11 +278,11 @@ const Rig: React.FC<{ t: number; a: ReturnType<typeof useAssets> }> = ({ t, a })
 
   return (
     <group>
-      {JACK_X.map((x, i) => {
+      {(xs ?? JACK_X).map((x, i) => {
         const rodBottom = 0.86;
         const rodTop = beamBottom - 0.42 + 0.03;
         const rodLen = Math.max(0.05, rodTop - rodBottom);
-        const crank = Math.sin(t * 2.2 + PHASE[i]) * 0.5;
+        const crank = Math.sin(t * 2.2 + PHASE[i % 4]) * 0.5;
         return (
           <group key={i} position={[x, 0, JACK_Z]}>
             <Ink geometry={baseGeo} material={steel} position={[0, 0.06, 0]} px={2} />
@@ -289,7 +304,7 @@ const Rig: React.FC<{ t: number; a: ReturnType<typeof useAssets> }> = ({ t, a })
       })}
 
       {/* timber cribbing stacks, built up layer by layer as the hotel rises */}
-      {JACK_X.map((x, i) => (
+      {(xs ?? JACK_X).map((x, i) => (
         <group key={i} position={[x, 0, JACK_Z]}>
           {[-0.95, 0.95].map((dx, j) => (
             <group key={j} position={[dx, 0, 0]}>
@@ -312,7 +327,7 @@ const Rig: React.FC<{ t: number; a: ReturnType<typeof useAssets> }> = ({ t, a })
 /* ------------------------------------------------------------------ */
 /* the world around it                                                */
 /* ------------------------------------------------------------------ */
-const Barrel: React.FC<{ p: [number, number, number]; s?: number; color?: string }> = ({ p, s = 1, color = "#a8693b" }) => {
+export const Barrel: React.FC<{ p: [number, number, number]; s?: number; color?: string }> = ({ p, s = 1, color = "#a8693b" }) => {
   const geo = useMemo(() => new THREE.CylinderGeometry(0.46, 0.46, 1.0, 20), []);
   const ring = useMemo(() => new THREE.TorusGeometry(0.47, 0.035, 6, 24), []);
   const m = useMemo(() => toon(color), [color]);
@@ -328,21 +343,19 @@ const Barrel: React.FC<{ p: [number, number, number]; s?: number; color?: string
   );
 };
 
-const Crate: React.FC<{ p: [number, number, number]; s?: [number, number, number]; rot?: number; a: ReturnType<typeof useAssets>; label?: THREE.Texture }> = ({ p, s = [1, 1, 1], rot = 0, a, label }) => {
+export const Crate: React.FC<{ p: [number, number, number]; s?: [number, number, number]; rot?: number; a: ReturnType<typeof useAssets>; label?: THREE.Texture }> = ({ p, s = [1, 1, 1], rot = 0, a, label }) => {
   const geo = useMemo(() => box(1, 1, 1), []);
-  const mats = useMemo(() => {
-    const w = toon(a.wood);
-    const l = label ? toon(label) : w;
-    return [w, w, w, w, l, w];
-  }, [a, label]);
+  const wood = useMemo(() => toon(a.wood), [a]);
+  const plaque = useMemo(() => (label ? new THREE.MeshBasicMaterial({ map: label }) : null), [label]);
   return (
-    <group position={[p[0], p[1] + s[1] / 2, p[2]]} rotation={[0, rot, 0]} scale={s}>
-      <Ink geometry={geo} material={mats} px={3} />
+    <group position={[p[0], p[1] + s[1] / 2, p[2]]} rotation={[0, rot, 0]}>
+      <group scale={s}><Ink geometry={geo} material={wood} px={3} /></group>
+      {plaque ? <mesh material={plaque} position={[0, 0, s[2] / 2 + 0.01]}><planeGeometry args={[s[0] * 0.86, (s[0] * 0.86) / 4]} /></mesh> : null}
     </group>
   );
 };
 
-const Lamp: React.FC<{ p: [number, number, number]; a: ReturnType<typeof useAssets> }> = ({ p, a }) => {
+export const Lamp: React.FC<{ p: [number, number, number]; a: ReturnType<typeof useAssets> }> = ({ p, a }) => {
   const pole = useMemo(() => new THREE.CylinderGeometry(0.07, 0.11, 4.4, 10), []);
   const head = useMemo(() => box(0.5, 0.62, 0.5), []);
   const cap = useMemo(() => new THREE.ConeGeometry(0.42, 0.34, 4), []);
@@ -361,7 +374,7 @@ const Lamp: React.FC<{ p: [number, number, number]; a: ReturnType<typeof useAsse
   );
 };
 
-const MeasurePole: React.FC<{ t: number; a: ReturnType<typeof useAssets> }> = ({ t, a }) => {
+export const MeasurePole: React.FC<{ t: number; a: ReturnType<typeof useAssets> }> = ({ t, a }) => {
   const poleGeo = useMemo(() => box(0.5, 4.0, 0.14), []);
   const pm = useMemo(() => [toon("#2b1a1d"), toon("#2b1a1d"), toon("#2b1a1d"), toon("#2b1a1d"), toon(a.marks), toon("#2b1a1d")], [a]);
   const boardGeo = useMemo(() => box(1.7, 0.85, 0.12), []);
@@ -380,7 +393,7 @@ const MeasurePole: React.FC<{ t: number; a: ReturnType<typeof useAssets> }> = ({
   );
 };
 
-const Neighbor: React.FC<{ x: number; w: number; floors: number; map: THREE.Texture; trim: string; a: ReturnType<typeof useAssets>; cols: number[]; sign?: THREE.Texture; arch?: boolean }> = ({
+export const Neighbor: React.FC<{ x: number; w: number; floors: number; map: THREE.Texture; trim: string; a: ReturnType<typeof useAssets>; cols: number[]; sign?: THREE.Texture; arch?: boolean }> = ({
   x, w, floors, map, trim, a, cols, sign, arch,
 }) => {
   const signGeo = useMemo(() => box(3.2, 0.8, 0.14), []);
@@ -395,7 +408,7 @@ const Neighbor: React.FC<{ x: number; w: number; floors: number; map: THREE.Text
 };
 
 /* distant skyline */
-const Skyline: React.FC<{ a: ReturnType<typeof useAssets> }> = ({ a }) => {
+export const Skyline: React.FC<{ a: ReturnType<typeof useAssets> }> = ({ a }) => {
   const items = useMemo(() => {
     const r = rng(21);
     return Array.from({ length: 16 }, (_, i) => ({
@@ -425,10 +438,10 @@ const Skyline: React.FC<{ a: ReturnType<typeof useAssets> }> = ({ a }) => {
 };
 
 /* floating dust in the light */
-const Dust: React.FC<{ t: number }> = ({ t }) => {
+export const Dust: React.FC<{ t: number }> = ({ t }) => {
   const pts = useMemo(() => {
     const r = rng(77);
-    return Array.from({ length: 70 }, () => [r() * 20 - 10, r() * 14 + 0.5, r() * 12 - 2, r() * 6] as [number, number, number, number]);
+    return Array.from({ length: 34 }, () => [r() * 20 - 10, r() * 14 + 0.5, r() * 12 - 2, r() * 6] as [number, number, number, number]);
   }, []);
   const mat = useMemo(() => new THREE.MeshBasicMaterial({ color: "#fff1cf", transparent: true, opacity: 0.8, depthWrite: false }), []);
   const geo = useMemo(() => new THREE.CircleGeometry(0.035, 8), []);
@@ -444,9 +457,13 @@ const Dust: React.FC<{ t: number }> = ({ t }) => {
 /* ------------------------------------------------------------------ */
 /* the whole set                                                      */
 /* ------------------------------------------------------------------ */
-export const HotelScene: React.FC<{ t: number; cam: [number, number, number] }> = ({ t, cam }) => {
+export type HotelSceneProps = {
+  t: number; cam: [number, number, number]; liftTime?: number; crewPose?: any; crewExpr?: any; boardT?: number;
+  rooms?: THREE.Texture[]; guests?: React.ReactNode; defaultGuests?: boolean; crew?: boolean; showProps?: boolean;
+};
+export const HotelScene: React.FC<HotelSceneProps> = ({ t, cam, liftTime, crewPose = "crank", crewExpr = "strain", boardT, rooms, guests, defaultGuests = true, crew = true, showProps = true }) => {
   const a = useAssets();
-  const lift = liftAt(t);
+  const lift = liftAt(liftTime ?? t);
   const mudMat = useMemo(() => toon(a.mud), [a]);
   const stoneMat = useMemo(() => toon(a.stone), [a]);
   const groundGeo = useMemo(() => new THREE.PlaneGeometry(120, 80), []);
@@ -456,10 +473,10 @@ export const HotelScene: React.FC<{ t: number; cam: [number, number, number] }> 
   const skyMat = useMemo(() => new THREE.MeshBasicMaterial({ color: "#9bd1f2", fog: false }), []);
   const sidewalk = useMemo(() => box(34, 0.1, 1.5), []);
 
-  const worker = (p: [number, number, number], pal: keyof typeof PALETTES, s: number, pose: "crank" | "watch" | "idle", seed: number, crank = 2.2, phase?: number) => (
+  const worker = (p: [number, number, number], look: any, sc: number, pose: any, seed: number, _c = 2.2, phase?: number, expr: any = "strain") => !crew ? null : (
     <>
-      <Person palette={PALETTES[pal]} t={t} position={p} yaw={yawToward(p, cam)} scale={s} seed={seed} pose={pose} crank={crank} phase={phase} />
-      <ContactShadow position={[p[0], 0.02, p[2]]} r={0.4 * s} />
+      <Person2 look={look} expr={pose === "crank" ? crewExpr : expr} t={t + (phase ?? 0) * 0.1} position={p} yaw={yawToward(p, cam)} scale={sc} seed={seed} pose={pose === "crank" ? crewPose : pose} />
+      <ContactShadow position={[p[0], 0.02, p[2]]} r={0.45 * sc} />
     </>
   );
 
@@ -469,8 +486,7 @@ export const HotelScene: React.FC<{ t: number; cam: [number, number, number] }> 
 
   return (
     <group>
-      <color attach="background" args={["#9bd1f2"]} />
-      <fog attach="fog" args={["#cfe3ee", 26, 80]} />
+      <SceneEnv bg="#f4e6cf" fog={["#f1e3cc", 38, 130]} />
 
       {/* lights: warm key from upper-left, cool fill */}
       <hemisphereLight args={["#bfe3ff", "#c89a78", 1.15]} />
@@ -490,14 +506,13 @@ export const HotelScene: React.FC<{ t: number; cam: [number, number, number] }> 
       />
       <pointLight position={[0, 1.4, -2]} intensity={6} color="#ffb870" distance={9} />
 
-      {/* sky */}
-      <mesh position={[0, 20, -48]} material={skyMat}>
-        <planeGeometry args={[220, 90]} />
-      </mesh>
-      <Skyline a={a} />
+      <SkyDome t={t} />
+      <Horizon t={t} />
 
       {/* ground */}
-      <mesh geometry={groundGeo} material={mudMat} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, -10]} receiveShadow />
+      <Terrain kind="mud" />
+      <Tree p={[-13, 0, -16]} s={1.5} seed={2} /><Tree p={[15, 0, -15]} s={1.7} seed={5} /><Tree p={[-24, 0, -6]} s={1.4} seed={7} />
+      <Fence p={[-18, 0, 4.5]} n={9} />
       <Ink geometry={sidewalk} material={toon(a.planks)} position={[-4, 0.05, 5.4]} px={2.4} />
 
       {/* neighbours (they do NOT move) */}
@@ -510,8 +525,8 @@ export const HotelScene: React.FC<{ t: number; cam: [number, number, number] }> 
       <Ink geometry={foundationBack} material={stoneMat} position={[0, 1.6, -DEPTH - 0.2]} px={2.8} />
 
       {/* rising hotel + rig */}
-      <Hotel t={t} a={a} />
-      <Rig t={t} a={a} />
+      <Hotel t={t} a={a} lift={lift} rooms={rooms} guests={guests} defaultGuests={defaultGuests} />
+      <Rig t={t} a={a} lift={lift} />
 
       {/* ramp to the door */}
       <group position={[0, 0.16, 2.9]} rotation={[rampAng, 0, 0]}>
@@ -519,7 +534,7 @@ export const HotelScene: React.FC<{ t: number; cam: [number, number, number] }> 
       </group>
 
       {/* measuring pole with the six-foot board */}
-      <MeasurePole t={t} a={a} />
+      <MeasurePole t={boardT ?? t} a={a} />
 
       {/* props */}
       <Lamp p={[6.2, 0, 3.6]} a={a} />
@@ -532,11 +547,11 @@ export const HotelScene: React.FC<{ t: number; cam: [number, number, number] }> 
       <Crate p={[3.5, 0.9, 3.1]} s={[0.8, 0.7, 0.8]} rot={0.2} a={a} />
 
       {/* the crew */}
-      {worker([-3.6, 0, 1.75], "worker", 1.0, "crank", 3, 2.2, PHASE[0])}
-      {worker([-1.4, 0, 1.8], "worker2", 1.05, "crank", 8, 2.2, PHASE[1])}
-      {worker([3.0, 0, 1.75], "worker3", 0.98, "crank", 15, 2.2, PHASE[2])}
-      {worker([5.2, 0, 1.8], "worker", 0.95, "crank", 31, 2.2, PHASE[3])}
-      {worker([-4.5, 0, 3.6], "boss", 1.1, "watch", 21)}
+      {worker([-3.6, 0, 1.75], "cap", 1.0, "crank", 3, 2.2, PHASE[0])}
+      {worker([-1.4, 0, 1.8], "bowler", 1.05, "crank", 8, 2.2, PHASE[1])}
+      {worker([3.0, 0, 1.75], "glasses", 0.98, "crank", 15, 2.2, PHASE[2])}
+      {worker([5.2, 0, 1.8], "cap", 0.95, "crank", 31, 2.2, PHASE[3])}
+      {worker([-4.5, 0, 3.6], "boss", 1.1, "point", 21, 2.2, 0, "smug")}
 
       <Dust t={t} />
     </group>

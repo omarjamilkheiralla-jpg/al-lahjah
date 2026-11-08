@@ -21,3 +21,9 @@ npm run transcribe -- public/narration.mp3 en   # auto-captions (whisper.cpp) ->
 - All `remotion` and `@remotion/*` packages must stay on the same exact version (`npm run upgrade`).
 - `remotion.config.ts` uses your GPU (`angle`) by default. On a machine without a GPU run with `REMOTION_GL=swangle`. On Windows laptops with two GPUs, force the fast one: Settings > System > Display > Graphics > add `node.exe` and the Remotion `chrome-headless-shell.exe` (in `video/node_modules/.remotion/`) and set High performance.
 - Arabic captions: `npm run transcribe -- file.mp3 ar`, and use an Arabic font (`@remotion/google-fonts`, e.g. Cairo) in `Captions.tsx`.
+
+## The full video: "How Chicago Lifted Itself" (about 52 s)
+- Composition id `Full` (`src/full/`). Script, shot table, facts and sources: `projects/chicago-hotel/SCRIPT.md`.
+- `render_full.bat` renders the final 1080x1920 video with your GPU; `test_render_full.bat` renders the first 3 seconds.
+- Voice: `projects/chicago-hotel/make_voice.py` (Kokoro). Music + SFX + mix: `make_audio_full.py`. Word timings: `src/full/timing.json`.
+- Fonts in `public/fonts` are SIL Open Font License (Lilita One, Rye, Playfair Display).
