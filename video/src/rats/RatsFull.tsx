@@ -53,8 +53,9 @@ export const SHOTS: Shot[] = [
 /** cuts land just before each voice line starts, so the picture leads the voice */
 const LEAD = 0.1;
 export const FPS = 60;
-export const RATS_TOTAL = timing.total + 0.35;
+export const RATS_TOTAL = timing.total + 1.5;
 const TOTAL = RATS_TOTAL;
+const VOICE_END = timing.total + 0.35;   // the shot cuts and captions end with the narration; the last 1.15 s is the "ta-ding" tail
 const starts = timing.starts.map((s, i) => (i === 0 ? 0 : Math.max(0, s - LEAD)));
 const ends = starts.map((_, i) => (i + 1 < starts.length ? starts[i + 1] : TOTAL));
 export const SHOT_TIMES = starts.map((s, i) => ({ start: s, end: ends[i] }));

@@ -6,7 +6,7 @@ import numpy as np, soundfile as sf, librosa
 from kokoro_onnx import Kokoro
 
 onnx, bins, out = sys.argv[1], sys.argv[2], sys.argv[3]
-voice = sys.argv[4] if len(sys.argv) > 4 else "am_eric"
+voice = sys.argv[4] if len(sys.argv) > 4 else "af_sarah"
 k = Kokoro(onnx, bins)
 # per shot: list of (text, speed, pitch_semitones, gain_db, gap_after_seconds)
 SHOTS = [
@@ -15,8 +15,8 @@ SHOTS = [
  [("So they paid rat catchers for every rat they killed.", 1.1, 0.6, 0.0, 0.2)],
  [("But counting dead rats was messy,", 1.06, -0.6, 0.0, 0.1), ("so the rule changed:", 1.0, 0.0, 0.0, 0.2), ("just bring us the tail.", 1.1, 1.2, 0.8, 0.2)],
  [("Then they opened the offer to everyone:", 1.12, 0.6, 0.3, 0.16), ("one cent for every rat tail!", 1.1, 1.3, 1.6, 0.2)],
- [("Soon, officials noticed something strange.", 0.95, -1.0, 0.0, 0.4), ("Rats... running around... with no tails.", 0.9, 0.8, 0.6, 0.3)],
- [("You see, the reward was for the tail, not the rat.", 1.02, 0.7, 0.6, 0.22), ("A rat left alive to breed was worth more than a dead one.", 1.05, -0.4, 0.2, 0.24)],
+ [("Soon, officials noticed something strange.", 0.95, -1.0, 0.0, 0.4), ("Rats... running around... with no tails.", 0.9, 0.0, 0.6, 0.95)],
+ [("You see,", 0.98, 0.0, 0.6, 0.3), ("the reward was for the tail, not the rat.", 1.02, 0.0, 0.5, 0.22), ("A rat left alive to breed was worth more than a dead one.", 1.05, -0.4, 0.2, 0.24)],
  [("So people cut off the tails... and set the rats free.", 1.05, 0.6, 0.0, 0.16), ("Some even raised rats, just to harvest more tails.", 1.05, 1.2, 0.5, 0.22)],
  [("So the rats multiplied,", 1.0, 0.0, 0.0, 0.1), ("and the French paid for more and more tails.", 1.06, 0.4, 0.0, 0.32), ("Finally... they cancelled the program.", 0.9, -1.3, 0.6, 0.3)],
  [("Economists call this a perverse incentive:", 1.0, 0.0, 0.3, 0.22), ("pay for the measurement, and you get the measurement... not the result.", 0.97, 0.4, 0.6, 0.3)],

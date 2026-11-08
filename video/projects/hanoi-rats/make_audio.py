@@ -6,8 +6,9 @@ import numpy as np
 SR = 44100
 rng = np.random.default_rng(11)
 timing = json.load(open(sys.argv[2]))
-TOTAL = timing["total"] + 0.35
+TOTAL = timing["total"] + 1.5
 N = int(SR * TOTAL)
+END = timing["words"][-1][2]            # end of the last spoken word: the "ta-ding" lands right after it
 starts = [0.0] + [s - 0.1 for s in timing["starts"][1:]]
 ends = starts[1:] + [TOTAL]
 
@@ -207,9 +208,10 @@ while t < TOTAL - 0.05:
         if pos in (2, 6): put(music, snap(), t, 0.4)
     t += e8; step += 1
 # a big final chord on the last line
-put(music, pad(note(48), 2.6, 0.22), starts[10] + 2.2, 1.0)
-for k, m in enumerate([72, 76, 79, 84]): put(music, marimba(note(m), 0.9), starts[10] + 2.7 + k * 0.08, 0.3)
-put(music, bass(note(36), 1.2), starts[10] + 2.7, 0.7)
+put(music, pad(note(48), 2.6, 0.2), END + 0.25, 1.0)
+put(music, marimba(note(79), 0.35), END + 0.12, 0.34)                                 # "ta"
+for k, m in enumerate([84, 88, 91, 96]): put(music, marimba(note(m), 0.9), END + 0.36 + k * 0.07, 0.3)   # "-ding" sparkle
+put(music, bass(note(36), 1.2), END + 0.36, 0.7)
 music *= np.minimum(1, np.arange(N) / (SR * 0.2)) * np.minimum(1, (N - np.arange(N)) / (SR * 0.5))
 music /= max(1e-6, np.abs(music).max())
 
@@ -241,7 +243,7 @@ cw = [w for w in timing["words"] if w[0].lower().strip(".,!?").startswith("cance
 put(sfx, rip(0.7), (cw[0][1] if cw else starts[8] + 4.6) - 0.05, 0.6); put(sfx, creak(0.8), starts[8] + 1.2, 0.18)
 for q in range(3): put(sfx, click(), starts[9] + 1.2 + q * 0.25, 0.5)
 put(sfx, ding(1175, 1.2), starts[9] + 1.5, 0.15)
-put(sfx, ding(1568, 0.9), starts[10] + 0.6, 0.18); put(sfx, ding(1319, 1.6), starts[10] + 2.7, 0.18)
+put(sfx, ding(1568, 0.9), starts[10] + 0.6, 0.18); put(sfx, ding(1319, 0.5), END + 0.12, 0.2); put(sfx, ding(1976, 1.8), END + 0.36, 0.26)
 sfx /= max(1e-6, np.abs(sfx).max())
 
 # ------------------------------------------------------------------- voice + mix

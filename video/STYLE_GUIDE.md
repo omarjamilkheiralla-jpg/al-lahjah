@@ -184,3 +184,8 @@ Reference implementation: `video/src/rats/` (scenes), `video/src/full/` (charact
 1. Render about 30 frames spread across the WHOLE video and look at every one (not just the changed shots).
 2. Look specifically for: things passing through each other, cut-off hats or props, parts floating or detached, text running off boards, objects blocking faces, flat empty ground.
 3. State plainly what was checked and what was not (I cannot hear audio).
+
+## Update: narrator + ending (user choices, latest)
+- **Narrator: `af_sarah`** (user picked sample #8, "friendly female", about 200 Hz). Use it as-is: one steady voice, no pitch shifting, no clarity chain unless asked.
+- **Ending "ta-ding":** every video ends with the same short sparkle right after the last spoken word: a quick marimba "ta" (about 0.12 s after the word) and then a bright bell/marimba "-ding" arpeggio with a soft pad (about 0.36 s after). The video runs about 1.5 s past the last word to let it ring. Implemented in `projects/hanoi-rats/make_audio.py` (`END`).
+- **"You see," pause rule:** always stop before "You see" (about 1 s of silence after the previous line), then say "You see," as its own beat and stop again (about 0.35 s) before the explanation. It must never run on into the next words.
