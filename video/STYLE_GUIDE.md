@@ -177,6 +177,7 @@ Reference implementation: `video/src/rats/` (scenes), `video/src/full/` (charact
 ## 4. Audio
 - Narration: Kokoro, **no pitch shifting or phase-vocoder (it makes echo and a sinking tone)**. Use ONE voice with a near-constant speed; emotion comes from wording, punctuation, pauses and small gain changes. Check the median pitch of each shot stays within about 1 semitone.
 - **Voice choice:** the user found `am_liam` (about 127 Hz) too deep. Current voice is **`am_eric` (about 162 Hz): lighter, friendly, inviting.** Keep it unless the user asks otherwise.
+- **Clarity chain (required):** raw Kokoro `am_eric` was clean but muffled (presence 2-5 kHz = 0.036, air above 5 kHz = 0.005), which the user heard as "hushy, not clear". Always run `projects/hanoi-rats/clarify_voice.py` on the narration before mixing (real polyphase upsample, gentle harmonic air, +2 dB at 3.3 kHz, light compression). Result: presence about 0.09, air about 0.013, HNR unchanged (no added hiss). Never use an exciter filter on a 24 kHz file (it silences it).
 - Original score that changes with the story, sound effects on every action, about -14 LUFS, music about 10 dB under the voice and ducked.
 
 ## 5. QA before telling the user it is ready
