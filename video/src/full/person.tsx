@@ -39,7 +39,7 @@ const angles = (pose: Pose, t: number, ph: number, power = 1): Angles => {
     case "shake": return { as: -0.14, ae: 0.12, bs: 0.95 + Math.sin(t * 8) * 0.08, be: -0.55 };
     case "salute": return { as: -0.14, ae: 0.12, bs: 0.6, be: -2.35 };
     case "sleep": return { as: -0.12, ae: 0.2, bs: 0.12, be: -0.2 };
-    case "walk": return { as: -0.15 + Math.sin(t * 7 + ph) * 0.5, ae: 0.1, bs: 0.15 - Math.sin(t * 7 + ph) * 0.5, be: -0.1 };
+    case "walk": return { as: -0.15 + Math.sin(t * 7 + ph) * 0.35, ae: 0.1, bs: 0.15 - Math.sin(t * 7 + ph) * 0.35, be: -0.1 };
     default: return { as: -0.13 + sw * 0.03, ae: 0.16, bs: 0.13 - sw * 0.03, be: -0.16 };
   }
 };
@@ -112,12 +112,17 @@ export const Person2: React.FC<PersonProps> = ({
     <group position={position} rotation={[0, yaw, 0]} scale={scale}>
       {/* legs */}
       <group position={[0, bob * 0.3, 0]}>
-        <mesh geometry={legGeo} material={ink} position={[-0.1, 0.7, 0.001]} rotation={[0, 0, walking ? step * 0.4 : 0]} />
-        <mesh geometry={legGeo} material={ink} position={[0.1, 0.7, 0.001]} rotation={[0, 0, walking ? -step * 0.4 : 0]} />
-        <mesh geometry={shoeGeo} material={ink} position={[-0.16 + (walking ? step * 0.12 : 0), 0.04, 0.002]} />
-        <mesh geometry={shoeGeo} material={ink} position={[0.17 - (walking ? step * 0.12 : 0), 0.04, 0.002]} />
-        <mesh geometry={shoeGeo} material={rim} scale={[0.5, 0.25, 1]} position={[-0.17 + (walking ? step * 0.12 : 0), 0.075, 0.004]} />
-        <mesh geometry={shoeGeo} material={rim} scale={[0.5, 0.25, 1]} position={[0.18 - (walking ? step * 0.12 : 0), 0.075, 0.004]} />
+        {[-1, 1].map((side) => {
+          const sw = walking ? side * step * 0.17 : 0;
+          const lift = walking ? Math.max(0, side * step) * 0.07 : 0;
+          return (
+            <group key={side} position={[side * 0.11, 0.7 + lift, 0.001]} rotation={[0, 0, sw]}>
+              <mesh geometry={legGeo} material={ink} />
+              <mesh geometry={shoeGeo} material={ink} position={[side * 0.055, -0.66, 0.002]} />
+              <mesh geometry={shoeGeo} material={rim} scale={[0.5, 0.25, 1]} position={[side * 0.06, -0.625, 0.004]} />
+            </group>
+          );
+        })}
       </group>
 
       <group position={[0, bob, 0]} rotation={[0, 0, lean]}>

@@ -10,6 +10,15 @@ import { wallTexture, cobbleTexture } from "../full/assets";
 import { emo, Shop } from "../full/scenes";
 import { Rat, type RatExpr } from "./rat";
 import { INKD } from "../full/paint";
+import timing from "./timing.json";
+
+/** seconds from the start of shot `shot` (0-based) to the first spoken occurrence of `word` in it */
+const wordIn = (shot: number, word: string, fallback: number) => {
+  const s0 = shot === 0 ? 0 : timing.starts[shot] - 0.1;
+  const s1 = shot + 1 < timing.starts.length ? timing.starts[shot + 1] - 0.1 : 1e9;
+  const w = (timing.words as [string, number, number][]).find((x) => x[1] >= s0 && x[1] < s1 && x[0].toLowerCase().replace(/[^a-z]/g, "").startsWith(word));
+  return w ? w[1] - s0 : fallback;
+};
 
 type V3 = [number, number, number];
 export type SceneProps = { t: number; cam: V3 };
@@ -322,7 +331,8 @@ export const R8Farm: React.FC<SceneProps> = ({ t, cam }) => {
 export const R9So: React.FC<SceneProps> = ({ t, cam }) => {
   const r = rx(); const a = useAssets();
   const sacks = Math.min(12, 3 + Math.floor(t * 1.6));
-  const rip = clamp((t - 3.7) / 0.8);
+  const cancelAt = wordIn(8, "cancel", 4.6);
+  const rip = clamp((t - (cancelAt - 0.05)) / 0.8);
   const boxCoins = Math.max(0, 8 - Math.floor(t * 2.2));
   return (
     <group>
@@ -349,8 +359,8 @@ export const R9So: React.FC<SceneProps> = ({ t, cam }) => {
         <Ink geometry={box(1.6, 0.9, 1.0)} material={toon("#7a4a2a")} position={[0, 0.45, 0]} px={2.2} />
         <CoinStack p={[0, 0.9, 0]} n={boxCoins} r={0.26} />
       </group>
-      <Person look="official" p={[2.2, 0, 2.2]} cam={cam} t={t} s={1.5} expr={emo(t, [[0, "worried"], [2.5, "shock"], [3.7, "angry"], [4.8, "deadpan"]])} pose={t > 3.6 ? "point" : "idle"} seed={60} emph={t > 3.7 ? 1 : 0} />
-      {[0, 1, 2].map((i) => <Rat key={i} t={t} position={[6.6 + i * 0.6, 0, 3.4 + (i % 2) * 0.3]} scale={0.8} expr={t > 3.7 ? "grin" : "smug"} pose={t > 3.7 ? "wave" : "idle"} seed={i + 21} />)}
+      <Person look="official" p={[2.2, 0, 2.2]} cam={cam} t={t} s={1.5} expr={emo(t, [[0, "worried"], [2.6, "shock"], [cancelAt - 0.4, "angry"], [cancelAt + 1.2, "deadpan"]])} pose={t > cancelAt - 0.3 ? "point" : "idle"} seed={60} emph={t > cancelAt - 0.4 ? 1 : 0} />
+      {[0, 1, 2].map((i) => <Rat key={i} t={t} position={[6.6 + i * 0.6, 0, 3.4 + (i % 2) * 0.3]} scale={0.8} expr={t > cancelAt ? "grin" : "smug"} pose={t > cancelAt ? "wave" : "idle"} seed={i + 21} />)}
       <Dust t={t} />
     </group>
   );

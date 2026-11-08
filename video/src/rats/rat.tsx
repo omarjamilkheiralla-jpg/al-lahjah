@@ -117,14 +117,22 @@ export const Rat: React.FC<RatProps> = ({ t, position = [0, 0, 0], yaw = 0, scal
   const arm = (s: number, ang: number) => (
     <group position={[s * 0.19, 0.55, 0.03]} rotation={[0, 0, ang]}><mesh geometry={armG} material={inkM} /><mesh position={[0, -0.2, 0.002]}><circleGeometry args={[0.04, 12]} /><meshBasicMaterial color={INKD} /></mesh></group>
   );
-  const aL = pose === "cheer" ? -2.5 : pose === "wave" ? -0.3 : walk ? -0.2 + st * 0.5 : -0.15;
-  const aR = pose === "cheer" ? 2.5 : pose === "wave" ? 2.3 + Math.sin(t * 9) * 0.35 : pose === "point" ? 1.5 : walk ? 0.2 - st * 0.5 : 0.15;
+  const aL = pose === "cheer" ? -2.5 : pose === "wave" ? -0.3 : walk ? -0.2 + st * 0.3 : -0.15;
+  const aR = pose === "cheer" ? 2.5 : pose === "wave" ? 2.3 + Math.sin(t * 9) * 0.35 : pose === "point" ? 1.5 : walk ? 0.2 - st * 0.3 : 0.15;
   return (
     <group position={position} rotation={[0, yaw, 0]} scale={[scale * flip, scale, scale]}>
       <group position={[0, bob, 0]}>
         {tail ? <group position={[0.12, 0.27, -0.03]} rotation={[0, 0, Math.sin(t * 3 + ph) * 0.1]}><Ink geometry={tailGeo} material={tailMat} px={1.4} cast={false} /></group> : null}
-        <mesh geometry={legG} material={inkM} position={[-0.09, 0.3, 0.001]} rotation={[0, 0, walk ? st * 0.5 : 0]} /><mesh geometry={legG} material={inkM} position={[0.09, 0.3, 0.001]} rotation={[0, 0, walk ? -st * 0.5 : 0]} />
-        <mesh position={[-0.13, 0.02, 0.003]} scale={[1.25, 0.6, 1]}><circleGeometry args={[0.07, 14]} /><meshBasicMaterial color={INKD} /></mesh><mesh position={[0.13, 0.02, 0.003]} scale={[1.25, 0.6, 1]}><circleGeometry args={[0.07, 14]} /><meshBasicMaterial color={INKD} /></mesh>
+        {[-1, 1].map((side) => {
+          const sw = walk ? side * st * 0.22 : 0;
+          const lift = walk ? Math.max(0, side * st) * 0.06 : 0;
+          return (
+            <group key={side} position={[side * 0.115, 0.3 + lift, 0.001]} rotation={[0, 0, sw]}>
+              <mesh geometry={legG} material={inkM} />
+              <mesh position={[side * 0.035, -0.29, 0.002]} scale={[1.25, 0.6, 1]}><circleGeometry args={[0.07, 14]} /><meshBasicMaterial color={INKD} /></mesh>
+            </group>
+          );
+        })}
         {arm(-1, aL)}
         <mesh material={bm} position={[0, 0.5, 0]}><planeGeometry args={[0.48, 0.61]} /></mesh>
         {bowtie ? <group position={[0, 0.6, 0.02]}>
