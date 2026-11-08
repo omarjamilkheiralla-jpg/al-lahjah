@@ -156,8 +156,11 @@ export const headTexture = (look: Look, expr: Expr, key: string, v = 0) => {
     g.fillStyle = hc;
     g.beginPath(); g.ellipse(cx, cy - ry * 0.7, rx * 0.98, ry * 0.58, 0, Math.PI, 0); g.fill();
     g.beginPath(); g.moveTo(cx + 40, cy - ry * 0.72); g.quadraticCurveTo(cx + rx * 1.15, cy - ry * 0.66, cx + rx * 1.12, cy - ry * 0.5); g.quadraticCurveTo(cx + rx * 0.5, cy - ry * 0.62, cx + 20, cy - ry * 0.62); g.fill();
-    g.strokeStyle = "rgba(255,255,255,0.8)"; g.lineWidth = 9;
-    for (let i = 0; i < 6; i++) { g.beginPath(); g.arc(cx, cy - ry * 0.7, rx * 0.98, Math.PI * (1.12 + i * 0.1), Math.PI * (1.17 + i * 0.1)); g.stroke(); }
+    // cap pinstripes, clipped to the dome so they never poke out
+    g.save(); g.beginPath(); g.ellipse(cx, cy - ry * 0.7, rx * 0.98, ry * 0.58, 0, Math.PI, 0); g.clip();
+    g.strokeStyle = "rgba(255,255,255,0.7)"; g.lineWidth = 8;
+    for (let i = -4; i <= 4; i++) { g.beginPath(); g.moveTo(cx + i * 48, cy - ry * 0.72); g.quadraticCurveTo(cx + i * 40, cy - ry * 1.05, cx + i * 20, cy - ry * 1.3); g.stroke(); }
+    g.restore();
     g.lineWidth = 12; g.strokeStyle = INKD;
     g.beginPath(); g.ellipse(cx, cy - ry * 0.7, rx * 0.98, ry * 0.58, 0, Math.PI, 0); g.stroke();
     g.beginPath(); g.moveTo(cx + 40, cy - ry * 0.72); g.quadraticCurveTo(cx + rx * 1.15, cy - ry * 0.66, cx + rx * 1.12, cy - ry * 0.5); g.quadraticCurveTo(cx + rx * 0.5, cy - ry * 0.62, cx + 20, cy - ry * 0.62); g.stroke();
