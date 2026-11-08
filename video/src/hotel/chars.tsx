@@ -317,11 +317,26 @@ export const SleepingGuest: React.FC<{ t: number; position: [number, number, num
   );
 };
 
-/** soft contact shadow blob */
+/** soft shadows: a tight contact blob plus a long soft shadow falling away from the key light */
+let _shTex: THREE.CanvasTexture | null = null;
+const shTex = () => {
+  if (!_shTex) {
+    const c = document.createElement("canvas"); c.width = c.height = 128; const g = c.getContext("2d")!;
+    const gr = g.createRadialGradient(64, 64, 4, 64, 64, 62); gr.addColorStop(0, "rgba(42,26,30,0.9)"); gr.addColorStop(0.55, "rgba(42,26,30,0.45)"); gr.addColorStop(1, "rgba(42,26,30,0)");
+    g.fillStyle = gr; g.fillRect(0, 0, 128, 128); _shTex = new THREE.CanvasTexture(c);
+  }
+  return _shTex;
+};
 export const ContactShadow: React.FC<{ position: [number, number, number]; r?: number }> = ({ position, r = 0.5 }) => {
-  const geo = useMemo(() => new THREE.CircleGeometry(1, 28), []);
-  const mat = useMemo(() => new THREE.MeshBasicMaterial({ color: INK, transparent: true, opacity: 0.32, depthWrite: false }), []);
-  return <mesh geometry={geo} material={mat} position={position} rotation={[-Math.PI / 2, 0, 0]} scale={[r, r * 0.55, 1]} renderOrder={1} />;
+  const geo = useMemo(() => new THREE.PlaneGeometry(2, 2), []);
+  const mat = useMemo(() => new THREE.MeshBasicMaterial({ map: shTex(), transparent: true, opacity: 0.5, depthWrite: false }), []);
+  const mat2 = useMemo(() => new THREE.MeshBasicMaterial({ map: shTex(), transparent: true, opacity: 0.26, depthWrite: false }), []);
+  return (
+    <group position={position} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh geometry={geo} material={mat2} position={[r * 1.05, -r * 0.45, 0]} rotation={[0, 0, 0.45]} scale={[r * 1.9, r * 0.62, 1]} renderOrder={1} />
+      <mesh geometry={geo} material={mat} scale={[r * 0.95, r * 0.5, 1]} renderOrder={2} />
+    </group>
+  );
 };
 
 export const yawToward = (from: [number, number, number], cam: [number, number, number]) =>

@@ -105,7 +105,7 @@ export const Rat: React.FC<RatProps> = ({ t, position = [0, 0, 0], yaw = 0, scal
   const ph = (seed * 1.7) % 6;
   const hm = useMemo(() => new THREE.MeshBasicMaterial({ transparent: true, alphaTest: 0.04, side: THREE.DoubleSide }), []);
   const bm = useMemo(() => new THREE.MeshBasicMaterial({ transparent: true, alphaTest: 0.04, side: THREE.DoubleSide }), []);
-  const boil = Math.floor(t * 8 + seed) % 2;
+  const boil = Math.floor(t * 5 + seed) % 2;
   hm.map = ratHead(expr, fur, boil); bm.map = ratBody(fur);
   const walk = pose === "walk"; const st = Math.sin(t * 9 + ph);
   const bob = (walk ? Math.abs(st) * 0.03 : Math.sin(t * 3 + ph) * 0.008);

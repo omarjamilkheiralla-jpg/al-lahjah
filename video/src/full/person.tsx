@@ -80,7 +80,7 @@ export const Person2: React.FC<PersonProps> = ({
 
   const headMat = useMemo(() => new THREE.MeshBasicMaterial({ transparent: true, alphaTest: 0.04, side: THREE.DoubleSide }), []);
   const torsoMat = useMemo(() => new THREE.MeshBasicMaterial({ transparent: true, alphaTest: 0.04, side: THREE.DoubleSide }), []);
-  const boil = still ? 0 : Math.floor(t * 8 + seed) % 2;
+  const boil = still ? 0 : Math.floor(t * 5 + seed) % 2;
   headMat.map = headTexture(L, showExpr, lk, boil);
   headMat.color.set(tint);
   torsoMat.map = torsoTexture(L, lk, boil);

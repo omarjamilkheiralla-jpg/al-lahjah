@@ -10,6 +10,7 @@ import { wallTexture, cobbleTexture } from "../full/assets";
 import { emo, Shop } from "../full/scenes";
 import { Rat, type RatExpr } from "./rat";
 import { INKD } from "../full/paint";
+import { Frame, Clock, Plant, Shelf, HangingLamp, SunWindow, Bunting } from "./props";
 import timing from "./timing.json";
 
 /** seconds from the start of shot `shot` (0-based) to the first spoken occurrence of `word` in it */
@@ -56,13 +57,14 @@ const rx = () =>
     }),
     diagram: mkTex(1024, 768, (g, w, h) => {
       g.fillStyle = "#f2e6c8"; g.fillRect(0, 0, w, h);
-      g.strokeStyle = "rgba(120,90,50,.18)"; g.lineWidth = 2; for (let x = 0; x < w; x += 48) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); } for (let y = 0; y < h; y += 48) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
+      g.strokeStyle = "rgba(120,90,50,.16)"; g.lineWidth = 2; for (let x = 0; x < w; x += 48) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); } for (let y = 0; y < h; y += 48) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
       g.strokeStyle = INKD; g.lineWidth = 12; g.strokeRect(10, 10, w - 20, h - 20);
-      g.beginPath(); g.moveTo(w / 2, 40); g.lineTo(w / 2, h - 40); g.setLineDash([22, 16]); g.stroke(); g.setLineDash([]);
+      g.lineWidth = 8; g.setLineDash([22, 16]); g.beginPath(); g.moveTo(w / 2, 70); g.lineTo(w / 2, h - 70); g.stroke(); g.setLineDash([]);
       g.textAlign = "center"; g.fillStyle = INKD;
-      g.font = "400 64px 'Lilita One', Impact, sans-serif"; g.fillText("DEAD RAT", w * 0.25, 110); g.fillText("LIVE RAT", w * 0.75, 110);
-      g.font = "400 150px 'Lilita One', Impact, sans-serif"; g.fillStyle = "#c8403a"; g.fillText("1¢", w * 0.25, h * 0.74); g.fillStyle = "#2f8f5a"; g.fillText("1¢ 1¢ 1¢ 1¢", w * 0.75, h * 0.74 + 8);
-      g.font = "400 56px 'Lilita One', Impact, sans-serif"; g.fillStyle = INKD; g.fillText("ONCE", w * 0.25, h * 0.9); g.fillText("AGAIN AND AGAIN", w * 0.75, h * 0.9);
+      g.font = "400 76px 'Lilita One', Impact, sans-serif"; g.fillText("ONE TAIL", w * 0.25, 112); g.fillText("LIVE RAT", w * 0.75, 112);
+      g.fillStyle = "#c8403a"; g.fillRect(w * 0.25 - 150, 128, 300, 8); g.fillStyle = "#2f8f5a"; g.fillRect(w * 0.75 - 150, 128, 300, 8);
+      g.font = "400 50px 'Lilita One', Impact, sans-serif"; g.fillStyle = "#c8403a"; g.fillText("PAID ONCE", w * 0.25, h - 54);
+      g.fillStyle = "#2f8f5a"; g.fillText("PAID AGAIN & AGAIN", w * 0.75, h - 54);
     }),
   });
 
@@ -125,6 +127,8 @@ export const R1Hook: React.FC<SceneProps> = ({ t, cam }) => {
       <Lights color="#ffd9a0" intensity={2.4} pos={[-5, 8, 8]} shadowSize={10} extra={<pointLight position={[0, 2.5, 2]} intensity={10} color="#ffcf8a" distance={9} />} />
       <Ink geometry={box(16, 8, 0.3)} material={toon(r.wallCream)} position={[0, 4, -2.4]} px={2.4} />
       <Ink geometry={box(16, 0.3, 10)} material={toon(r.floor)} position={[0, -0.15, 2]} px={2.4} />
+      <Clock p={[-3.6, 5.6, -2.2]} t={t} s={1.3} /><Frame p={[3.4, 4.9, -2.2]} w={1.5} h={1.1} k={0} /><Shelf p={[-0.4, 3.9, -2.1]} w={3.0} />
+      <SunWindow p={[-5.8, 3.6, -2.2]} s={1.3} /><Plant p={[4.6, 0, -1.4]} s={1.7} t={t} /><HangingLamp p={[1.4, 6.9, -0.4]} t={t} />
       {/* the table: front half only, so nobody stands inside it */}
       <Ink geometry={box(6.4, 0.18, 1.7)} material={toon("#9a5a34")} position={[-0.3, 1.1, 0.7]} px={2.6} />
       <Ink geometry={box(6.2, 1.0, 1.5)} material={toon("#7a4624")} position={[-0.3, 0.5, 0.7]} px={2.4} />
@@ -158,6 +162,7 @@ export const R2Setup: React.FC<SceneProps> = ({ t, cam }) => {
     <group>
       <Street t={t} />
       <HanoiRow />
+      <Pole p={[-11, 0, 3.4]} /><Pole p={[11, 0, 3.4]} /><Bunting a={[-11, 6.6, 3.4]} b={[11, 6.6, 3.4]} t={t} sag={0.9} />
       <Tree p={[-9, 0, -2]} s={1.5} seed={2} /><Tree p={[10, 0, -3]} s={1.7} seed={6} />
       <Lamp p={[-4.8, 0, 2.6]} a={useAssets()} />
       {/* the drain */}
@@ -188,6 +193,7 @@ export const R3Plan: React.FC<SceneProps> = ({ t, cam }) => {
   return (
     <group>
       <Street t={t} /><HanoiRow z={-7} />
+      <Pole p={[-11, 0, 4.4]} /><Pole p={[11, 0, 4.4]} /><Bunting a={[-11, 6.4, 4.4]} b={[11, 6.4, 4.4]} t={t} sag={0.9} />
       <Lamp p={[6.2, 0, 2.4]} a={useAssets()} />
       {[0, 1, 2, 3].map((i) => <Person key={i} look={i % 2 ? "farmer" : "catcher"} p={[-5 + i * 2.6 + Math.min(t, 2.6) * 0.15, 0, 1.6 + (i % 2) * 0.35]} cam={cam} t={t} s={1.3} expr={i === 1 ? "grin" : "smug"} pose={i === 0 ? "idle" : "hold"} seed={20 + i} handR={i % 2 ? sack : null} />)}
       <Person look="official" p={[4.4, 0, 1.7]} cam={cam} t={t} s={1.4} expr="proud" pose="point" seed={30} />
@@ -212,6 +218,7 @@ export const R4But: React.FC<SceneProps> = ({ t, cam }) => {
       <Lights color="#ffdba8" intensity={2.3} pos={[-6, 9, 8]} shadowSize={10} extra={<pointLight position={[1, 3, 3]} intensity={9} color="#ffcf8a" distance={9} />} />
       <Ink geometry={box(18, 9, 0.3)} material={toon(r.wallGreen)} position={[0, 4.5, -2.6]} px={2.4} />
       <Ink geometry={box(18, 0.3, 12)} material={toon(r.floor)} position={[0, -0.15, 2]} px={2.4} />
+      <SunWindow p={[-3.9, 4.3, -2.4]} s={1.5} /><Clock p={[3.6, 5.7, -2.4]} t={t} s={1.3} /><Frame p={[2.3, 3.5, -2.45]} w={1.3} h={1.0} k={2} /><Plant p={[-5.2, 0, -1.2]} s={1.7} t={t} /><HangingLamp p={[0.6, 6.9, 0.0]} t={t} />
       <Ink geometry={box(5.6, 0.18, 1.5)} material={toon("#9a5a34")} position={[0.4, 1.35, 1.3]} px={2.6} />
       <Ink geometry={box(5.4, 1.3, 0.2)} material={toon("#7a4624")} position={[0.4, 0.66, 2.0]} px={2.4} />
       {/* messy pile of sacks */}
@@ -234,6 +241,7 @@ export const R5Then: React.FC<SceneProps> = ({ t, cam }) => {
   return (
     <group>
       <Street t={t} />
+      <Pole p={[-9, 0, -2.6]} /><Pole p={[9, 0, -2.6]} /><Bunting a={[-9, 7.4, -2.6]} b={[9, 7.4, -2.6]} t={t} sag={0.9} />
       <Shop x={5.2} z={-4} w={7} floors={3} map={r.cream} sign={r.office} roof="false" awning="#2b4a8a" curtains={["#3f8a5a", "#4a9a68"]} />
       <Shop x={-6.2} z={-4.4} w={6.2} floors={2} map={r.ochre} sign={rx().ochre ? signTexture("TEA", "#2f8f5a", "#fff3cf", 576, 128) : r.office} roof="gable" awning="#c8403a" curtains={["#3f8a5a"]} />
       <group position={[0, 0, 0.2]}>
@@ -259,9 +267,9 @@ export const R6Conflict: React.FC<SceneProps> = ({ t, cam }) => {
       <Facade w={11} floors={2} floor0={3.2} floorH={2.6} cols={[-3.4, 0, 3.4]} map={r.cream} trim="#fff3dd" glass={useAssets().room2} depth={1.2} curtains={["#3f8a5a", "#4a9a68"]} />
       {/* balcony */}
       <Ink geometry={box(5.2, 0.22, 1.8)} material={toon("#a8693b")} position={[0, 3.3, 1.0]} px={2.4} />
-      {[-2.4, -1.2, 0, 1.2, 2.4].map((x, i) => <Ink key={i} geometry={box(0.09, 0.9, 0.09)} material={toon("#2f3a46")} position={[x, 3.85, 1.85]} px={1.4} />)}
-      <Ink geometry={box(5.2, 0.1, 0.1)} material={toon("#2f3a46")} position={[0, 4.3, 1.85]} px={1.6} />
-      <Person look="official" p={[0, 3.4, 0.9]} cam={cam} t={t} s={1.35} expr={emo(t, [[0, "deadpan"], [1.6, "think"], [3.2, "shock"]])} pose="hold" seed={12} />
+      {[-2.4, -1.2, 0, 1.2, 2.4].map((x, i) => <Ink key={i} geometry={box(0.09, 0.7, 0.09)} material={toon("#2f3a46")} position={[x, 3.75, 1.85]} px={1.4} />)}
+      <Ink geometry={box(5.2, 0.1, 0.1)} material={toon("#2f3a46")} position={[0, 4.1, 1.85]} px={1.6} />
+      <Person look="official" p={[0, 3.4, -0.2]} cam={cam} t={t} s={1.35} expr={emo(t, [[0, "deadpan"], [1.6, "think"], [3.2, "shock"]])} pose="hold" seed={12} />
       {pos.slice(0, n).map((p, i) => <Rat key={i} t={t} position={[p.x + p.dir * t * p.sp, 0, p.z]} scale={0.52} expr={i % 3 ? "smug" : "grin"} tail={false} pose="walk" flip={-p.dir} seed={i + 9} fur={i % 4 === 0 ? "brown" : "grey"} />)}
       <Dust t={t} />
     </group>
@@ -271,24 +279,29 @@ export const R6Conflict: React.FC<SceneProps> = ({ t, cam }) => {
 /* ---- shot 7: the reward was for the tail, not the rat ---- */
 export const R7Pivot: React.FC<SceneProps> = ({ t, cam }) => {
   const r = rx();
-  const grow = Math.floor(clamp((t - 2.0) / 3.0) * 14);
+  const grow = clamp((t - 1.8) / 3.2);
+  const row = [{ x: 0.9, s: 0.95, e: "smug" as RatExpr, pose: "wave" as const, n: 1.0 }, { x: 1.75, s: 0.55, e: "grin" as RatExpr, pose: "idle" as const, n: 0.8 }, { x: 2.35, s: 0.5, e: "grin" as RatExpr, pose: "idle" as const, n: 0.62 }, { x: 2.9, s: 0.46, e: "smug" as RatExpr, pose: "idle" as const, n: 0.45 }];
   return (
     <group>
       <SceneEnv bg="#e8d6ae" fog={["#e8d6ae", 20, 70]} />
       <Lights color="#ffdba8" intensity={2.3} pos={[-6, 9, 6]} shadowSize={10} />
-      <Ink geometry={box(18, 0.4, 14)} material={toon(r.floor)} position={[0, -0.2, 0]} px={2.4} />
-      <Ink geometry={box(7.4, 0.3, 5.6)} material={toon("#8a5a34")} position={[0, 0.9, 0]} px={2.6} />
-      <mesh position={[0, 1.08, 0]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[6.4, 4.8]} /><meshBasicMaterial map={r.diagram} /></mesh>
-      {/* left: a single coin for the dead rat */}
-      <CoinStack p={[-1.8, 1.1, 1.7]} n={1} r={0.2} />
-      {/* right: coins keep piling up for the rats that keep breeding */}
-      <CoinStack p={[1.2, 1.1, 1.7]} n={Math.max(2, grow)} r={0.2} />
-      <CoinStack p={[1.8, 1.1, 1.7]} n={Math.max(1, grow - 3)} r={0.2} />
-      <CoinStack p={[2.4, 1.1, 1.7]} n={Math.max(1, grow - 6)} r={0.2} />
-      <CoinStack p={[3.0, 1.1, 1.7]} n={Math.max(1, grow - 9)} r={0.2} />
-      <Rat t={t} position={[-1.7, 1.1, 0.0]} scale={0.9} expr="deadpan" tail seed={3} />
-      {[0, 1, 2, 3].map((i) => <Rat key={i} t={t} position={[0.9 + i * 0.5, 1.1, -0.1 + (i % 2) * 0.3]} scale={i === 0 ? 0.9 : 0.5} expr={i === 0 ? "smug" : "grin"} pose={i === 0 ? "wave" : "idle"} seed={i + 12} fur={i === 2 ? "brown" : "grey"} />)}
-      <Person look="catcher" p={[-4.2, 0, 1.4]} cam={cam} t={t} s={1.6} expr={emo(t, [[0, "think"], [2.4, "proud"], [4.0, "grin"]])} pose="point" seed={14} />
+      <Ink geometry={box(22, 0.4, 16)} material={toon(r.floor)} position={[0, -0.2, 0]} px={2.4} />
+      <Ink geometry={box(22, 9, 0.3)} material={toon(r.wallCream)} position={[0, 4.5, -5.5]} px={2.4} />
+      <Ink geometry={box(7.8, 0.34, 5.8)} material={toon("#8a5a34")} position={[0, 0.9, 0]} px={2.6} />
+      {[[-3.5, -2.6], [3.5, -2.6], [-3.5, 2.6], [3.5, 2.6]].map(([x, z], i) => <Ink key={i} geometry={box(0.3, 0.9, 0.3)} material={toon("#6a4224")} position={[x, 0.45, z]} px={2} />)}
+      <mesh position={[0, 1.08, 0]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[7.0, 5.25]} /><meshBasicMaterial map={r.diagram} /></mesh>
+      {/* left column: one tail, one coin */}
+      <TailProp p={[-2.3, 1.12, 0.1]} rot={[-Math.PI / 2, 0, 0.35]} s={1.9} />
+      <CoinStack p={[-1.75, 1.09, 1.7]} n={1} r={0.24} />
+      {/* right column: one live rat, a growing family, and a growing pile under each */}
+      {row.map((c, i) => (
+        <React.Fragment key={i}>
+          <Rat t={t} position={[c.x, 1.09, 0.1]} scale={c.s} expr={c.e} pose={c.pose} seed={i + 12} fur={i === 2 ? "brown" : "grey"} />
+          <CoinStack p={[c.x, 1.09, 1.7]} n={Math.max(1, Math.round(1 + grow * 12 * c.n))} r={0.2} />
+        </React.Fragment>
+      ))}
+      <Person look="catcher" p={[-4.7, 0, 1.2]} cam={cam} t={t} s={1.6} expr={emo(t, [[0, "think"], [2.4, "proud"], [4.0, "grin"]])} pose="point" seed={14} />
+      <Plant p={[4.9, 0, -3.5]} s={1.6} t={t} /><Clock p={[-3.2, 5.6, -5.3]} t={t} s={1.5} /><Frame p={[3.4, 5.4, -5.3]} w={1.8} h={1.3} k={1} />
       <Dust t={t} />
     </group>
   );
@@ -381,6 +394,8 @@ export const R10Payoff: React.FC<SceneProps> = ({ t, cam }) => {
         <Ink geometry={box(5.6, 0.14, 0.3)} material={toon("#7a5a3a")} position={[0, -2.1, 0.16]} px={1.6} />
       </group>
       <Rat t={t} position={[-2.0, 0, 0.8]} scale={1.8} expr={emo(t, [[0, "smug"], [2.0, "grin"], [3.8, "smug"]])} pose={t > 1.0 ? "point" : "wave"} bowtie seed={31} fur="grey" />
+      <Clock p={[4.6, 6.0, -2.4]} t={t} s={1.5} /><Shelf p={[-5.0, 5.4, -2.3]} w={2.8} /><Plant p={[-5.4, 0, -1.6]} s={1.9} t={t} /><Frame p={[-2.0, 7.0, -2.45]} w={1.5} h={1.0} k={1} />
+      {[0, 1, 2].map((i) => <group key={"d" + i} position={[1.4 + i * 1.2, 0, 2.7 + (i % 2) * 0.4]}><Ink geometry={box(1.0, 0.1, 0.7)} material={toon("#9a5a34")} position={[0, 0.75, 0]} px={1.8} /><Ink geometry={box(0.08, 0.75, 0.08)} material={toon("#6a4224")} position={[-0.42, 0.37, 0.28]} px={1.4} cast={false} /><Ink geometry={box(0.08, 0.75, 0.08)} material={toon("#6a4224")} position={[0.42, 0.37, 0.28]} px={1.4} cast={false} /></group>)}
       {[0, 1, 2].map((i) => <Rat key={i} t={t} position={[1.4 + i * 1.2, 0, 2.2 + (i % 2) * 0.4]} scale={1.0} expr={i === 1 ? "worried" : "deadpan"} pose="idle" seed={i + 41} fur={i === 2 ? "brown" : "white"} />)}
       <Person look="official" p={[4.6, 0, 1.4]} cam={cam} t={t} s={1.4} expr={emo(t, [[0, "deadpan"], [3.0, "think"], [4.5, "worried"]])} seed={70} />
       <Dust t={t} />
@@ -397,6 +412,7 @@ export const R11Close: React.FC<SceneProps> = ({ t, cam }) => {
       <Lights color="#ffd9a0" intensity={2.0} pos={[-4, 7, 6]} shadowSize={8} extra={<pointLight position={[0, 3, 3]} intensity={12} color="#ffcf8a" distance={9} />} />
       <Ink geometry={box(16, 8, 0.3)} material={toon(r.wallCream)} position={[0, 4, -2.4]} px={2.4} />
       <Ink geometry={box(16, 0.3, 10)} material={toon(r.floor)} position={[0, -0.15, 2]} px={2.4} />
+      <SunWindow p={[-3.6, 3.9, -2.25]} s={1.4} /><Frame p={[3.2, 4.6, -2.3]} w={1.6} h={1.2} k={0} /><Clock p={[0.4, 6.2, -2.3]} t={t} s={1.4} /><HangingLamp p={[0, 7.3, 0.5]} t={t} /><Plant p={[4.7, 0, -1.4]} s={1.7} t={t} />
       <Ink geometry={box(5.4, 0.2, 1.5)} material={toon("#7a4624")} position={[0, 1.3, 1.2]} px={2.6} />
       <Ink geometry={box(5.2, 1.3, 0.2)} material={toon("#6a3e20")} position={[0, 0.66, 1.95]} px={2.4} />
       {/* the plate with one lonely tail */}

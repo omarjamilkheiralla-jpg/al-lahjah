@@ -52,7 +52,7 @@ export const SHOTS: Shot[] = [
 
 /** cuts land just before each voice line starts, so the picture leads the voice */
 const LEAD = 0.1;
-export const FPS = 30;
+export const FPS = 60;
 export const RATS_TOTAL = timing.total + 0.35;
 const TOTAL = RATS_TOTAL;
 const starts = timing.starts.map((s, i) => (i === 0 ? 0 : Math.max(0, s - LEAD)));
@@ -169,14 +169,17 @@ export const RatsFull: React.FC<{ captions?: boolean; audio?: boolean }> = ({ ca
   const sceneT = shot.sceneT ? shot.sceneT(local) : local;
 
   if (!fontsOk) return <AbsoluteFill style={{ backgroundColor: "#f4e6cf" }} />;
+  const punch = si > 0 ? 1 + 0.05 * Math.pow(Math.max(0, 1 - local / 0.3), 2) : 1;
   return (
     <AbsoluteFill style={{ backgroundColor: "#9bd1f2" }}>
+      <AbsoluteFill style={{ transform: `scale(${punch})`, transformOrigin: "50% 50%" }}>
       <ThreeCanvas width={width} height={height} shadows="soft" flat camera={{ fov: shot.fov ?? 70, near: 0.1, far: 260, position: [p.x, p.y, p.z] }} gl={{ antialias: true }}>
         <Rig p={p} l={l} roll={roll} fov={shot.fov ?? 70} />
         <Scene key={si} t={sceneT} cam={[p.x, p.y, p.z]} />
         <PostFX focus={dist} range={Math.max(2.5, dist * 0.55)} bokeh={shot.bokeh ?? 3.4} frame={frame} />
       </ThreeCanvas>
-      {flash > 0 ? <AbsoluteFill style={{ backgroundColor: "#fff6e0", opacity: flash * 0.75 }} /> : null}
+      </AbsoluteFill>
+      {flash > 0 ? <AbsoluteFill style={{ backgroundColor: "#fff6e0", opacity: flash * 0.6 }} /> : null}
       {captions ? <Captions t={t} /> : null}
       {audio ? <Audio src={staticFile("rats_mix.wav")} /> : null}
     </AbsoluteFill>
