@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import React, { useEffect, useLayoutEffect } from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Audio, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { ThreeCanvas } from "@remotion/three";
 import { useThree } from "@react-three/fiber";
 import { PostFX } from "./PostFX";
@@ -9,12 +9,12 @@ import { clamp } from "./kit";
 
 /* ---- words, timed to the narration (estimated at ~3.35 words/second until the real voice-over exists) ---- */
 export const WORDS: { w: string; s: number }[] = [
-  { w: "A", s: 0.0 }, { w: "Chicago", s: 0.14 }, { w: "hotel", s: 0.58 },
-  { w: "was", s: 0.98 }, { w: "lifted", s: 1.12 },
-  { w: "six", s: 1.72 }, { w: "feet", s: 2.02 },
-  { w: "into", s: 2.42 }, { w: "the", s: 2.62 }, { w: "air", s: 2.78 },
-  { w: "with", s: 3.22 }, { w: "every", s: 3.46 }, { w: "guest", s: 3.86 },
-  { w: "still", s: 4.2 }, { w: "inside.", s: 4.5 },
+  { w: "A", s: 0.1 }, { w: "Chicago", s: 0.3 }, { w: "hotel", s: 0.6 },
+  { w: "was", s: 1.18 }, { w: "lifted", s: 1.4 },
+  { w: "six", s: 1.72 }, { w: "feet", s: 2.0 },
+  { w: "into", s: 2.32 }, { w: "the", s: 2.58 }, { w: "air", s: 2.74 },
+  { w: "with", s: 3.02 }, { w: "every", s: 3.28 }, { w: "guest", s: 3.58 },
+  { w: "still", s: 3.82 }, { w: "inside.", s: 4.12 },
 ];
 const PAGES = [[0, 3], [3, 5], [5, 7], [7, 10], [10, 13], [13, 15]];
 
@@ -22,9 +22,9 @@ const PAGES = [[0, 3], [3, 5], [5, 7], [7, 10], [10, 13], [13, 15]];
 const g = guestLocal();
 const KEYS = [
   { t: 0.0, p: [-1.4, 1.15, 10.4], l: [0.1, 3.0, 0.0] },
-  { t: 1.15, p: [-2.9, 1.8, 6.5], l: [-1.4, 2.3, 0.3] },
-  { t: 2.0, p: [-3.0, 3.5, 9.0], l: [-3.0, 3.5, 0.0] },
-  { t: 3.86, p: [0.6, 9.8, 10.8], l: [1.3, 11.0, 0.0] },
+  { t: 1.4, p: [-3.1, 1.8, 6.6], l: [-2.0, 2.3, 0.3] },
+  { t: 2.05, p: [-3.0, 3.5, 9.0], l: [-3.0, 3.5, 0.0] },
+  { t: 3.7, p: [0.6, 9.8, 10.8], l: [1.3, 11.0, 0.0] },
   { t: 5.0, p: [1.35, 12.7, 4.8], l: [1.3, 12.95, 0.0] },
 ] as const;
 
@@ -106,7 +106,7 @@ const Captions: React.FC<{ t: number }> = ({ t }) => {
   );
 };
 
-export const HotelHook: React.FC<{ captions?: boolean }> = ({ captions = true }) => {
+export const HotelHook: React.FC<{ captions?: boolean; audio?: boolean }> = ({ captions = true, audio = true }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
   const t = frame / fps;
@@ -128,6 +128,7 @@ export const HotelHook: React.FC<{ captions?: boolean }> = ({ captions = true })
         <PostFX focus={dist} range={Math.max(2.5, dist * 0.55)} bokeh={3.2} frame={frame} />
       </ThreeCanvas>
       {captions ? <Captions t={t} /> : null}
+      {audio ? <Audio src={staticFile("hotel_mix.wav")} /> : null}
     </AbsoluteFill>
   );
 };

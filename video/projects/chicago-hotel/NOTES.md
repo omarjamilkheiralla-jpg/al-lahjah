@@ -24,6 +24,16 @@ Depth in every shot: blurred foreground (planks, barrels, crates), sharp mid-gro
 - `src/hotel/PostFX.tsx`: depth of field + vignette
 - `src/hotel/HotelHook.tsx`: camera path, captions, timing (edit `WORDS` once the real voice-over exists)
 
+## Audio (all original, nothing copyrighted)
+- **Voice:** offline Piper voice `en_US-ryan-high` (placeholder; swap for ElevenLabs or your own voice later). Word timings measured from the audio and used for captions and camera beats.
+- **Music:** original playful bed (bouncy pizzicato chords, marimba melody, light snaps/shaker, walking bass, little sparkle on "inside"), synthesised by `make_audio.py`. It ducks under the voice and sits about 12 dB below it.
+- **SFX:** ratchet clicks in time with the lever cranks, timber creaks, camera whooshes, a "boing" when the 6 FT board pops, a tiny snore on the guest.
+- **Mix:** voice + music + sfx normalised to about -14 LUFS, in `public/hotel_mix.wav`.
+- Rebuild: `python3 -I projects/chicago-hotel/make_audio.py <voice.wav> <out_dir>` then `ffmpeg -i hotel_mix_raw.wav -af loudnorm=I=-14:TP=-1.5:LRA=7 -ar 44100 public/hotel_mix.wav`.
+
+## Fixed in the polish pass
+Ramp no longer cuts through a worker; window bars no longer cross the sleeping guest's face; no black picture frames in the rooms; clean roof edge; pole, boss and workers no longer collide; workers keep their hands on the levers; captions and camera retimed to the real words.
+
 ## Not done yet
-- No voice-over or sound effects (silent sample). Timing of words is estimated at 3.35 words/s.
 - Checked on stills and a half-resolution preview only. Full 1080x1920 render is for your PC (`render_hook.bat`).
+- Characters do not walk (no walk cycles), hotel sign is cropped for a moment while the camera pushes past it.

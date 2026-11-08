@@ -17,15 +17,15 @@ export const HOTEL_H = FLOOR0 + FLOOR * N_UP;
 export const BASE_Y = 1.55; // where the hotel starts (on its stone basement)
 export const LIFT = 1.83; // six feet in metres
 export const DEPTH = 9.3;
-const JACK_X = [-4.2, -1.4, 1.4, 4.2];
+const JACK_X = [-4.4, -2.2, 2.2, 4.4];
 const JACK_Z = 0.62;
 const PHASE = [0.4, 1.9, 3.3, 4.6];
 
-export const liftAt = (t: number) => LIFT * easeInOut(clamp((t - 0.45) / 4.1));
+export const liftAt = (t: number) => LIFT * easeInOut(clamp((t - 0.7) / 4.0));
 
 export const GUEST_WIN = { col: 2, floor: 2 }; // third upper floor, x = +1.3
 const COLS = [-3.9, -1.3, 1.3, 3.9];
-export const guestLocal = (): [number, number, number] => [COLS[GUEST_WIN.col], FLOOR0 + FLOOR * GUEST_WIN.floor + 1.0, -0.38];
+export const guestLocal = (): [number, number, number] => [COLS[GUEST_WIN.col], FLOOR0 + FLOOR * GUEST_WIN.floor + 1.13, -0.38];
 
 /* ------------------------------------------------------------------ */
 /* textures + materials (built once)                                  */
@@ -110,6 +110,7 @@ const Facade: React.FC<FacadeProps> = ({ w, floors, floor0, floorH, cols, map, t
   const sashV = useMemo(() => box(0.07, 1.75, 0.07), []);
   const sashH = useMemo(() => box(1.3, 0.07, 0.07), []);
   const corniceGeos = useMemo(() => [box(w + 0.7, 0.28, 1.15), box(w + 0.35, 0.22, 0.95), box(w, 0.9, 0.8)], [w]);
+  const parapetMat = useMemo(() => toon(trim === "#f3e3c3" ? "#b8452f" : "#d9b88a"), [trim]);
   const curtainGeo = useMemo(() => box(0.2, 1.6, 0.05), []);
   const curtainMat = useMemo(() => [toon("#d9453f"), toon("#f2c53d"), toon("#7a3d8f")], []);
 
@@ -127,7 +128,7 @@ const Facade: React.FC<FacadeProps> = ({ w, floors, floor0, floorH, cols, map, t
           <group key={i} position={[o.x, o.y, -0.08]}>
             {/* sash cross + frame */}
             
-            <Ink geometry={sashH} material={frameMat} position={[0, o.h * 0.3, 0.02]} px={1.6} cast={false} />
+
             {/* sill + lintel */}
             <Ink geometry={sillGeo} material={trimMat} position={[0, -0.04, 0.12]} px={2.4} />
             {upper ? <Ink geometry={lintelGeo} material={trimMat} position={[0, o.h + 0.1, 0.09]} px={2.2} /> : null}
@@ -143,7 +144,7 @@ const Facade: React.FC<FacadeProps> = ({ w, floors, floor0, floorH, cols, map, t
       {/* cornice */}
       <Ink geometry={corniceGeos[0]} material={trimMat} position={[0, h + 0.14, -0.4]} px={2.6} />
       <Ink geometry={corniceGeos[1]} material={trimMat} position={[0, h + 0.4, -0.3]} px={2.6} />
-      <Ink geometry={corniceGeos[2]} material={toon(map)} position={[0, h + 0.95, -0.4]} px={2.6} />
+      <Ink geometry={corniceGeos[2]} material={parapetMat} position={[0, h + 0.95, -0.4]} px={2.6} />
     </group>
   );
 };
@@ -368,10 +369,10 @@ const MeasurePole: React.FC<{ t: number; a: ReturnType<typeof useAssets> }> = ({
   const pop = easeOutBack(clamp((t - 1.72) / 0.35));
   const y6 = BASE_Y + LIFT; // the six-foot mark on the pole
   return (
-    <group position={[-5.6, 0, 1.2]}>
+    <group position={[-5.9, 0, 1.0]}>
       {/* pole: marks span y = BASE_Y .. BASE_Y+LIFT mapped across the texture height */}
       <Ink geometry={poleGeo} material={pm} position={[0, 2.0, 0]} px={2.6} />
-      <group position={[1.15, y6, 0.06]} scale={Math.max(0.001, pop)}>
+      <group position={[1.2, y6, 0.06]} scale={Math.max(0.001, pop)}>
         <Ink geometry={boardGeo} material={bm} px={2.6} />
       </group>
       <ContactShadow position={[0, 0.02, 0]} r={0.6} />
@@ -451,7 +452,7 @@ export const HotelScene: React.FC<{ t: number; cam: [number, number, number] }> 
   const groundGeo = useMemo(() => new THREE.PlaneGeometry(120, 80), []);
   const basement = useMemo(() => box(HOTEL_W, BASE_Y, 1.2), []);
   const foundationBack = useMemo(() => box(HOTEL_W + 2, 3.2, 0.5), []);
-  const rampGeo = useMemo(() => box(1.7, 0.1, 1), []);
+  const rampGeo = useMemo(() => box(1.1, 0.1, 1), []);
   const skyMat = useMemo(() => new THREE.MeshBasicMaterial({ color: "#9bd1f2", fog: false }), []);
   const sidewalk = useMemo(() => box(34, 0.1, 1.5), []);
 
@@ -531,11 +532,11 @@ export const HotelScene: React.FC<{ t: number; cam: [number, number, number] }> 
       <Crate p={[3.5, 0.9, 3.1]} s={[0.8, 0.7, 0.8]} rot={0.2} a={a} />
 
       {/* the crew */}
-      {worker([-3.35, 0, 1.75], "worker", 1.0, "crank", 3, 2.2, PHASE[0])}
-      {worker([-0.55, 0, 1.8], "worker2", 1.05, "crank", 8, 2.2, PHASE[1])}
-      {worker([2.25, 0, 1.75], "worker3", 0.98, "crank", 15, 2.2, PHASE[2])}
-      {worker([5.0, 0, 1.8], "worker", 0.95, "crank", 31, 2.2, PHASE[3])}
-      {worker([-5.0, 0, 3.3], "boss", 1.1, "watch", 21)}
+      {worker([-3.6, 0, 1.75], "worker", 1.0, "crank", 3, 2.2, PHASE[0])}
+      {worker([-1.4, 0, 1.8], "worker2", 1.05, "crank", 8, 2.2, PHASE[1])}
+      {worker([3.0, 0, 1.75], "worker3", 0.98, "crank", 15, 2.2, PHASE[2])}
+      {worker([5.2, 0, 1.8], "worker", 0.95, "crank", 31, 2.2, PHASE[3])}
+      {worker([-4.5, 0, 3.6], "boss", 1.1, "watch", 21)}
 
       <Dust t={t} />
     </group>

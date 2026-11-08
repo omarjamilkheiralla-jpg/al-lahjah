@@ -24,7 +24,7 @@ export const Root: React.FC = () => {
         fps={FPS}
         width={1080}
         height={1920}
-        defaultProps={{ captions: true }}
+        defaultProps={{ captions: true, audio: true }}
       />
     </>
   );

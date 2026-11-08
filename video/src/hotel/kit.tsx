@@ -247,10 +247,14 @@ export const roomTexture = (seed = 4, warm = "#ffd08a", deep = "#e8944f") =>
     for (let x = 0; x < w; x += 24) g.fillRect(x, 0, 8, h * 0.62);
     g.fillStyle = "#8d553f";
     g.fillRect(0, h * 0.62, w, h * 0.38);
-    g.fillStyle = INK;
-    g.fillRect(w * (0.2 + r() * 0.4), h * 0.2, 54, 40);
-    g.fillStyle = "#f3d8a6";
-    g.fillRect(w * 0.2 + 4, h * 0.2 + 4, 46, 32);
+    // soft painted picture (no hard black frame)
+    const px = w * (0.2 + r() * 0.4);
+    g.fillStyle = "#b8703f";
+    g.fillRect(px, h * 0.2, 54, 40);
+    g.fillStyle = "#f6dfae";
+    g.fillRect(px + 5, h * 0.2 + 5, 44, 30);
+    g.fillStyle = "#e9a05a";
+    g.fillRect(px + 5, h * 0.2 + 22, 44, 13);
   });
 
 /* ---------- toon shading ---------- */
