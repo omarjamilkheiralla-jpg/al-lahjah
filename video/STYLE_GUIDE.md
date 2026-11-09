@@ -194,3 +194,9 @@ Reference implementation: `video/src/rats/` (scenes), `video/src/full/` (charact
 The user went back to the **version 5 voice: `am_liam`**, steady, no pitch shifting, NO clarity chain and no extra processing, with the newer details kept
 (ta-ding ending, pause before and after "You see,", the long-street visuals). `af_sarah` (sample #8) was liked as a sample, but the user chose to keep v5 for this video.
 Do not re-apply `clarify_voice.py` or change the narrator for this video unless asked.
+
+## Update (latest): "Cut Every Tail" narrator = Chatterbox "B"
+The user chose **Chatterbox sample B** (exaggeration 0.4, cfg_weight 0.35) for the rat video: expressive but calm, not "zesty".
+What fixed "zesty": no question mark on "Why would anyone do that" (a rising ending sounds sassy), no "!" on "one cent for every rat tail", low exaggeration, and each phrase generated separately with its own pause.
+Pipeline: `projects/hanoi-rats/phrases.py` -> `chatterbox_gen.py` (run in the Chatterbox venv, CPU is fine: about 20 s per phrase) -> `assemble_chatterbox.py` (equal loudness per phrase, pauses) -> whisper word timings -> `make_audio.py`.
+Check every phrase by transcription before use. "tail" heard as "tale" is a homophone, not an error.
