@@ -65,7 +65,8 @@ export const ratHead = (expr: RatExpr, fur: Fur, v = 0) => {
     g.fillStyle = "#fff"; g.beginPath(); g.arc(x - 8, ey - 8, 7, 0, 7); g.fill();
     if (expr === "deadpan" || expr === "smug" || expr === "grin") {
       const lid = expr === "grin" ? 0.25 : 0.5;
-      g.fillStyle = base; g.beginPath(); g.moveTo(x - 42, ey - 56); g.lineTo(x + 42, ey - 56); g.lineTo(x + 42, ey - 34 + lid * 40); g.quadraticCurveTo(x, ey - 38 + lid * 44, x - 42, ey - 34 + lid * 40); g.closePath(); g.fill();
+      g.save(); g.beginPath(); g.ellipse(x, ey, 27, 33, 0, 0, 7); g.clip();   // the lid only covers the eye itself (no visible box)
+      g.fillStyle = base; g.beginPath(); g.moveTo(x - 42, ey - 56); g.lineTo(x + 42, ey - 56); g.lineTo(x + 42, ey - 34 + lid * 40); g.quadraticCurveTo(x, ey - 38 + lid * 44, x - 42, ey - 34 + lid * 40); g.closePath(); g.fill(); g.restore();
       inkStroke(g, [[x - 42, ey - 34 + lid * 40], [x, ey - 38 + lid * 44], [x + 42, ey - 34 + lid * 40]], 9, 7 + s);
     }
   };
