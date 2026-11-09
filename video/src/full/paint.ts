@@ -9,7 +9,7 @@ export type Look = {
   shirt: string; shirtShade: string; shirtHi: string;
   tie?: string; tie2?: string; collar?: string; vest?: string;
   pants: string;
-  hat?: "top" | "bowler" | "cap" | "balaclava" | "nightcap" | "pith" | "conical" | "none"; hatColor?: string; hatBand?: string;
+  hat?: "top" | "bowler" | "cap" | "balaclava" | "nightcap" | "pith" | "conical" | "diver" | "none"; hatColor?: string; hatBand?: string;
   glasses?: boolean; mustache?: boolean; stripes?: boolean;
 };
 
@@ -195,6 +195,15 @@ export const headTexture = (look: Look, expr: Expr, key: string, v = 0) => {
     g.restore();
     g.lineWidth = 12; g.strokeStyle = INKD; g.beginPath(); g.moveTo(ax, ay); g.lineTo(cx + bx, by); g.quadraticCurveTo(cx, by + 46, cx - bx, by); g.closePath(); g.stroke();
     g.lineWidth = 7; g.beginPath(); g.moveTo(cx - rx * 0.9, by + 14); g.quadraticCurveTo(cx - rx * 0.95, cy + ry * 0.3, cx - rx * 0.55, cy + ry * 0.78); g.moveTo(cx + rx * 0.9, by + 14); g.quadraticCurveTo(cx + rx * 0.95, cy + ry * 0.3, cx + rx * 0.55, cy + ry * 0.78); g.stroke();
+  } else if (look.hat === "diver") {
+    const br = "#c99a3a";
+    g.beginPath(); g.ellipse(cx, cy - ry * 0.5, rx * 1.2, ry * 0.85, 0, Math.PI, 0); g.fillStyle = br; g.fill(); g.lineWidth = 13; g.strokeStyle = INKD; g.stroke();
+    g.fillStyle = "rgba(255,240,190,0.4)"; g.beginPath(); g.ellipse(cx - rx * 0.4, cy - ry * 1.05, 70, 24, -0.5, 0, 7); g.fill();
+    g.beginPath(); g.ellipse(cx, cy, rx * 0.98, ry * 0.96, 0, 0, 7); g.lineWidth = 50; g.strokeStyle = br; g.stroke();
+    g.beginPath(); g.ellipse(cx, cy, rx * 0.98 + 25, ry * 0.96 + 25, 0, 0, 7); g.lineWidth = 11; g.strokeStyle = INKD; g.stroke();
+    g.beginPath(); g.ellipse(cx, cy, rx * 0.98 - 25, ry * 0.96 - 25, 0, 0, 7); g.lineWidth = 11; g.stroke();
+    g.fillStyle = "#8a6420"; for (let i = 0; i < 14; i++) { const a = (i / 14) * Math.PI * 2; g.beginPath(); g.arc(cx + Math.cos(a) * rx * 0.98, cy + Math.sin(a) * ry * 0.96, 7, 0, 7); g.fill(); }
+    g.fillStyle = "rgba(180,220,255,0.28)"; g.beginPath(); g.ellipse(cx, cy, rx * 0.98 - 25, ry * 0.96 - 25, 0, 0, 7); g.fill();
   } else if (look.hat === "balaclava") {
     g.save(); path(g, outline); g.fillStyle = "#1b1b27"; g.fill(); g.restore();
     g.fillStyle = look.skin;
@@ -352,5 +361,10 @@ export const LOOKS: Record<string, Look> = {
   catcher: { skin: "#f8efe6", skinShade: "#c6b4cc", hair: "#2a1e20", hairHi: "#5a4448", hairStyle: "fringe", shirt: "#8a6a44", shirtShade: "#5e4628", shirtHi: "#b08e62", pants: "#2e2a30", hat: "conical", hatColor: "#dcb866", collar: "#8a6a44" },
   farmer: { skin: "#f8efe6", skinShade: "#c6b4cc", hair: "#2a1e20", hairHi: "#5a4448", hairStyle: "fringe", shirt: "#5a8a4a", shirtShade: "#3a6030", shirtHi: "#86b872", pants: "#3a3236", hat: "conical", hatColor: "#e3c474", collar: "#5a8a4a" },
   vendor: { skin: "#f8efe6", skinShade: "#c6b4cc", hair: "#2a1e20", hairHi: "#5a4448", hairStyle: "fringe", shirt: "#c8503a", shirtShade: "#8a3220", shirtHi: "#e8806a", pants: "#3a3236", hat: "conical", hatColor: "#d6b062", collar: "#c8503a" },
+  diver: { skin: "#f8efe6", skinShade: "#c6b4cc", hair: "#3d2a22", hairHi: "#7d5a40", hairStyle: "fringe", shirt: "#2b5fa8", shirtShade: "#1b3d78", shirtHi: "#5a8ad0", tie: undefined, pants: "#3a3a46", hat: "diver", collar: "#2b5fa8" },
+  scientist: { skin: "#f8efe6", skinShade: "#c6b4cc", hair: "#8a8a92", hairHi: "#d4d4dc", hairStyle: "side", shirt: "#f5f4ee", shirtShade: "#c0c0c8", shirtHi: "#ffffff", tie: "#2f8a6a", tie2: "rgba(255,255,255,.4)", pants: "#3a3a46", glasses: true, collar: "#ffffff" },
+  greek: { skin: "#f4e6d8", skinShade: "#c6b4cc", hair: "#3d2a22", hairHi: "#7d5a40", hairStyle: "fringe", shirt: "#f4ead2", shirtShade: "#cdbf9a", shirtHi: "#ffffff", tie: undefined, pants: "#cdbf9a", collar: "#d9a82c" },
+  craftsman: { skin: "#f4e6d8", skinShade: "#c6b4cc", hair: "#9a9aa2", hairHi: "#dcdce4", hairStyle: "bald", shirt: "#8a5a34", shirtShade: "#5e3a1e", shirtHi: "#b08050", vest: "#5a3a1e", pants: "#4a3a3a", mustache: true, collar: "#8a5a34" },
+  clerk: { skin: "#f8efe6", skinShade: "#c6b4cc", hair: "#3b2b2f", hairHi: "#7a5a50", hairStyle: "side", shirt: "#7a8a6a", shirtShade: "#4f5f44", shirtHi: "#a0b090", tie: "#8a3b2f", tie2: "rgba(255,210,160,.5)", pants: "#4a4a3a", glasses: true, vest: "#5a6a4a" },
   baker: { skin: "#f8efe6", skinShade: "#c6b4cc", hair: "#5a3a2a", hairHi: "#9a6a4a", hairStyle: "bald", shirt: "#f4f0e8", shirtShade: "#c0b8a8", shirtHi: "#ffffff", tie: undefined, pants: "#4a3a3a", hat: "none" },
 };

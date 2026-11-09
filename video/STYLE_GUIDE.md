@@ -177,7 +177,6 @@ Reference implementation: `video/src/rats/` (scenes), `video/src/full/` (charact
 ## 4. Audio
 - Narration: Kokoro, **no pitch shifting or phase-vocoder (it makes echo and a sinking tone)**. Use ONE voice with a near-constant speed; emotion comes from wording, punctuation, pauses and small gain changes. Check the median pitch of each shot stays within about 1 semitone.
 - **Voice choice:** the user found `am_liam` (about 127 Hz) too deep. Current voice is **`am_eric` (about 162 Hz): lighter, friendly, inviting.** Keep it unless the user asks otherwise.
-- **Clarity chain (required):** raw Kokoro `am_eric` was clean but muffled (presence 2-5 kHz = 0.036, air above 5 kHz = 0.005), which the user heard as "hushy, not clear". Always run `projects/hanoi-rats/clarify_voice.py` on the narration before mixing (real polyphase upsample, gentle harmonic air, +2 dB at 3.3 kHz, light compression). Result: presence about 0.09, air about 0.013, HNR unchanged (no added hiss). Never use an exciter filter on a 24 kHz file (it silences it).
 - Original score that changes with the story, sound effects on every action, about -14 LUFS, music about 10 dB under the voice and ducked.
 
 ## 5. QA before telling the user it is ready
@@ -195,8 +194,11 @@ The user went back to the **version 5 voice: `am_liam`**, steady, no pitch shift
 (ta-ding ending, pause before and after "You see,", the long-street visuals). `af_sarah` (sample #8) was liked as a sample, but the user chose to keep v5 for this video.
 Do not re-apply `clarify_voice.py` or change the narrator for this video unless asked.
 
-## Update (latest): "Cut Every Tail" narrator = Chatterbox "B"
-The user chose **Chatterbox sample B** (exaggeration 0.4, cfg_weight 0.35) for the rat video: expressive but calm, not "zesty".
-What fixed "zesty": no question mark on "Why would anyone do that" (a rising ending sounds sassy), no "!" on "one cent for every rat tail", low exaggeration, and each phrase generated separately with its own pause.
-Pipeline: `projects/hanoi-rats/phrases.py` -> `chatterbox_gen.py` (run in the Chatterbox venv, CPU is fine: about 20 s per phrase) -> `assemble_chatterbox.py` (equal loudness per phrase, pauses) -> whisper word timings -> `make_audio.py`.
-Check every phrase by transcription before use. "tail" heard as "tale" is a homophone, not an error.
+
+## FINAL narrator rule (user decision, overrides every earlier voice note)
+- **Narrator for ALL videos: Kokoro `am_liam`, the "version 5" voice.** One steady voice, speed varies only slightly, NO pitch shifting, NO clarity/EQ chain, NO other TTS tools.
+- **Chatterbox was tried and removed** (user: "so zesty"). Do not reinstall it. `af_sarah` (sample #8) and other voices were samples only.
+- If the user asks for "deeper": the only clearly deeper Kokoro voice is British (`bm_lewis`, about 83 Hz). The user does not want other accents, so keep `am_liam` (about 122 Hz) unless told otherwise.
+- Delivery: phrase by phrase, no "?" or "!" on lines that would sound sassy; pause ~1 s before "You see,", say it as its own phrase, pause ~0.4 s after. End every video with the "ta-ding" right after the last word.
+- Pipeline: `projects/<video>/make_voice.py` -> whisper word timings (fix "You'll see" -> "You see,", "x -rays" -> "X-rays" in captions) -> `make_audio.py` -> `loudnorm` -> `public/<video>_mix.wav`.
+- For a more human sound the user can record their own voice or use a paid service; offer it but do not push it.

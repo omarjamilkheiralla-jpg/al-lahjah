@@ -32,3 +32,8 @@ npm run transcribe -- public/narration.mp3 en   # auto-captions (whisper.cpp) ->
 - Composition id `Rats` (`src/rats/`). Script, shot table, facts and sources: `projects/hanoi-rats/SCRIPT.md`.
 - `render_rats.bat` renders the final video; `test_render_rats.bat` renders the first 3 seconds.
 - Voice: `projects/hanoi-rats/make_voice.py` (Kokoro). Score + SFX + mix: `projects/hanoi-rats/make_audio.py`. Timings: `src/rats/timing.json`.
+
+## "The Computer in the Shipwreck" (Antikythera, about 66 s)
+- Composition id `Anti` (`src/anti/`). Script, shot table, facts and sources: `projects/antikythera/SCRIPT.md`.
+- Render: `render_anti.bat` (or `npx remotion render src/index.ts Anti out\antikythera.mp4 ...`).
+- Voice: `projects/antikythera/make_voice.py` (Kokoro am_liam). Score + SFX + mix: `projects/antikythera/make_audio.py`.
