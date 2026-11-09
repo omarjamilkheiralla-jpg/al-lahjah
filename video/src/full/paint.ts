@@ -196,14 +196,14 @@ export const headTexture = (look: Look, expr: Expr, key: string, v = 0) => {
     g.lineWidth = 12; g.strokeStyle = INKD; g.beginPath(); g.moveTo(ax, ay); g.lineTo(cx + bx, by); g.quadraticCurveTo(cx, by + 46, cx - bx, by); g.closePath(); g.stroke();
     g.lineWidth = 7; g.beginPath(); g.moveTo(cx - rx * 0.9, by + 14); g.quadraticCurveTo(cx - rx * 0.95, cy + ry * 0.3, cx - rx * 0.55, cy + ry * 0.78); g.moveTo(cx + rx * 0.9, by + 14); g.quadraticCurveTo(cx + rx * 0.95, cy + ry * 0.3, cx + rx * 0.55, cy + ry * 0.78); g.stroke();
   } else if (look.hat === "diver") {
-    const br = "#c99a3a";
-    g.beginPath(); g.ellipse(cx, cy - ry * 0.5, rx * 1.2, ry * 0.85, 0, Math.PI, 0); g.fillStyle = br; g.fill(); g.lineWidth = 13; g.strokeStyle = INKD; g.stroke();
-    g.fillStyle = "rgba(255,240,190,0.4)"; g.beginPath(); g.ellipse(cx - rx * 0.4, cy - ry * 1.05, 70, 24, -0.5, 0, 7); g.fill();
-    g.beginPath(); g.ellipse(cx, cy, rx * 0.98, ry * 0.96, 0, 0, 7); g.lineWidth = 50; g.strokeStyle = br; g.stroke();
-    g.beginPath(); g.ellipse(cx, cy, rx * 0.98 + 25, ry * 0.96 + 25, 0, 0, 7); g.lineWidth = 11; g.strokeStyle = INKD; g.stroke();
-    g.beginPath(); g.ellipse(cx, cy, rx * 0.98 - 25, ry * 0.96 - 25, 0, 0, 7); g.lineWidth = 11; g.stroke();
-    g.fillStyle = "#8a6420"; for (let i = 0; i < 14; i++) { const a = (i / 14) * Math.PI * 2; g.beginPath(); g.arc(cx + Math.cos(a) * rx * 0.98, cy + Math.sin(a) * ry * 0.96, 7, 0, 7); g.fill(); }
-    g.fillStyle = "rgba(180,220,255,0.28)"; g.beginPath(); g.ellipse(cx, cy, rx * 0.98 - 25, ry * 0.96 - 25, 0, 0, 7); g.fill();
+    const br = "#c99a3a", R = Math.max(rx, ry);
+    // single clean helmet: brass shell, glass window, riveted rim
+    g.beginPath(); g.ellipse(cx, cy - ry * 0.06, rx * 1.2, ry * 1.2, 0, 0, Math.PI * 2);
+    const bg2 = g.createRadialGradient(cx - rx * 0.5, cy - ry * 0.7, 20, cx, cy, R * 1.3); bg2.addColorStop(0, "#f4d27a"); bg2.addColorStop(0.5, br); bg2.addColorStop(1, "#a8782a");
+    g.fillStyle = bg2; g.fill(); g.lineWidth = 15; g.strokeStyle = INKD; g.stroke();
+    g.fillStyle = "#8a6420"; for (let i = 0; i < 16; i++) { const aa = (i / 16) * Math.PI * 2; g.beginPath(); g.arc(cx + Math.cos(aa) * rx * 1.06, cy - ry * 0.06 + Math.sin(aa) * ry * 1.06, 7, 0, 7); g.fill(); }
+    g.beginPath(); g.ellipse(cx, cy, rx * 0.93, ry * 0.93, 0, 0, Math.PI * 2); g.fillStyle = look.skin; g.fill(); g.lineWidth = 13; g.strokeStyle = INKD; g.stroke();
+    g.fillStyle = "rgba(255,248,210,0.55)"; g.beginPath(); g.ellipse(cx - rx * 0.75, cy - ry * 0.95, 60, 18, -0.6, 0, 7); g.fill();
   } else if (look.hat === "balaclava") {
     g.save(); path(g, outline); g.fillStyle = "#1b1b27"; g.fill(); g.restore();
     g.fillStyle = look.skin;

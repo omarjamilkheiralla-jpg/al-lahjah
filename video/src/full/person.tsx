@@ -109,7 +109,7 @@ export const Person2: React.FC<PersonProps> = ({
   );
 
   return (
-    <group position={position} rotation={[0, yaw, 0]} scale={scale}>
+    <group position={position} rotation={[0, Math.sign(yaw) * Math.min(Math.abs(yaw) > 0.3 ? 0.18 : Math.abs(yaw), 0.3), 0]} scale={[scale * (Math.abs(yaw) > 0.3 ? Math.sign(yaw) : 1), scale, scale]}>
       {/* legs */}
       <group position={[0, bob * 0.3, 0]}>
         {[-1, 1].map((side) => {

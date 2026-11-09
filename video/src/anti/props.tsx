@@ -38,21 +38,28 @@ export const AT = () =>
       g.fillStyle = "#efdfb6"; g.fillRect(0, 0, w, h);
       blur(g, 14, () => { const r = rng(2); for (let i = 0; i < 30; i++) { g.fillStyle = `rgba(120,80,30,${0.05 + r() * 0.07})`; g.beginPath(); g.ellipse(r() * w, r() * h, 50 + r() * 90, 20 + r() * 40, 0, 0, 7); g.fill(); } });
       g.strokeStyle = INKD; g.lineWidth = 10; g.strokeRect(14, 14, w - 28, h - 28);
-      g.lineWidth = 12; g.lineCap = "round"; g.beginPath(); g.moveTo(80, 300); g.lineTo(w - 80, 300); g.stroke();
-      g.fillStyle = "#c99a3a"; g.beginPath(); g.arc(150, 300, 36, 0, 7); g.fill(); g.lineWidth = 8; g.stroke();
-      g.fillStyle = "#6a7488"; g.beginPath(); g.arc(w - 150, 300, 36, 0, 7); g.fill(); g.stroke();
-      g.textAlign = "center"; g.fillStyle = INKD; g.font = "400 78px 'Lilita One', Impact, sans-serif"; g.fillText("THIS MACHINE", 210, 200); g.font = "400 66px 'Lilita One', Impact, sans-serif"; g.fillText("CLOCKS", w - 150, 200);
-      g.strokeStyle = "#c8403a"; g.lineWidth = 12; g.beginPath(); g.moveTo(240, 390); g.lineTo(w - 230, 390); g.moveTo(240, 360); g.lineTo(240, 420); g.moveTo(w - 230, 360); g.lineTo(w - 230, 420); g.stroke();
-      g.fillStyle = "#c8403a"; g.font = "400 84px 'Lilita One', Impact, sans-serif"; g.fillText("OVER 1,000 YEARS", w / 2, 470);
+      g.lineWidth = 12; g.lineCap = "round"; g.beginPath(); g.moveTo(80, 250); g.lineTo(w - 80, 250); g.stroke();
+      g.fillStyle = "#c99a3a"; g.beginPath(); g.arc(150, 250, 36, 0, 7); g.fill(); g.lineWidth = 8; g.stroke();
+      g.fillStyle = "#6a7488"; g.beginPath(); g.arc(w - 150, 250, 36, 0, 7); g.fill(); g.stroke();
+      g.textAlign = "center"; g.fillStyle = INKD; g.font = "400 78px 'Lilita One', Impact, sans-serif"; g.fillText("THIS MACHINE", 210, 150); g.font = "400 66px 'Lilita One', Impact, sans-serif"; g.fillText("CLOCKS", w - 150, 150);
+      g.strokeStyle = "#c8403a"; g.lineWidth = 12; g.beginPath(); g.moveTo(240, 330); g.lineTo(w - 230, 330); g.moveTo(240, 305); g.lineTo(240, 355); g.moveTo(w - 230, 305); g.lineTo(w - 230, 355); g.stroke();
+      g.fillStyle = "#c8403a"; g.font = "400 80px 'Lilita One', Impact, sans-serif"; g.fillText("OVER 1,000 YEARS", w / 2, 425);
       grain(g, w, h, 12, 1200, 0.04);
     }),
     xray: cv(512, 384, (g, w, h) => {
       g.fillStyle = "#04141c"; g.fillRect(0, 0, w, h);
-      const gr = g.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, 230); gr.addColorStop(0, "rgba(120,255,230,.35)"); gr.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = gr; g.fillRect(0, 0, w, h);
-      g.strokeStyle = "#7affe0"; g.lineWidth = 5;
-      for (const [cx, cy, R, n] of [[190, 190, 84, 24], [330, 160, 56, 16], [300, 270, 44, 12], [120, 290, 40, 12]] as const) {
-        g.beginPath(); for (let i = 0; i < n * 2; i++) { const a = (i / (n * 2)) * Math.PI * 2, rr = i % 2 ? R * 0.84 : R; g.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); } g.closePath(); g.stroke(); g.beginPath(); g.arc(cx, cy, R * 0.25, 0, 7); g.stroke();
-      }
+      const bgG = g.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, 260); bgG.addColorStop(0, "rgba(90,230,200,.32)"); bgG.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = bgG; g.fillRect(0, 0, w, h);
+      const gear = (cx: number, cy: number, R: number, n: number, rot: number) => {
+        g.save(); g.translate(cx, cy); g.rotate(rot);
+        g.beginPath(); for (let i = 0; i < n; i++) { const a0 = (i / n) * Math.PI * 2, st = (Math.PI * 2) / n; const pts = [[a0, R * 0.82], [a0 + st * 0.14, R], [a0 + st * 0.5, R], [a0 + st * 0.62, R * 0.82]]; pts.forEach(([aa, rr], k) => { const x = Math.cos(aa) * rr, y = Math.sin(aa) * rr; (i === 0 && k === 0) ? g.moveTo(x, y) : g.lineTo(x, y); }); }
+        g.closePath(); const fg = g.createRadialGradient(0, 0, R * 0.1, 0, 0, R); fg.addColorStop(0, "rgba(120,255,225,.5)"); fg.addColorStop(1, "rgba(40,170,160,.55)"); g.fillStyle = fg; g.fill();
+        g.lineJoin = "round"; g.lineWidth = 7; g.strokeStyle = "#a8fff0"; g.stroke();
+        g.globalCompositeOperation = "destination-out"; for (let k = 0; k < 5; k++) { g.beginPath(); g.arc(0, 0, R * 0.62, (k / 5) * Math.PI * 2 + 0.25, ((k + 1) / 5) * Math.PI * 2 - 0.25); g.arc(0, 0, R * 0.3, ((k + 1) / 5) * Math.PI * 2 - 0.25, (k / 5) * Math.PI * 2 + 0.25, true); g.closePath(); g.fill(); }
+        g.beginPath(); g.arc(0, 0, R * 0.14, 0, 7); g.fill(); g.globalCompositeOperation = "source-over";
+        g.beginPath(); g.arc(0, 0, R * 0.2, 0, 7); g.lineWidth = 6; g.strokeStyle = "#a8fff0"; g.stroke();
+        g.restore();
+      };
+      gear(190, 185, 118, 22, 0.1); gear(372, 150, 76, 14, 0.3); gear(338, 288, 60, 11, 0.5); gear(100, 300, 54, 10, 0.2);
       g.fillStyle = "rgba(255,255,255,.05)"; for (let y = 0; y < h; y += 6) g.fillRect(0, y, w, 2);
     }),
     letters: cv(512, 256, (g, w, h) => {

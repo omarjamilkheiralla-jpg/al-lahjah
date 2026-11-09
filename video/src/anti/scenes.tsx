@@ -206,13 +206,13 @@ export const A6Conflict: React.FC<SceneProps> = ({ t, cam }) => {
       <SceneEnv bg="#5a3a22" fog={["#5a3a22", 16, 60]} />
       <Lights color="#ffdca0" intensity={1.8} pos={[-5, 9, 9]} hemi={["#ffe8c0", "#8a5a3a", 1.2]} shadowSize={12} extra={<pointLight position={[0, 4, 4]} intensity={10} color="#ffd890" distance={14} />} />
       <Room tex={x.wallWarm} w={26} /><Floor tex={x.floor} z={3} w={26} d={14} />
-      <group position={[0, 4.2, -2.4]}>
+      <group position={[0, 5.4, -2.4]}>
         <Ink geometry={box(15.4, 8.0, 0.2)} material={toon("#3a2a1a")} px={2.4} />
         <mesh position={[0, 0, 0.12]} material={tl}><planeGeometry args={[14.8, 7.4]} /></mesh>
         {[[-7.2, 3.6], [7.2, 3.6], [-7.2, -3.6], [7.2, -3.6]].map(([px, py], i) => <mesh key={i} position={[px, py, 0.16]}><circleGeometry args={[0.16, 10]} /><meshBasicMaterial color="#c8403a" /></mesh>)}
       </group>
-      <P look="scientist" p={[6.2, 0, 1.4]} cam={cam} t={t} s={1.7} expr={emo(t, [[0, "think"], [2.0, "worried"], [3.4, "shock"]])} pose={t > 1.4 ? "point" : "hold"} seed={9} emph={t > 3.4 ? 1 : 0} />
-      <P look="clerk" p={[-6.4, 0, 1.6]} cam={cam} t={t} s={1.5} expr="shock" pose="cross" seed={10} />
+      <P look="scientist" p={[6.4, 0, 1.6]} cam={cam} t={t} s={1.5} expr={emo(t, [[0, "think"], [2.0, "worried"], [3.4, "shock"]])} pose={t > 1.4 ? "point" : "hold"} seed={9} emph={t > 3.4 ? 1 : 0} />
+      <P look="clerk" p={[-6.6, 0, 1.8]} cam={cam} t={t} s={1.3} expr="shock" pose="cross" seed={10} />
       <Plant p={[-11, 0, -1.4]} s={1.9} t={t} /><Plant p={[11, 0, -1.4]} s={1.9} t={t} />
       <Dust t={t} />
     </group>
@@ -307,7 +307,7 @@ export const A9So: React.FC<SceneProps> = ({ t, cam }) => {
       <Machine p={[1.9, 2.35, 0.3]} s={1.0} t={t} crank hand={t > 5.4 ? (t - 5.4) * 5 : 0} />
       {[[-2.8, 0.2], [3.0, 0.5], [-1.9, 0.9]].map(([cx, cz], i) => <Candle key={i} p={[cx, 1.55, cz]} t={t} seed={i + 1} h={0.5 + i * 0.1} />)}
       {[0, 1, 2].map((i) => <Gear key={i} p={[-2.2 + i * 0.7, 1.6, 1.0]} r={0.24} teeth={10} depth={0.06} rot={[-Math.PI / 2, 0, i]} color="#c99a3a" />)}
-      <P look="craftsman" p={[-0.7, 0, -0.7]} cam={cam} t={t} s={1.7} expr={emo(t, [[0, "think"], [3.0, "proud"], [5.4, "grin"]])} pose={t > 5.2 ? "point" : "hold"} seed={15} tint="#ffe2b0" />
+      <P look="craftsman" p={[-0.9, 0, 2.0]} cam={cam} t={t} s={1.7} expr={emo(t, [[0, "think"], [3.0, "proud"], [5.4, "grin"]])} pose={t > 5.2 ? "point" : "hold"} seed={15} tint="#ffe2b0" />
       <Dust t={t} />
     </group>
   );
