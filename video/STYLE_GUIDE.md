@@ -202,3 +202,10 @@ Do not re-apply `clarify_voice.py` or change the narrator for this video unless 
 - Delivery: phrase by phrase, no "?" or "!" on lines that would sound sassy; pause ~1 s before "You see,", say it as its own phrase, pause ~0.4 s after. End every video with the "ta-ding" right after the last word.
 - Pipeline: `projects/<video>/make_voice.py` -> whisper word timings (fix "You'll see" -> "You see,", "x -rays" -> "X-rays" in captions) -> `make_audio.py` -> `loudnorm` -> `public/<video>_mix.wav`.
 - For a more human sound the user can record their own voice or use a paid service; offer it but do not push it.
+
+## Zero tolerance: stray lines and seams (user, final)
+No thin wavy lines, hard texture stripes, tile seams, spiky outlines or faceted shards anywhere. Causes found and rules:
+- Ground textures must be seamless (draw blobs wrapped at the tile edges) and must not contain ripple/stroke lines.
+- Organic meshes (rocks, lumps) must be welded (`mergeVertices`) with smooth normals before outlining; never outline a non-indexed displaced icosahedron (it spikes).
+- Wrapped UVs make seams: use a planar projection for blob textures.
+- Check every shot at full resolution (crop the ground and the props), not just thumbnails.
