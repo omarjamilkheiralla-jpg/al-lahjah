@@ -1,6 +1,15 @@
 import * as THREE from "three";
 import React, { useMemo } from "react";
 import { Ink, box, toon, rng, clamp, woodTexture } from "../hotel/kit";
+import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+
+/** smooth, welded blob geometry (no flat facets, no outline spikes) */
+const smoothBlob = (detail: number, deform: (v: THREE.Vector3, i: number) => THREE.Vector3) => {
+  let g: THREE.BufferGeometry = new THREE.IcosahedronGeometry(1, detail); g.deleteAttribute("uv"); g.deleteAttribute("normal"); g = mergeVertices(g, 1e-4);
+  const pos = g.attributes.position; for (let i = 0; i < pos.count; i++) { const v = deform(new THREE.Vector3().fromBufferAttribute(pos, i), i); pos.setXYZ(i, v.x, v.y, v.z); }
+  const uv = new Float32Array(pos.count * 2); for (let i = 0; i < pos.count; i++) { const v = new THREE.Vector3().fromBufferAttribute(pos, i); uv[i * 2] = v.x * 0.5 + 0.5; uv[i * 2 + 1] = v.y * 0.5 + 0.5; }   // planar projection: no wrap seam
+  g.setAttribute("uv", new THREE.BufferAttribute(uv, 2)); g.computeVertexNormals(); return g;
+};
 import { INKD } from "../full/paint";
 import { Glow } from "../full/nature";
 
@@ -22,10 +31,9 @@ export const AT = () =>
     }, true),
     sand: cv(512, 512, (g, w, h) => {
       const r = rng(9); g.fillStyle = "#d8c79a"; g.fillRect(0, 0, w, h);
-      blur(g, 16, () => { for (let i = 0; i < 40; i++) { g.fillStyle = ["#c8b585", "#e6d6a8", "#b9a674"][i % 3]; g.beginPath(); g.ellipse(r() * w, r() * h, 60 + r() * 90, 20 + r() * 40, r() * 3, 0, 7); g.fill(); } });
-      g.strokeStyle = "rgba(120,100,60,.25)"; g.lineWidth = 5; for (let y = 24; y < h; y += 44) { g.beginPath(); g.moveTo(0, y); for (let x = 0; x <= w; x += 40) g.lineTo(x, y + Math.sin(x * 0.05 + y) * 6); g.stroke(); }
-      for (let i = 0; i < 160; i++) { g.fillStyle = r() < 0.5 ? "#f0e6c4" : "#9a8a5a"; g.beginPath(); g.arc(r() * w, r() * h, 1.5 + r() * 3, 0, 7); g.fill(); }
-      grain(g, w, h, 9, 1000, 0.04);
+      blur(g, 22, () => { for (let i = 0; i < 46; i++) { const x = r() * w, y = r() * h, rx = 50 + r() * 90, ry = 20 + r() * 50, c = ["#c8b585", "#e6d6a8", "#b9a674", "#d2bf90"][i % 4]; g.fillStyle = c; for (const ox of [-w, 0, w]) for (const oy of [-h, 0, h]) { g.beginPath(); g.ellipse(x + ox, y + oy, rx, ry, 0.3, 0, 7); g.fill(); } } });
+      for (let i = 0; i < 90; i++) { g.fillStyle = r() < 0.5 ? "rgba(240,230,196,.7)" : "rgba(130,110,70,.35)"; const x = r() * w, y = r() * h, rr = 1.2 + r() * 2.4; for (const ox of [-w, 0, w]) { g.beginPath(); g.arc(x + ox, y, rr, 0, 7); g.fill(); } }
+      grain(g, w, h, 9, 700, 0.03);
     }, true),
     sea: cv(512, 512, (g, w, h) => {
       const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, "#4fa8d8"); gr.addColorStop(1, "#2a7fb8"); g.fillStyle = gr; g.fillRect(0, 0, w, h);
@@ -87,11 +95,11 @@ export const Gear: React.FC<{ p?: [number, number, number]; r?: number; teeth?: 
 
 export const Lump: React.FC<{ p?: [number, number, number]; s?: number; rot?: [number, number, number]; gear?: boolean; t?: number }> = ({ p = [0, 0, 0], s = 1, rot = [0, 0, 0], gear = true, t = 0 }) => {
   const x = AT();
-  const geo = useMemo(() => { const g = new THREE.IcosahedronGeometry(1, 3); const r = rng(8); const pos = g.attributes.position; for (let i = 0; i < pos.count; i++) { const v = new THREE.Vector3().fromBufferAttribute(pos, i); const k = 0.82 + 0.28 * Math.sin(v.x * 3.1 + v.y * 2.3) * Math.cos(v.z * 2.7) + (r() - 0.5) * 0.04; v.multiplyScalar(k); pos.setXYZ(i, v.x * 1.25, v.y * 0.8, v.z); } g.computeVertexNormals(); return g; }, []);
-  const mat = useMemo(() => { const t2 = x.crust.clone(); t2.needsUpdate = true; t2.repeat.set(2, 2); return toon(t2); }, [x]);
+  const geo = useMemo(() => { const r = rng(8); return smoothBlob(4, (v) => { const k = 0.84 + 0.26 * Math.sin(v.x * 3.1 + v.y * 2.3) * Math.cos(v.z * 2.7) + (r() - 0.5) * 0.02; return new THREE.Vector3(v.x * 1.25 * k, v.y * 0.8 * k, v.z * k); }); }, []);
+  const mat = useMemo(() => { const t2 = x.crust.clone(); t2.needsUpdate = true; t2.repeat.set(1.6, 1.6); return toon(t2); }, [x]);
   return (
     <group position={p} rotation={rot} scale={s}>
-      <Ink geometry={geo} material={mat} px={2.4} />
+      <Ink geometry={geo} material={mat} px={2.0} />
       {gear ? <Gear p={[0.62, 0.26, 0.5]} r={0.3} teeth={14} spin={t * 0.5} rot={[0.5, 0.2, 0.3]} depth={0.1} /> : null}
     </group>
   );
@@ -169,9 +177,9 @@ export const Seaweed: React.FC<{ p: [number, number, number]; t: number; h?: num
 };
 
 export const Rock: React.FC<{ p: [number, number, number]; s?: number; color?: string; seed?: number }> = ({ p, s = 1, color = "#8a8a8a", seed = 1 }) => {
-  const geo = useMemo(() => { const g = new THREE.IcosahedronGeometry(1, 1); const r = rng(seed * 5); const pos = g.attributes.position; for (let i = 0; i < pos.count; i++) { const v = new THREE.Vector3().fromBufferAttribute(pos, i); v.multiplyScalar(0.8 + r() * 0.4); pos.setXYZ(i, v.x, v.y * 0.7, v.z); } g.computeVertexNormals(); return g; }, [seed]);
+  const geo = useMemo(() => { const r = rng(seed * 5); return smoothBlob(3, (v) => { const k = 0.86 + 0.18 * Math.sin(v.x * 2.6 + seed) * Math.cos(v.z * 2.2 + v.y) + (r() - 0.5) * 0.015; return new THREE.Vector3(v.x * k * 1.1, v.y * k * 0.62, v.z * k); }); }, [seed]);
   const m = useMemo(() => toon(color), [color]);
-  return <Ink geometry={geo} material={m} position={p} scale={s} px={2.2} />;
+  return <Ink geometry={geo} material={m} position={p} scale={s} px={2.0} />;
 };
 
 export const Sea: React.FC<{ t: number; y?: number; size?: [number, number]; z?: number }> = ({ t, y = 0, size = [260, 200], z = -60 }) => {
