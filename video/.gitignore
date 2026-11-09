@@ -3,3 +3,4 @@ out
 build
 .remotion
 whisper.cpp
+__pycache__/
