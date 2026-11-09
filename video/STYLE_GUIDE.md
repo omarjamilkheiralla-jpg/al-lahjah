@@ -189,3 +189,8 @@ Reference implementation: `video/src/rats/` (scenes), `video/src/full/` (charact
 - **Narrator: `af_sarah`** (user picked sample #8, "friendly female", about 200 Hz). Use it as-is: one steady voice, no pitch shifting, no clarity chain unless asked.
 - **Ending "ta-ding":** every video ends with the same short sparkle right after the last spoken word: a quick marimba "ta" (about 0.12 s after the word) and then a bright bell/marimba "-ding" arpeggio with a soft pad (about 0.36 s after). The video runs about 1.5 s past the last word to let it ring. Implemented in `projects/hanoi-rats/make_audio.py` (`END`).
 - **"You see," pause rule:** always stop before "You see" (about 1 s of silence after the previous line), then say "You see," as its own beat and stop again (about 0.35 s) before the explanation. It must never run on into the next words.
+
+## Update (latest): narrator for "Cut Every Tail" = version 5 voice
+The user went back to the **version 5 voice: `am_liam`**, steady, no pitch shifting, NO clarity chain and no extra processing, with the newer details kept
+(ta-ding ending, pause before and after "You see,", the long-street visuals). `af_sarah` (sample #8) was liked as a sample, but the user chose to keep v5 for this video.
+Do not re-apply `clarify_voice.py` or change the narrator for this video unless asked.
