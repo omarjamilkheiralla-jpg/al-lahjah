@@ -6,6 +6,7 @@ import { Avatar } from "./full/Avatar";
 import { RatsFull, RATS_TOTAL, FPS as RATS_FPS } from "./rats/RatsFull";
 import { AntiFull, ANTI_TOTAL, FPS as ANTI_FPS } from "./anti/AntiFull";
 import { Thumb } from "./rats/Thumb";
+import { EmuFull, EMU_TOTAL, FPS as EMU_FPS } from "./emu/EmuFull";
 
 export const FPS = 30;
 
@@ -27,6 +28,7 @@ export const Root: React.FC = () => {
       <Composition id="Anti" component={AntiFull} durationInFrames={Math.ceil(ANTI_TOTAL * ANTI_FPS)} fps={ANTI_FPS} width={1080} height={1920} defaultProps={{ captions: true, audio: true }} />
       <Composition id="ThumbRatsV" component={Thumb} durationInFrames={1} fps={30} width={1080} height={1920} defaultProps={{ w: 1080, h: 1920 }} />
       <Composition id="ThumbRatsH" component={Thumb} durationInFrames={1} fps={30} width={1280} height={720} defaultProps={{ w: 1280, h: 720 }} />
+      <Composition id="Emu" component={EmuFull} durationInFrames={Math.ceil(EMU_TOTAL * EMU_FPS)} fps={EMU_FPS} width={1080} height={1920} defaultProps={{ captions: true, audio: true }} />
       {/* the full video: "How Chicago Lifted Itself" */}
       <Composition id="Full" component={Full} durationInFrames={Math.ceil(TOTAL * FPS)} fps={FPS} width={1080} height={1920} defaultProps={{ captions: true, audio: true }} />
       {/* 5-second hook sample: vertical 9:16 */}
