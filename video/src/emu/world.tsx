@@ -18,8 +18,8 @@ const memo = <T,>(k: string, f: () => T): T => { const m = (memo as any).c ??= n
 export const TX = () => memo("tx", () => ({
   dirt: cv(1024, 1024, (g, w, h) => {
     const r = rng(21); g.fillStyle = "#b06a44"; g.fillRect(0, 0, w, h);
-    blur(g, 34, () => { for (let i = 0; i < 90; i++) { g.fillStyle = ["#c07c52", "#a05a38", "#c98e62", "#935034", "#b86f46"][i % 5]; const x = r() * w, y = r() * h, rx = 60 + r() * 140, ry = 30 + r() * 80, rot = r() * 3; wrap(w, h, (ox, oy) => { g.beginPath(); g.ellipse(x + ox, y + oy, rx, ry, rot, 0, 7); g.fill(); }); } });
-    blur(g, 22, () => { for (let i = 0; i < 40; i++) { g.fillStyle = i % 2 ? "rgba(120,60,34,.14)" : "rgba(220,150,100,.12)"; const x = r() * w, y = r() * h, rx = 50 + r() * 90; wrap(w, h, (ox, oy) => { g.beginPath(); g.ellipse(x + ox, y + oy, rx, rx * 0.6, 0, 0, 7); g.fill(); }); } });
+    blur(g, 34, () => { for (let i = 0; i < 90; i++) { g.fillStyle = ["#b97449", "#ae6a42", "#bf7c52", "#a8643f", "#b56f46"][i % 5]; const x = r() * w, y = r() * h, rx = 60 + r() * 140, ry = 30 + r() * 80, rot = r() * 3; wrap(w, h, (ox, oy) => { g.beginPath(); g.ellipse(x + ox, y + oy, rx, ry, rot, 0, 7); g.fill(); }); } });
+    blur(g, 22, () => { for (let i = 0; i < 40; i++) { g.fillStyle = i % 2 ? "rgba(120,60,34,.05)" : "rgba(220,150,100,.05)"; const x = r() * w, y = r() * h, rx = 50 + r() * 90; wrap(w, h, (ox, oy) => { g.beginPath(); g.ellipse(x + ox, y + oy, rx, rx * 0.6, 0, 0, 7); g.fill(); }); } });
     for (let i = 0; i < 90; i++) { const x = r() * w, y = r() * h; g.fillStyle = r() < 0.5 ? "#c9b070" : "#8a7a3e"; wrap(w, h, (ox, oy) => { for (let b = -2; b <= 2; b++) { g.beginPath(); g.moveTo(x + ox + b * 5, y + oy); g.lineTo(x + ox + b * 7 - 3, y + oy - 16 - r() * 8); g.lineTo(x + ox + b * 5 + 4, y + oy); g.fill(); } }); }
     for (let i = 0; i < 460; i++) { const x = r() * w, y = r() * h, rr = 1.6 + r() * 3.6; g.fillStyle = r() < 0.5 ? "#d9a074" : "#6a3320"; wrap(w, h, (ox, oy) => { g.beginPath(); g.arc(x + ox, y + oy, rr, 0, 7); g.fill(); }); }
     grain(g, w, h, 5, 2600, 0.035);
