@@ -82,7 +82,7 @@ export const E4But: React.FC<SceneProps> = ({ t, cam }) => <Standoff t={t} cam={
 /* ============================ 2: drought, the emus and the farmers ============================ */
 export const E2Setup: React.FC<SceneProps> = ({ t, cam }) => {
   const sign = useMemo(() => new THREE.MeshBasicMaterial({ map: signTexture("CAMPION", "#c8403a", "#fff3cf", 576, 128) }), []);
-  const flock = useMemo(() => { const r = rng(17); return Array.from({ length: 26 }, (_, i) => ({ z: -4.5 - (i % 6) * 1.6 + (r() - 0.5), sp: 3.2 + r() * 1.4, off: r() * 40, s: 0.95 + r() * 0.2 })); }, []);
+  const flock = useMemo(() => { const r = rng(17); return Array.from({ length: 36 }, (_, i) => ({ z: i < 26 ? -4.5 - (i % 6) * 1.6 + (r() - 0.5) : 0.2 + ((i - 26) % 5) * 0.7, sp: 3.2 + r() * 1.4, off: r() * 40, s: 0.95 + r() * 0.2 })); }, []);
   const dust = useMemo(() => Array.from({ length: 22 }, (_, i) => ({ x: -14 + (i % 11) * 3, y: 0.5, z: -5 - (i % 5) * 1.6, born: i * 0.35, life: 2.2, s0: 0.8, s1: 2.6, rise: 0.4, op: 0.45 })), []);
   return (
     <group>
@@ -95,7 +95,7 @@ export const E2Setup: React.FC<SceneProps> = ({ t, cam }) => {
         <Scatter count={520} w={36} d={14} z={2} seed={5} size={0.05} colors={["#d9a074", "#8a4a2e", "#e6c8a0", "#6a3320"]} />
         {flock.map((f, i) => { const x = -22 + ((t * f.sp + f.off) % 46); return <E key={i} t={t} cam={cam} p={[x, 0, f.z]} s={f.s} face={-1} mode="run" expr="deadpan" seed={i + 1} shade={i % 2} />; })}
         <Puffs items={dust} t={t} tint="#d9b896" />
-        <E t={t} cam={cam} p={[-6.2, 0, 2.6]} s={1.25} mode="peck" seed={31} /><E t={t} cam={cam} p={[6.2, 0, 1.8]} s={1.2} face={-1} mode="walk" seed={33} expr="smug" />
+        
         <P look="farm" p={[-2.6, 0, 4.2]} cam={cam} t={t} s={1.45} expr={emo(t, [[0, "worried"], [4.2, "shock"], [7.5, "angry"]])} pose={t > 5 ? "cheer" : "point"} seed={11} emph={t > 5 ? 1 : 0} />
         <P look="farm" p={[1.4, 0, 5.4]} cam={cam} t={t} s={1.35} expr={emo(t, [[0, "deadpan"], [5.5, "worried"], [8, "angry"]])} pose="hold" seed={12} yaw={-0.9} lean={0.04} />
         <SunDust t={t} n={36} area={[30, 6, 18]} />
@@ -108,7 +108,7 @@ export const E2Setup: React.FC<SceneProps> = ({ t, cam }) => {
 export const E3Plan: React.FC<SceneProps> = ({ t, cam }) => {
   const x = TX(); const wallP = useMemo(() => toon(tc(wallTexture("#7aa08a", "#4f7a64", 3), 3, 1)), []);
   const wallGeo = useMemo(() => wallWithHoles(20, 7.6, 0.5, [{ x: 4.4, y: 1.5, w: 3.6, h: 3.0 }]), []);
-  const floor = useMemo(() => toon(tc(woodTexture(["#b47a46", "#a86c3c", "#bf8650"], 6, 7), 4, 3)), []);
+  const floor = useMemo(() => toon(tc(cv(512, 512, (g, w, h) => { const r = rng(5); const rows = 8, rh = h / rows; for (let i = 0; i < rows; i++) { const y = i * rh; let x = -r() * 200; while (x < w) { const len = 180 + r() * 220; const c = ["#b47a46", "#ac7040", "#bb824c", "#a86c3c"][Math.floor(r() * 4)]; g.fillStyle = c; g.fillRect(x, y, len, rh); g.fillStyle = "rgba(60,30,12,.55)"; g.fillRect(x, y, 3, rh); for (let k = 0; k < 4; k++) { g.fillStyle = "rgba(70,36,14,.10)"; g.fillRect(x + 6, y + 6 + k * (rh / 4.4), len - 12, 2); } x += len; } g.fillStyle = "rgba(50,24,8,.6)"; g.fillRect(0, y, w, 3); g.fillStyle = "rgba(255,225,170,.12)"; g.fillRect(0, y + 3, w, 3); } }, true), 3, 3)), []);
   const rug = useMemo(() => toon(cv(256, 256, (g, w, h) => { g.fillStyle = "#8a2f2a"; g.fillRect(0, 0, w, h); g.fillStyle = "#c9a24a"; g.fillRect(14, 14, w - 28, h - 28); g.fillStyle = "#8a2f2a"; g.fillRect(28, 28, w - 56, h - 56); g.fillStyle = "#3a5a7a"; g.beginPath(); g.moveTo(w / 2, 56); g.lineTo(w - 56, h / 2); g.lineTo(w / 2, h - 56); g.lineTo(56, h / 2); g.closePath(); g.fill(); }, true)), []);
   const mapMat = useMemo(() => new THREE.MeshBasicMaterial({ map: x.map }), [x]);
   const tx = -8 + t * 3.6;
@@ -240,7 +240,7 @@ export const E7Pivot: React.FC<SceneProps> = ({ t, cam }) => {
 
 /* ============================ 8: round after round ============================ */
 export const E8Esc: React.FC<SceneProps> = ({ t, cam }) => {
-  const bursts = useMemo(() => { const a: { x: number; y: number; z: number; born: number; life: number; s0: number; s1: number; rise: number; op: number }[] = []; [-5, 0, 5].forEach((gx, g) => { for (let i = 0; i < 18; i++) a.push({ x: gx + 1.9 + i * 0.08, y: 1.05, z: 0, born: 0.2 + i * 0.2 + g * 0.07, life: 1.5, s0: 0.2, s1: 1.2, rise: 0.5, op: 0.55 }); }); return a; }, []);
+  const bursts = useMemo(() => { const a: { x: number; y: number; z: number; born: number; life: number; s0: number; s1: number; rise: number; op: number }[] = []; [-5, 0, 5].forEach((gx, g) => { for (let i = 0; i < 18; i++) a.push({ x: gx - 1.3 - i * 0.12, y: 1.05, z: -1.8 - i * 0.16, born: 0.2 + i * 0.2 + g * 0.07, life: 1.5, s0: 0.2, s1: 1.2, rise: 0.5, op: 0.55 }); }); return a; }, []);
   const flashOn = (Math.floor(t * 14) % 2) as number;
   return (
     <group>
@@ -248,8 +248,8 @@ export const E8Esc: React.FC<SceneProps> = ({ t, cam }) => {
         <Wheat x={0} z={-12} w={56} d={9} n={3600} t={t} seed={13} h={1.1} />
         <Scatter count={480} w={34} d={12} z={0} seed={14} size={0.05} colors={["#d9a074", "#8a4a2e", "#e6c8a0", "#6a3320"]} />
         {[-5, 0, 5].map((gx, i) => <React.Fragment key={i}>
-          <LewisGun p={[gx, 0, 0]} rot={0} s={1.25} fire={flashOn} t={t + i * 0.3} />
-          <P look="soldier" p={[gx - 1.3, 0, 0.1]} cam={cam} t={t} s={1.3} expr={emo(t, [[0, "angry"], [2.0, "worried"], [3.2, "deadpan"]])} pose="hold" seed={50 + i} yaw={0.9} emph={t < 2 ? 1 : 0} lean={i === 2 ? Math.min(0.22, t * 0.06) : 0} />
+          <LewisGun p={[gx, 0, 0]} rot={2.2} s={1.25} fire={flashOn} t={t + i * 0.3} />
+          <P look="soldier" p={[gx + 1.0, 0, 1.3]} cam={cam} t={t} s={1.3} expr={emo(t, [[0, "angry"], [2.0, "worried"], [3.2, "deadpan"]])} pose="hold" seed={50 + i} yaw={-0.9} emph={t < 2 ? 1 : 0} />
         </React.Fragment>)}
         <Casings n={t * 15} center={[0, 0, 0.9]} spread={13} seed={3} />
         <Puffs items={bursts} t={t} tint="#efeae0" />

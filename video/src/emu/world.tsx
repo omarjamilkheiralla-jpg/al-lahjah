@@ -77,7 +77,7 @@ export const TX = () => memo("tx", () => ({
     g.fillStyle = "#d9c27a"; for (const [x, y, ww, hh] of [[120, 140, 260, 180], [440, 110, 220, 150], [700, 200, 220, 200], [150, 420, 240, 200], [480, 400, 260, 220]] as const) { g.fillRect(x, y, ww, hh); g.lineWidth = 8; g.strokeStyle = "#8a6a2a"; g.strokeRect(x, y, ww, hh); }
     g.strokeStyle = "#4a8ab8"; g.lineWidth = 22; g.lineCap = "round"; g.beginPath(); g.moveTo(40, 640); g.bezierCurveTo(260, 560, 360, 700, 620, 600); g.bezierCurveTo(800, 530, 900, 600, 990, 520); g.stroke();
     g.strokeStyle = "#8a6a4a"; g.lineWidth = 12; g.setLineDash([26, 18]); g.beginPath(); g.moveTo(60, 60); g.bezierCurveTo(300, 330, 640, 330, 970, 700); g.stroke(); g.setLineDash([]);
-    g.fillStyle = "#c8403a"; g.font = "400 66px 'Lilita One', Impact, sans-serif"; g.textAlign = "center"; g.fillText("CAMPION", 330, 520); g.fillStyle = "#2a1a1e"; g.font = "400 44px 'Playfair Display', Georgia, serif"; g.fillText("WESTERN AUSTRALIA", 560, 730);
+    g.fillStyle = "#c8403a"; g.font = "400 44px 'Lilita One', Impact, sans-serif"; g.textAlign = "center"; g.fillText("CAMPION", 270, 592); g.fillStyle = "#2a1a1e"; g.font = "400 44px 'Playfair Display', Georgia, serif"; g.fillText("WESTERN AUSTRALIA", 560, 730);
     g.lineWidth = 14; g.strokeStyle = "#2a1a1e"; g.strokeRect(10, 10, w - 20, h - 20); grain(g, w, h, 5, 1400, 0.04);
   }),
 }));
@@ -241,7 +241,7 @@ export const Truck: React.FC<{ p?: V3; t?: number; s?: number; rot?: number; spe
         </group>
       ))}
       {[[1.55, 0.8], [1.55, -0.8], [-1.5, 0.8], [-1.5, -0.8]].map(([wx, wz], i) => <Ink key={i} geometry={box(1.1, 0.07, 0.34)} material={paint} position={[wx, 1.18, wz]} px={1.6} cast={false} />)}
-      {gun ? <LewisGun p={[-1.3, 1.05, 0]} s={0.9} rot={0} fire={fire} t={t} tripod={false} elev={Math.sin(t * 9) * 0.05 + 0.1} /> : null}
+      {gun ? <LewisGun p={[-0.8, 1.05, 0]} s={0.9} rot={1.25} fire={fire} t={t} tripod={false} elev={Math.sin(t * 9) * 0.05 + 0.1} /> : null}
     </group>
   );
 };
