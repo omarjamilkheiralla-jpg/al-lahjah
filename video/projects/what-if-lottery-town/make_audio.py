@@ -345,7 +345,7 @@ put(sfx, chop(8.0), starts[20], 0.4); put(sfx, cheer(2.5), starts[20] + 4.5, 0.4
 # 21: the mayor cries: a sad little wah
 put(sfx, wah(), (tword("cries", starts[21]) or starts[21] + 4.0), 0.3)
 # 22: a heartbeat of dread
-for q in range(6): put(sfx, thud(), starts[22] + 0.5 + q * 1.1, 0.3)
+pass
 # 23: the balloon stretches, then a tiny pop
 put(sfx, squeak(5.0), starts[23] + 0.2, 0.3); put(sfx, pop(), starts[23] + 5.8, 0.3)
 # 24-25: footsteps and the oven fire, a hopeful chime

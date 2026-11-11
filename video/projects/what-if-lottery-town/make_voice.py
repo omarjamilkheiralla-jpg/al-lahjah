@@ -33,7 +33,7 @@ def yousee(text, sp, gdb, gap):
             a1, a2 = a[:cut].copy(), a[cut:].copy()
             nz = np.where(np.abs(a2) > 0.01)[0]; a2 = a2[nz[0]:]
             if 0.36 < len(a1) / SR < 1.3:
-                f = int(0.01 * SR); a1[-f:] *= np.linspace(1, 0, f); a2[:f] *= np.linspace(0, 1, f)
+                f = int(0.025 * SR); a1[-f:] *= np.linspace(1, 0, f); a2[:f] *= np.linspace(0, 1, f)
                 print("  'You see,' ok at speed %.2f: part1 %.2fs" % (spd, len(a1) / SR)); return [a1, np.zeros(int(0.42 * SR), dtype=np.float32), a2]
         print("  'You see' attempt at %.2f heard %s part1 %.2f" % (spd, [x[0] for x in w[:4]], len(a1)/SR if len(w)>=4 and w[0][0]=='you' else -1))
     raise SystemExit("could not make a clean 'You see,'")

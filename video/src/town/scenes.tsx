@@ -285,7 +285,11 @@ export const T12Shop: React.FC<SceneProps> = ({ t, cam }) => {
   return (
     <Town t={t}>
       <Board p={[-17, 0, -0.6]} w={1.8} h={0.8} tex={open} /><Board p={[-9.6, 0, -0.6]} w={1.8} h={0.8} tex={open} />
-      {Array.from({ length: 26 }, (_, i) => { const tgt = i % 2 ? -17 : -9.6; const sp = 0.6 + (i % 5) * 0.12; const k = clamp((t * sp - i * 0.12) / 1.0); const sx = -4 + (i % 7) * 4; return <P key={i} look={LOOKS[(i * 5 + 2) % LOOKS.length]} p={[sx + (tgt - sx) * smooth(k), 0.15, 5.6 - 5.0 * smooth(k) + (i % 3) * 0.3]} cam={cam} t={t} s={1.4} pose="walk" yaw={tgt - sx > 0 ? 0.9 : -0.9} expr="grin" seed={i + 70} />; })}
+      {Array.from({ length: 22 }, (_, i) => {
+        const shop = i % 2; const tgt = (shop ? -9.6 : -17) + (Math.floor(i / 2) - 5) * 0.52; const tz = -2.9 + (Math.floor(i / 2) % 3) * 0.55;
+        const sx = -3 + (i % 11) * 3.2; const sz = 7.0 - (i % 4) * 0.9; const k = clamp((t * (0.55 + (i % 5) * 0.06) - i * 0.1) / 1.0); const moving = k > 0 && k < 0.98;
+        return <P key={i} look={LOOKS[(i * 5 + 2) % LOOKS.length]} p={[sx + (tgt - sx) * smooth(k), 0.15, sz + (tz - sz) * smooth(k)]} cam={cam} t={t} s={1.4} pose={moving ? "walk" : k >= 0.98 ? "cheer" : "idle"} yaw={moving ? (tgt - sx > 0 ? 0.9 : -0.9) : undefined} expr="grin" seed={i + 70} emph={k >= 0.98 ? 0.4 : 0} />;
+      })}
       <Bills t={t} born={0.3} n={50} area={[16, 8, 6]} center={[-13, 0, 3]} fall={1.2} />
     </Town>
   );
@@ -338,7 +342,7 @@ export const T16Lemonade: React.FC<SceneProps> = ({ t, cam }) => {
         <Board p={[3.6, 0, 0.4]} w={2.4} h={0.9} tex={signTex("LEMONADE $200", "#fff4d8", "#c8283a", 768, 220)} />
       </group>
       <P look="cap" p={[0.6, 0.2, 6.2]} cam={cam} t={t} s={1.15} expr="proud" pose="cheer" seed={5} emph={0.6} />
-      {[0, 1, 2, 3].map((i) => { const k = smooth((t * 0.5 - i * 0.18)); return <P key={i} look={LOOKS[(i * 3 + 1) % LOOKS.length]} p={[-12 + i * -1.5 + k * 9.0, 0.2, 3.4 + (i % 2) * 0.5]} cam={cam} t={t} s={1.45} pose="walk" yaw={0.9} expr="grin" seed={i + 90} />; })}
+      {[0, 1, 2, 3].map((i) => { const k = smooth((t * 0.5 - i * 0.18)); return <P key={i} look={LOOKS[(i * 3 + 1) % LOOKS.length]} p={[-12 + i * -1.5 + k * 9.0, 0.2, 3.4 + (i % 2) * 0.5]} cam={cam} t={t} s={1.45} pose={k > 0.01 && k < 0.98 ? "walk" : "idle"} yaw={k > 0.01 && k < 0.98 ? 0.9 : undefined} expr="grin" seed={i + 90} />; })}
       <Bills t={t} born={wordIn(16, "pays", 4.0)} n={30} area={[8, 6, 4]} center={[0, 0, 7.5]} fall={1.4} />
     </Town>
   );
@@ -433,7 +437,7 @@ export const T24Back: React.FC<SceneProps> = ({ t, cam }) => {
   const specs: [string, number, number][] = [["cap", -17, 5.0], ["guest", -10, 4.6], ["craftsman", 3, 4.2], ["engineer", 22, 4.8], ["scientist", 13, 4.4], ["woman", -26, 4.6]];
   return (
     <Town t={t + 4} gold>
-      {specs.map(([lk, tx, sz], i) => { const k = smooth(go[i]); const sx = tx + (i % 2 ? 12 : -12); return <P key={i} look={lk as any} p={[sx + (tx - sx) * k, 0.2, sz + (1 - k) * 2.4]} cam={cam} t={t} s={1.5} pose={k < 0.98 ? "walk" : "cheer"} yaw={k < 0.98 ? (tx - sx > 0 ? 0.9 : -0.9) : undefined} expr={k < 0.98 ? "deadpan" : "grin"} seed={i + 100} />; })}
+      {specs.map(([lk, tx, sz], i) => { const k = smooth(go[i]); const sx = tx + (i % 2 ? 12 : -12); return <P key={i} look={lk as any} p={[sx + (tx - sx) * k, 0.2, sz + (1 - k) * 2.4]} cam={cam} t={t} s={1.5} pose={k > 0 && k < 0.98 ? "walk" : k >= 0.98 ? "cheer" : "idle"} yaw={k > 0 && k < 0.98 ? (tx - sx > 0 ? 0.9 : -0.9) : undefined} expr={k < 0.98 ? "deadpan" : "grin"} seed={i + 100} />; })}
       <Sun p={[60, 14, -120]} s={90} /><SunDust t={t} n={30} area={[40, 10, 16]} />
     </Town>
   );
