@@ -8,11 +8,11 @@ Words: 472
 
 ### HOOK
 
-What if every person in one small town won a million dollars on the same morning?
+What if an entire town won the lottery?
 
-Three thousand people. Three thousand millionaires.
+It is a small town of three thousand people. Every week, for ten years, everyone has put in one dollar, to buy a single ticket together.
 
-Starting now.
+This week, the numbers match. The jackpot is three billion dollars. Split three thousand ways, that is one million dollars each.
 
 ### MONDAY
 
