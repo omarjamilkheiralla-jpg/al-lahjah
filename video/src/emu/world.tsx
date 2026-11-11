@@ -241,7 +241,7 @@ export const Truck: React.FC<{ p?: V3; t?: number; s?: number; rot?: number; spe
         </group>
       ))}
       {[[1.55, 0.8], [1.55, -0.8], [-1.5, 0.8], [-1.5, -0.8]].map(([wx, wz], i) => <Ink key={i} geometry={box(1.1, 0.07, 0.34)} material={paint} position={[wx, 1.18, wz]} px={1.6} cast={false} />)}
-      {gun ? <LewisGun p={[-0.8, 1.05, 0]} s={0.9} rot={1.25} fire={fire} t={t} tripod={false} elev={Math.sin(t * 9) * 0.05 + 0.1} /> : null}
+      {gun ? <LewisGun p={[-1.3, 1.05, 0]} s={0.9} rot={0.9} fire={fire} t={t} tripod={false} elev={Math.sin(t * 9) * 0.05 + 0.1} /> : null}
     </group>
   );
 };
