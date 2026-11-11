@@ -21,7 +21,7 @@ export const grassTex = () => memo("grass", () => cv(512, 512, (g, w, h) => {
 }, true));
 export const roadTex = () => memo("road", () => cv(512, 512, (g, w, h) => {
   const r = rng(8); g.fillStyle = "#5a5a64"; g.fillRect(0, 0, w, h);
-  blur(g, 22, () => { for (let i = 0; i < 40; i++) { g.fillStyle = i % 2 ? "rgba(30,30,40,.18)" : "rgba(200,200,215,.12)"; const x = r() * w, y = r() * h, rr = 40 + r() * 70; wrap(w, h, (ox, oy) => { g.beginPath(); g.ellipse(x + ox, y + oy, rr, rr * 0.6, r() * 3, 0, 7); g.fill(); }); } });
+  blur(g, 22, () => { for (let i = 0; i < 40; i++) { g.fillStyle = i % 2 ? "rgba(30,30,40,.07)" : "rgba(200,200,215,.06)"; const x = r() * w, y = r() * h, rr = 40 + r() * 70; wrap(w, h, (ox, oy) => { g.beginPath(); g.ellipse(x + ox, y + oy, rr, rr * 0.6, r() * 3, 0, 7); g.fill(); }); } });
   for (let i = 0; i < 700; i++) { g.fillStyle = r() < 0.5 ? "rgba(20,20,28,.22)" : "rgba(220,220,235,.2)"; const x = r() * w, y = r() * h; wrap(w, h, (ox, oy) => g.fillRect(x + ox, y + oy, 2 + r() * 2, 2 + r() * 2)); }
 }, true));
 export const paverTex = () => memo("paver", () => cv(256, 256, (g, w, h) => {
@@ -78,8 +78,8 @@ export const Street: React.FC<{ x0?: number; x1?: number; z0?: number; z1?: numb
 };
 
 /* ------------------------------------------------------------------ buildings */
-export type BProps = { p: V3; w: number; h: number; d?: number; rot?: number; wall?: string; wallKind?: "brick" | "siding" | "paint"; roof?: string; roofType?: "flat" | "gable"; sign?: string; signBg?: string; signFg?: string; awning?: [string, string]; doorColor?: string; cols?: number; floors?: number; lit?: boolean; shopFront?: boolean; chimney?: boolean; pediment?: boolean; columns?: boolean; clock?: boolean };
-export const Building: React.FC<BProps> = ({ p, w, h, d = 6, rot = 0, wall = "#c06a4a", wallKind = "brick", roof = "#5a3a34", roofType = "flat", sign, signBg, signFg, awning, doorColor = "#5a3418", cols, floors = 2, lit = true, shopFront = false, chimney = false, pediment = false, columns = false, clock = false }) => {
+export type BProps = { p: V3; w: number; h: number; d?: number; rot?: number; wall?: string; wallKind?: "brick" | "siding" | "paint"; roof?: string; roofType?: "flat" | "gable"; sign?: string; signBg?: string; signFg?: string; awning?: [string, string]; doorColor?: string; cols?: number; floors?: number; lit?: boolean; shopFront?: boolean; chimney?: boolean; pediment?: boolean; columns?: boolean; clock?: boolean; simple?: boolean };
+export const Building: React.FC<BProps> = ({ p, w, h, d = 6, rot = 0, wall = "#c06a4a", wallKind = "brick", roof = "#5a3a34", roofType = "flat", sign, signBg, signFg, awning, doorColor = "#5a3418", cols, floors = 2, lit = true, shopFront = false, chimney = false, pediment = false, columns = false, clock = false, simple = false }) => {
   const wm = useMemo(() => toon(wallKind === "brick" ? rep(brickTex(wall), w / 3.4, h / 3.4) : wallKind === "siding" ? rep(sidingTex(wall), w / 3, h / 3) : wall), [wall, wallKind, w, h]);
   const rm = useMemo(() => toon(roof), [roof]); const trim = useMemo(() => toon("#f1e8d4"), []); const dark = useMemo(() => toon("#3a2630"), []);
   const door = useMemo(() => toon(doorColor), [doorColor]);
@@ -93,7 +93,12 @@ export const Building: React.FC<BProps> = ({ p, w, h, d = 6, rot = 0, wall = "#c
   const wins: React.ReactNode[] = [];
   for (let f = shopFront ? 1 : 0; f < floors; f++) for (let c = 0; c < nC; c++) {
     const x = -w / 2 + ((c + 0.5) * w) / nC; const y = (shopFront ? 3.6 : 0) + (f - (shopFront ? 1 : 0)) * fh + fh * 0.58; if (f === 0 && !shopFront && Math.abs(x) < 0.9) continue;
-    wins.push(<group key={`${f}_${c}`} position={[x, y, d / 2]}>
+    wins.push(simple ? <group key={`${f}_${c}`} position={[x, y, d / 2]}>
+      <Ink geometry={box(1.1, 1.4, 0.12)} material={trim} px={1.2} cast={false} outline={false} />
+      <mesh material={glass} position={[0, 0, 0.08]}><planeGeometry args={[0.84, 1.14]} /></mesh>
+      <mesh material={trim} position={[0, 0, 0.1]}><boxGeometry args={[0.07, 1.14, 0.05]} /></mesh>
+      <Ink geometry={box(1.35, 0.14, 0.3)} material={trim} position={[0, -0.76, 0.1]} px={1.2} cast={false} outline={false} />
+    </group> : <group key={`${f}_${c}`} position={[x, y, d / 2]}>
       <Ink geometry={box(1.15, 1.45, 0.14)} material={trim} px={1.4} cast={false} />
       <mesh material={glass} position={[0, 0, 0.09]}><planeGeometry args={[0.86, 1.16]} /></mesh>
       <Ink geometry={box(0.06, 1.16, 0.06)} material={trim} position={[0, 0, 0.11]} px={1} cast={false} /><Ink geometry={box(0.86, 0.06, 0.06)} material={trim} position={[0, 0, 0.11]} px={1} cast={false} />
@@ -223,6 +228,37 @@ export const Board: React.FC<{ p: V3; w: number; h: number; tex: THREE.Texture; 
     <Ink geometry={box(w + 0.3, h + 0.3, 0.22)} material={dk} position={[0, h / 2 + 1.0, 0]} px={px} cast={false} />
     <mesh material={m} position={[0, h / 2 + 1.0, 0.12]}><planeGeometry args={[w, h]} /></mesh>
     {legs ? [-1, 1].map((k, i) => <Ink key={i} geometry={box(0.2, 1.6, 0.2)} material={wood} position={[k * (w / 2 - 0.2), 0.8, -0.05]} px={1.6} cast={false} />) : null}
+  </group>;
+};
+
+/* ------------------------------------------------------------------ city pieces */
+const windowTex = (c: string) => memo("wtex" + c, () => cv(128, 256, (g, w, h) => { g.fillStyle = c; g.fillRect(0, 0, w, h); const r = rng(c.length); for (let y = 0; y < 8; y++) for (let x = 0; x < 4; x++) { g.fillStyle = r() < 0.28 ? "#f6dc90" : "#8fb6d0"; g.fillRect(x * 32 + 6, y * 32 + 6, 20, 22); } const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, "rgba(255,255,255,.1)"); gr.addColorStop(1, "rgba(0,0,0,.1)"); g.fillStyle = gr; g.fillRect(0, 0, w, h); }, true));
+export const Skyline: React.FC<{ z: number; seed?: number }> = ({ z, seed = 1 }) => {
+  const items = useMemo(() => { const r = rng(seed * 7); const a: { x: number; z: number; w: number; h: number; c: string }[] = []; for (const [zz, hh, c] of [[0, 1, "#9fb0c4"], [-26, 1.4, "#a9b8ca"], [-52, 1.8, "#b6c3d2"]] as const) { let x = -230; while (x < 230) { const w2 = 12 + r() * 14; a.push({ x: x + w2 / 2, z: z + zz * Math.sign(z) * -1, w: w2, h: (16 + r() * 34) * hh, c }); x += w2 + 1 + r() * 4; } } return a; }, [z, seed]);
+  return <group>{items.map((q, i) => { const m = useMemo(() => new THREE.MeshBasicMaterial({ map: rep(windowTex(q.c), q.w / 12, q.h / 24), fog: true }), [q.c, q.w, q.h]); return <mesh key={i} material={m} position={[q.x, q.h / 2, q.z]}><boxGeometry args={[q.w, q.h, 12]} /></mesh>; })}</group>;
+};
+export const CityGround: React.FC = () => { const m = useMemo(() => toon(rep(paverTex(), 90, 80)), []); return <mesh material={m} rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, -20]}><planeGeometry args={[520, 360]} /></mesh>; };
+export const Plaza: React.FC<{ x0: number; x1: number; z0: number; z1: number }> = ({ x0, x1, z0, z1 }) => { const m = useMemo(() => toon(rep(paverTex(), (x1 - x0) / 3, (z1 - z0) / 3)), [x0, x1, z0, z1]); const c = useMemo(() => toon("#d8d0c0"), []); return <group><Ink geometry={box(x1 - x0, 0.2, z1 - z0)} material={m} position={[(x0 + x1) / 2, 0.08, (z0 + z1) / 2]} px={2} cast={false} /><Ink geometry={box(x1 - x0, 0.22, 0.22)} material={c} position={[(x0 + x1) / 2, 0.1, z0]} px={1.4} cast={false} /></group>; };
+export const Lawn: React.FC<{ p: V3; w: number; d: number }> = ({ p, w, d }) => { const m = useMemo(() => toon(rep(grassTex(), w / 6, d / 6)), [w, d]); return <Ink geometry={box(w, 0.16, d)} material={m} position={[p[0], 0.06, p[2]]} px={1.6} cast={false} />; };
+export const Van: React.FC<{ p: V3; rot?: number; open?: boolean }> = ({ p, rot = 0, open = true }) => {
+  const wh = useMemo(() => toon("#f2eee2"), []); const bl = useMemo(() => toon("#2f6aa8"), []); const tire = useMemo(() => toon("#2a2628"), []); const hub = useMemo(() => toon("#c8ccd4"), []); const gl = useMemo(() => new THREE.MeshBasicMaterial({ color: "#a8d4ea" }), []); const dk = useMemo(() => toon("#3a2630"), []);
+  const sg = useMemo(() => new THREE.MeshBasicMaterial({ map: signTex("MOVERS", "#2f6aa8", "#fff6e0", 512, 160) }), []);
+  return <group position={p} rotation={[0, rot, 0]}>
+    <Ink geometry={box(4.4, 2.6, 2.2)} material={wh} position={[-0.8, 2.1, 0]} px={2} /><Ink geometry={box(1.7, 1.9, 2.2)} material={bl} position={[2.4, 1.75, 0]} px={2} />
+    <mesh material={gl} position={[3.25, 2.1, 1.12]}><planeGeometry args={[1.0, 0.8]} /></mesh><mesh material={gl} position={[3.25, 2.1, -1.12]} rotation={[0, Math.PI, 0]}><planeGeometry args={[1.0, 0.8]} /></mesh>
+    <mesh material={sg} position={[-0.8, 2.4, 1.12]}><planeGeometry args={[2.8, 0.8]} /></mesh>
+    <Ink geometry={box(0.12, 2.4, 2.0)} material={dk} position={[-3.04, 2.1, 0]} px={1.2} cast={false} />
+    {[[2.4, 1.0], [-2.2, 1.0], [2.4, -1.0], [-2.2, -1.0]].map(([x, z], i) => <group key={i} position={[x, 0.55, z]}><Ink geometry={new THREE.CylinderGeometry(0.55, 0.55, 0.36, 16)} material={tire} rotation={[Math.PI / 2, 0, 0]} px={1.6} cast={false} /><mesh material={hub} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.26, 0.26, 0.4, 12]} /></mesh></group>)}
+  </group>;
+};
+export const GasStation: React.FC<{ p: V3; t: number; empty?: boolean }> = ({ p, t, empty = false }) => {
+  const roof = useMemo(() => toon("#d8483a"), []); const wh = useMemo(() => toon("#f6efe2"), []); const dk = useMemo(() => toon("#2a2a34"), []); const red = useMemo(() => toon("#d8483a"), []);
+  const scr = useMemo(() => new THREE.MeshBasicMaterial({ color: empty ? "#d8483a" : "#9ad8c0" }), [empty]); const sign = useMemo(() => new THREE.MeshBasicMaterial({ map: signTex(empty ? "EMPTY" : "GAS", empty ? "#d8283a" : "#fff4d8", empty ? "#fff6e0" : "#c8283a", 512, 256) }), [empty]);
+  return <group position={p}>
+    <Plaza x0={-9} x1={9} z0={-9.5} z1={-1.2} />
+    <Ink geometry={box(12, 0.5, 7)} material={roof} position={[0, 5.4, -5.4]} px={2} /><Ink geometry={box(0.5, 5.4, 0.5)} material={wh} position={[-5, 2.7, -8.2]} px={1.6} cast={false} /><Ink geometry={box(0.5, 5.4, 0.5)} material={wh} position={[5, 2.7, -8.2]} px={1.6} cast={false} /><Ink geometry={box(0.5, 5.4, 0.5)} material={wh} position={[-5, 2.7, -2.6]} px={1.6} cast={false} /><Ink geometry={box(0.5, 5.4, 0.5)} material={wh} position={[5, 2.7, -2.6]} px={1.6} cast={false} />
+    {[-3, 0, 3].map((x, i) => <group key={i} position={[x, 0.2, -5.4]}><Ink geometry={box(0.9, 2.0, 0.7)} material={red} position={[0, 1.0, 0]} px={1.8} cast={false} /><mesh material={scr} position={[0, 1.5, 0.37]}><planeGeometry args={[0.6, 0.35]} /></mesh><Ink geometry={box(1.1, 0.2, 0.9)} material={dk} position={[0, 0.1, 0]} px={1.4} cast={false} /></group>)}
+    <group position={[7.6, 8.6, -2.0]}><Ink geometry={box(0.3, 6, 0.3)} material={dk} position={[0, -3, 0]} px={1.4} cast={false} /><Ink geometry={box(3.4, 1.7, 0.3)} material={dk} px={1.6} cast={false} /><mesh material={sign} position={[0, 0, 0.17]}><planeGeometry args={[3.1, 1.45]} /></mesh></group>
   </group>;
 };
 export { toon, box, rng, clamp, Ink, cv, rep, memo };

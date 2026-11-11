@@ -6,9 +6,8 @@ import { SceneEnv, Lights } from "../full/env";
 import { emo } from "../full/scenes";
 import { Sky, Puffs, SunDust } from "../emu/world";
 import { INKD } from "../full/paint";
-import { Fence } from "../full/nature";
 import timing from "./timing.json";
-import { Ink, box, toon, rng, clamp, cv, rep, signTex, Ground, Street, Building, Tree, Lamp, Bench, Hills, Car, Boat, Helicopter, Bills, Sun, Board, type V3, type BProps } from "./world";
+import { Ink, box, toon, rng, clamp, cv, rep, signTex, roadTex, CityGround, Skyline, Plaza, Lawn, Van, GasStation, Street, Building, Tree, Lamp, Bench, Car, Boat, Helicopter, Bills, Sun, Board, type V3, type BProps } from "./world";
 
 export type SceneProps = { t: number; cam: V3 };
 const smooth = (x: number) => { const k = clamp(x); return k * k * (3 - 2 * k); };
@@ -24,7 +23,7 @@ const P: React.FC<{ look: any; p: V3; cam: V3; t: number; s?: number; expr?: any
     {shadow ? <ContactShadow position={[p[0], p[1] + 0.02, p[2]]} r={0.42 * s} /> : null}
   </>
 );
-const LOOKS = ["farmer", "guest", "woman", "owner", "boss", "clerk", "farm", "pullman", "bowler", "glasses", "cap", "vendor"];
+const LOOKS = ["guest", "woman", "owner", "boss", "clerk", "farm", "pullman", "bowler", "glasses", "cap", "engineer", "official"];
 const Crowd: React.FC<{ t: number; cam: V3; n: number; c: V3; w: number; d: number; seed?: number; pose?: any; expr?: any; emph?: number; s?: number; skip?: (x: number, z: number) => boolean }> = ({ t, cam, n, c, w, d, seed = 1, pose = "idle", expr = "deadpan", emph = 0, s = 1.35, skip }) => {
   const pts = useMemo(() => { const r = rng(seed * 13); const a: { x: number; z: number; l: string; sc: number; sd: number }[] = []; const cols = Math.ceil(Math.sqrt(n * (w / d))); const rows = Math.ceil(n / cols); for (let i = 0; i < n; i++) { const cx = i % cols, rz = Math.floor(i / cols); const x = c[0] - w / 2 + ((cx + 0.5 + (r() - 0.5) * 0.6) * w) / cols; const z = c[2] - d / 2 + ((rz + 0.5 + (r() - 0.5) * 0.6) * d) / rows; if (skip && skip(x, z)) continue; a.push({ x, z, l: LOOKS[(i * 5 + seed) % LOOKS.length], sc: s * (0.9 + r() * 0.2), sd: i + seed * 50 }); } return a; }, [n, c, w, d, seed, s, skip]);
   return <>{pts.map((q, i) => <P key={i} look={q.l} p={[q.x, c[1], q.z]} cam={cam} t={t} s={q.sc} pose={pose} expr={expr} seed={q.sd} emph={emph} />)}</>;
@@ -40,30 +39,38 @@ const BACK: BProps[] = [
   { p: [22.5, 0, -9], w: 9.5, h: 5.4, d: 8, wall: "#cfd4dc", wallKind: "paint", sign: "MOTORS", signBg: "#1f3f6a", signFg: "#ffe9a0", awning: ["#2f6aa8", "#fff6ec"], shopFront: true, floors: 2, cols: 4 },
   { p: [31.4, 0, -8.6], w: 6.2, h: 5.8, d: 7, wall: "#58a6a8", wallKind: "paint", sign: "DINER", signBg: "#fff4d8", signFg: "#d8483a", awning: ["#d8483a", "#fff6ec"], shopFront: true, floors: 2, cols: 2 },
 ];
-const FRONT: BProps[] = [
-  { p: [-26, 0, 16], w: 7, h: 5, d: 6, wall: "#e6c47a", wallKind: "siding", roof: "#8a4a3a", roofType: "gable", chimney: true, rot: Math.PI, doorColor: "#8a3a2a" },
-  { p: [-13, 0, 16.5], w: 6.5, h: 5.2, d: 6, wall: "#a8c4d8", wallKind: "siding", roof: "#4a5a7a", roofType: "gable", rot: Math.PI, doorColor: "#d8483a" },
-  { p: [0, 0, 16], w: 7, h: 5, d: 6, wall: "#d8a8a0", wallKind: "siding", roof: "#6a4a46", roofType: "gable", chimney: true, rot: Math.PI, doorColor: "#4a6a8a" },
-  { p: [13, 0, 16.5], w: 6.5, h: 5.2, d: 6, wall: "#b8d0a0", wallKind: "siding", roof: "#7a5a3a", roofType: "gable", rot: Math.PI, doorColor: "#8a3a2a" },
-  { p: [26, 0, 16], w: 7, h: 5, d: 6, wall: "#e8d8a8", wallKind: "siding", roof: "#8a4a3a", roofType: "gable", chimney: true, rot: Math.PI, doorColor: "#2f5a8a" },
-];
-export const Town: React.FC<{ t: number; gold?: boolean; children?: React.ReactNode; nobuild?: string[] }> = ({ t, gold = false, children, nobuild = [] }) => {
+const PAL = ["#c06a4a", "#b87a5a", "#8a9aa8", "#c9a86a", "#9a6a7a", "#7a9a8a", "#d0b090", "#a8b8c8", "#c88a6a", "#a8725a"];
+const SIGNS = ["PHARMACY", "BOOKS", "CAFE", "HARDWARE", "PIZZA", "BANK", "TAILOR", "FLOWERS", "SHOES", "TOYS", "DELI", "OPTICIAN", "BAKERY", "CINEMA", "SALON"];
+const AWN: [string, string][] = [["#e8758a", "#fff6ec"], ["#3f9a62", "#fff6ec"], ["#2f6aa8", "#fff6ec"], ["#d8883a", "#fff6ec"], ["#8a5ab8", "#fff6ec"]];
+const gen = (ints: [number, number][], z: number, rot: number, seed: number): BProps[] => {
+  const r = rng(seed); const out: BProps[] = [];
+  for (const [a, b] of ints) { let x = a + 0.3; while (b - x > 5.2) { let w = Math.min(5.6 + r() * 3.4, b - x); if (b - x - w < 5.2) w = b - x; const shop = r() < 0.7; const h = 6.4 + Math.floor(r() * 3) * 3.2; const floors = shop ? Math.round((h - 3.6) / 3.2) + 1 : Math.round(h / 3.2);
+    out.push({ p: [x + w / 2, 0, z], w, h, d: 7, rot, wall: PAL[Math.floor(r() * PAL.length)], wallKind: r() < 0.5 ? "brick" : "paint", sign: shop ? SIGNS[Math.floor(r() * SIGNS.length)] : undefined, signBg: "#f6efd8", signFg: ["#7a1f22", "#2f5a8a", "#2f6a4a", "#6a3a8a"][Math.floor(r() * 4)], awning: shop ? AWN[Math.floor(r() * AWN.length)] : undefined, shopFront: shop, floors, cols: Math.max(2, Math.round(w / 2.6)), simple: true, doorColor: ["#5a3418", "#2f5a8a", "#8a3a2a"][Math.floor(r() * 3)], lit: r() < 0.6 }); x += w + 0.25; } }
+  return out;
+};
+const FILL_BACK = gen([[-92, -60], [-39, -31], [34.9, 43.6], [50.4, 92]], -9, 0, 3);
+const FILL_FRONT = gen([[-92, 92]], 20.5, Math.PI, 8);
+const welcomeTex = () => cv(1024, 420, (g, w, h) => { g.fillStyle = "#f6efd8"; g.fillRect(0, 0, w, h); g.strokeStyle = INKD; g.lineWidth = 16; g.strokeRect(8, 8, w - 16, h - 16); g.strokeStyle = "#2f6a4a"; g.lineWidth = 6; g.strokeRect(26, 26, w - 52, h - 52); g.textAlign = "center"; g.textBaseline = "middle"; g.fillStyle = "#2f6a4a"; g.font = "400 90px 'Lilita One', Impact, sans-serif"; g.fillText("WELCOME TO", w / 2, 120); g.font = "400 112px 'Lilita One', Impact, sans-serif"; g.fillText("MILLBROOK", w / 2, 235); g.fillStyle = "#7a1f22"; g.font = "400 66px 'Lilita One', Impact, sans-serif"; g.fillText("POPULATION 3,000", w / 2, 340); });
+export const Town: React.FC<{ t: number; gold?: boolean; children?: React.ReactNode }> = ({ t, gold = false, children }) => {
   const pos = gold ? ([-22, 8, 18] as V3) : ([-14, 18, 14] as V3);
+  const rm = useMemo(() => toon(rep(roadTex(), 1, 10)), []); const wt = useMemo(() => welcomeTex(), []);
   return (
     <group>
-      <SceneEnv bg={gold ? "#f4c98a" : "#bfe0f2"} fog={gold ? ["#f4cf9c", 70, 280] : ["#d4e8f2", 80, 300]} />
+      <SceneEnv bg={gold ? "#f4c98a" : "#bfe0f2"} fog={gold ? ["#f4cf9c", 120, 380] : ["#d4e8f2", 130, 400]} />
       <Lights color={gold ? "#ffcf8a" : "#fff0cc"} intensity={gold ? 2.9 : 2.6} pos={pos} hemi={gold ? ["#ffe6c0", "#9a7a56", 1.1] : ["#cfe8ff", "#a8946a", 1.2]} shadowSize={20} />
       <Sky kind={gold ? "gold" : "day"} t={t} /><group rotation={[0, Math.PI, 0]}><Sky kind={gold ? "gold" : "day"} t={t} /></group>
-      <Hills /><group rotation={[0, Math.PI, 0]}><Hills /></group>
-      <Ground /><Street />
-      {BACK.filter((b) => !nobuild.includes(b.sign ?? "")).map((b, i) => <Building key={i} {...b} />)}
-      {FRONT.map((b, i) => <Building key={i} {...b} />)}
-      {[-21, -5.5, 8, 18, 28].map((x, i) => <Tree key={i} p={[x, 0, 10.4 + (i % 2) * 1.2]} s={1.15 + (i % 3) * 0.12} seed={i + 1} />)}
-      {[-14, 0, 14, 28].map((x, i) => <Lamp key={i} p={[x, 0, -1.6]} />)}{[-7, 7, 21].map((x, i) => <Lamp key={i} p={[x, 0, 6.0]} />)}
-      <Bench p={[-4, 0.1, -2.6]} /><Bench p={[8.2, 0.1, 7.2]} rot={Math.PI} />
-      <Fence p={[-40, 0, 22]} n={20} />
-      <Board p={[-30, 0, 9.6]} w={5.2} h={1.1} tex={signTex("WELCOME TO MILLBROOK", "#f6efd8", "#2f6a4a", 1024, 220)} />
-      <Board p={[-30, 0.0, 9.6]} w={3.2} h={0.9} tex={signTex("POPULATION 3,000", "#f1e3b8", "#7a1f22", 1024, 260)} legs={false} />
+      <Skyline z={-95} seed={1} /><Skyline z={105} seed={2} />
+      <CityGround /><Street x0={-95} x1={95} />
+      <mesh material={rm} rotation={[-Math.PI / 2, 0, 0]} position={[47, 0.007, -48]}><planeGeometry args={[6, 86]} /></mesh>
+      <Plaza x0={-95} x1={95} z0={8.8} z1={17} />
+      {BACK.map((b, i) => <Building key={i} {...b} />)}
+      {FILL_BACK.map((b, i) => <Building key={"b" + i} {...b} />)}
+      {FILL_FRONT.map((b, i) => <Building key={"f" + i} {...b} />)}
+      <GasStation p={[-49.5, 0, 0]} t={t} empty={false} />
+      {[-82, -66, -36, -21, -5.5, 8, 18, 28, 44, 62, 80].map((x, i) => <Tree key={i} p={[x, 0.2, 15.6 + (i % 2) * 0.6]} s={0.95 + (i % 3) * 0.1} seed={i + 1} />)}
+      {[-84, -70, -56, -42, -28, -14, 0, 14, 28, 42, 56, 70, 84].map((x, i) => <Lamp key={i} p={[x, 0, -1.6]} />)}{[-77, -63, -49, -35, -21, -7, 7, 21, 35, 49, 63, 77].map((x, i) => <Lamp key={i} p={[x, 0, 9.6]} />)}
+      <Bench p={[-4, 0.1, -2.6]} /><Bench p={[8.2, 0.1, 7.2]} rot={Math.PI} /><Bench p={[-52, 0.1, 12.4]} rot={Math.PI} /><Bench p={[30, 0.1, 12.4]} rot={Math.PI} />
+      <Board p={[-72, 0.2, 11.4]} w={5.0} h={2.1} tex={wt} />
       {children}
     </group>
   );
@@ -143,7 +150,7 @@ export const T0Hook: React.FC<SceneProps> = ({ t, cam }) => (
 );
 export const T1Small: React.FC<SceneProps> = ({ t, cam }) => (
   <Town t={t + 3} gold><Walkers t={t} cam={cam} n={8} seed={5} /><SunDust t={t} n={30} area={[30, 8, 20]} />
-    <P look="woman" p={[-27, 0.2, 11.4]} cam={cam} t={t} s={1.5} expr="smug" pose="idle" seed={4} /><P look="farmer" p={[-33, 0.2, 11.8]} cam={cam} t={t} s={1.5} expr="grin" pose="hold" seed={7} /></Town>
+    <P look="woman" p={[-78, 0.2, 12.2]} cam={cam} t={t} s={1.5} expr="smug" pose="idle" seed={4} /><P look="boss" p={[-65, 0.2, 12.0]} cam={cam} t={t} s={1.5} expr="grin" pose="hold" seed={7} /></Town>
 );
 export const T2Pool: React.FC<SceneProps> = ({ t, cam }) => {
   const weeks = ["WEEK 1", "WEEK 12", "WEEK 52", "WEEK 130", "WEEK 260", "WEEK 390", "WEEK 520"]; const wi = Math.min(weeks.length - 1, Math.floor(t / 1.6));
@@ -156,8 +163,8 @@ export const T2Pool: React.FC<SceneProps> = ({ t, cam }) => {
       <group position={[2.4, 1.86, -3.4]}><mesh material={glass}><cylinderGeometry args={[0.75, 0.75, 2.5, 22]} /></mesh><mesh material={cash} position={[0, -1.25 + jarH / 2, 0]}><cylinderGeometry args={[0.7, 0.7, jarH, 20]} /></mesh><Ink geometry={new THREE.CylinderGeometry(0.8, 0.8, 0.2, 20)} material={toon("#8a5a34")} position={[0, 1.35, 0]} px={1.4} cast={false} /></group>
       <Board p={[-3.2, 3.1, -7.4]} w={3.0} h={0.8} tex={signTex("TICKET FUND $1", "#f6efd8", "#2f6a4a", 768, 200)} legs={false} />
       <Board p={[9.2, 3.1, -7.4]} w={3.0} h={1.0} tex={signTex(weeks[wi], "#2f3f6a", "#ffe9a0", 768, 220)} legs={false} />
-      <P look="vendor" p={[3.8, 0.1, -4.8]} cam={cam} t={t} s={1.5} expr="grin" pose="idle" seed={3} />
-      {q.map((i) => { const x = -0.6 - i * 2.0; const drop = (t * 0.7 + i * 0.35) % 1; return <group key={i}><P look={LOOKS[(i * 4) % LOOKS.length]} p={[x + 3.6, 0.1, -1.0 + (i % 2) * 0.3]} cam={cam} t={t} s={1.45} expr={i % 2 ? "grin" : "deadpan"} pose="point" seed={i + 9} /><mesh position={[Math.max(2.4, x + 3.6 - 0.6 * drop), 3.4 - drop * 1.2, -2.2]} rotation={[0.4, drop * 4, 0.3]}><planeGeometry args={[0.45, 0.22]} /><meshBasicMaterial color="#7fbf6a" side={THREE.DoubleSide} /></mesh></group>; })}
+      <P look="clerk" p={[3.8, 0.1, -4.8]} cam={cam} t={t} s={1.5} expr="grin" pose="idle" seed={3} />
+      {q.map((i) => { const x = -0.6 - i * 2.0; const drop = (t * 0.7 + i * 0.35) % 1; return <group key={i}><P look={LOOKS[(i * 4) % LOOKS.length]} p={[x + 3.6, 0.1, -1.0 + (i % 2) * 0.3]} cam={cam} t={t} s={1.45} expr={i % 2 ? "grin" : "deadpan"} pose="idle" seed={i + 9} /><mesh position={[Math.max(2.4, x + 3.6 - 0.6 * drop), 3.4 - drop * 1.2, -2.2]} rotation={[0.4, drop * 4, 0.3]}><planeGeometry args={[0.45, 0.22]} /><meshBasicMaterial color="#7fbf6a" side={THREE.DoubleSide} /></mesh></group>; })}
     </Room>
   );
 };
@@ -179,7 +186,7 @@ export const T4Monday: React.FC<SceneProps> = ({ t, cam }) => (
     <CheckEasel p={[0.6, 0.0, 0.6]} />
     <P look="clerk" p={[-3.4, 0.1, 1.6]} cam={cam} t={t} s={1.6} expr="smug" pose="point" seed={8} />
     <Ink geometry={new THREE.CylinderGeometry(0.1, 0.1, 0.1, 6)} material={toon("#000")} position={[0, -9, 0]} px={1} cast={false} />
-    <Crowd t={t} cam={cam} n={22} c={[0, 0.2, 6.6]} w={22} d={4.6} seed={3} expr="think" />
+    <Crowd t={t} cam={cam} n={22} c={[0, 0.2, 5.6]} w={22} d={3.6} seed={3} expr="think" />
     <Walkers t={t} cam={cam} n={4} seed={9} /><Sun p={[-60, 20, -110]} s={80} /><SunDust t={t} n={30} area={[30, 8, 16]} />
   </Town>
 );
@@ -187,9 +194,9 @@ export const T5Names: React.FC<SceneProps> = ({ t, cam }) => {
   const lt = useMemo(() => new THREE.MeshBasicMaterial({ map: listTex(), side: THREE.DoubleSide }), []);
   const hit = (w: string, fb: number) => wordIn(5, w, fb); const k = [hit("mayor", 3), hit("baker", 4), hit("bus", 5), hit("kid", 6.5)];
   return (
-    <Town t={t} gold nobuild={[]}>
+    <Town t={t} gold>
       <group position={[-6.2, 0, 1.0]}><Ink geometry={box(3.0, 0.2, 0.2)} material={toon("#6a4630")} position={[0, 7.3, 0]} px={1.6} cast={false} /><mesh material={lt} position={[0, 3.7, 0.1]}><planeGeometry args={[3.2, 7.2]} /></mesh></group>
-      {[["official", -2.4, "proud"], ["baker", -0.4, "grin"], ["cap", 1.6, "smug"], ["catcher", 3.4, "grin"]].map(([lk, x, ex], i) => <group key={i} position={[0, 0, 0]}><P look={lk as any} p={[x as number, 0.1 + Math.max(0, Math.sin((t - k[i]) * 7)) * (t > k[i] && t < k[i] + 0.6 ? 0.35 : 0), 1.6 - (i % 2) * 0.4]} cam={cam} t={t} s={i === 3 ? 1.1 : 1.55} expr={t > k[i] ? "laugh" : (ex as any)} pose={t > k[i] ? "cheer" : "idle"} seed={i + 1} /></group>)}
+      {[["official", -2.4, "proud"], ["baker", -0.4, "grin"], ["cap", 1.6, "smug"], ["cap", 3.4, "grin"]].map(([lk, x, ex], i) => <group key={i} position={[0, 0, 0]}><P look={lk as any} p={[x as number, 0.1 + Math.max(0, Math.sin((t - k[i]) * 7)) * (t > k[i] && t < k[i] + 0.6 ? 0.35 : 0), 1.6 - (i % 2) * 0.4]} cam={cam} t={t} s={i === 3 ? 1.1 : 1.55} expr={t > k[i] ? "laugh" : (ex as any)} pose={t > k[i] ? "cheer" : "idle"} seed={i + 1} /></group>)}
       <CheckEasel p={[7.6, 0, 0.8]} />
       <Crowd t={t} cam={cam} n={14} c={[2, 0.2, 11.8]} w={18} d={3.2} seed={4} expr="think" />
     </Town>
@@ -220,40 +227,37 @@ const Dealer: React.FC<SceneProps & { sold?: number }> = ({ t, cam, sold = 0 }) 
   );
 };
 export const T7Dealer: React.FC<SceneProps> = (p) => <Dealer {...p} />;
-export const T8Boat: React.FC<SceneProps> = ({ t, cam }) => {
-  const wall = useMemo(() => toon("#e6c47a"), []);
-  return (
-    <Town t={t + 2} nobuild={[]}>
-      <group position={[0, 0, 22]}><Building p={[0, 0, 0]} w={8} h={5.2} d={6} wall="#e6c47a" wallKind="siding" roof="#8a4a3a" roofType="gable" chimney rot={0} doorColor="#8a3a2a" /></group>
-      <Boat p={[6.4 + smooth(t / 3.4) * 0, 0.1, 29.5]} rot={0.15} s={1.15} />
-      <P look="owner" p={[1.2, 0.2, 31.5]} cam={cam} t={t} s={1.6} expr="laugh" pose="cheer" seed={4} emph={1} />
-      <P look="woman" p={[-2.2, 0.2, 32.5]} cam={cam} t={t} s={1.5} expr="worried" pose="cross" seed={5} />
-      <Board p={[-6.5, 0, 36]} w={2.6} h={0.9} tex={signTex("NO LAKE HERE", "#f6efd8", "#2f5a8a", 640, 220)} />
-      <Bills t={t} born={0.8} n={24} area={[10, 7, 6]} center={[2, 0, 30]} fall={1.0} />
-    </Town>
-  );
-};
+export const T8Boat: React.FC<SceneProps> = ({ t, cam }) => (
+  <Town t={t + 2}>
+    <Street x0={125} x1={205} z0={14} z1={21} />
+    {[140, 155, 170].map((x, i) => <Building key={i} p={[x, 0, 5]} w={8} h={5.2} d={6} wall={["#e6c47a", "#a8c4d8", "#d8a8a0"][i]} wallKind="siding" roof={["#8a4a3a", "#4a5a7a", "#6a4a46"][i]} roofType="gable" chimney={i !== 1} rot={0} doorColor={["#8a3a2a", "#d8483a", "#4a6a8a"][i]} />)}
+    {[135, 150, 165, 180].map((x, i) => <Building key={"a" + i} p={[x + 7, 0, 32]} w={8} h={5.4} d={6} wall={["#b8d0a0", "#e8d8a8", "#c8a8d0", "#a8d0c8"][i]} wallKind="siding" roof="#7a5a3a" roofType="gable" rot={Math.PI} doorColor="#8a3a2a" />)}
+    {[140, 155, 170].map((x, i) => <Lawn key={i} p={[x + 1, 0, 9.4]} w={11} d={2.8} />)}
+    <Boat p={[161.7, 0.1, 9.6]} rot={0.1} s={1.1} />
+    <P look="owner" p={[157, 0.2, 12.2]} cam={cam} t={t} s={1.6} expr="laugh" pose="cheer" seed={4} emph={1} />
+    <P look="woman" p={[151, 0.2, 12.0]} cam={cam} t={t} s={1.5} expr="worried" pose="cross" seed={5} />
+    <Board p={[147, 0.2, 11.4]} w={2.6} h={0.9} tex={signTex("NO LAKE HERE", "#f6efd8", "#2f5a8a", 640, 220)} />
+    <Car p={[146, 0.05, 17.4]} color="#2f6aa8" rot={Math.PI} /><Car p={[168, 0.05, 18.4]} color="#c8403a" rot={0} />
+    {[137, 152, 166, 178].map((x, i) => <Tree key={i} p={[x, 0.2, 11.6]} s={0.9} seed={i + 3} />)}
+    <Bills t={t} born={0.8} n={24} area={[10, 7, 6]} center={[158, 0, 10]} fall={1.0} />
+  </Town>
+);
 const Pump: React.FC<{ p: V3; t: number; empty?: boolean }> = ({ p, empty = false }) => { const r = useMemo(() => toon("#d8483a"), []); const dk = useMemo(() => toon("#2a2a34"), []); const sc = useMemo(() => new THREE.MeshBasicMaterial({ color: empty ? "#d8483a" : "#9ad8c0" }), [empty]); return <group position={p}><Ink geometry={box(0.9, 2.0, 0.7)} material={r} position={[0, 1.0, 0]} px={1.8} cast={false} /><mesh material={sc} position={[0, 1.5, 0.37]}><planeGeometry args={[0.6, 0.35]} /></mesh><Ink geometry={box(1.1, 0.2, 0.9)} material={dk} position={[0, 0.1, 0]} px={1.4} cast={false} /><Ink geometry={new THREE.TorusGeometry(0.22, 0.05, 8, 14, Math.PI * 1.5)} material={dk} position={[0.52, 1.0, 0]} rotation={[0, 0, 0.5]} px={1} cast={false} /></group>; };
 export const T9Gas: React.FC<SceneProps> = ({ t, cam }) => {
-  const sign = useMemo(() => signTex("GAS", "#fff4d8", "#c8283a", 512, 256), []); const empt = useMemo(() => new THREE.MeshBasicMaterial({ map: signTex("EMPTY", "#d8283a", "#fff6e0", 512, 256) }), []);
-  const roof = useMemo(() => toon("#d8483a"), []); const wh = useMemo(() => toon("#f6efe2"), []);
+  const emptyAt = 2.6; const colsC = ["#2f6aa8", "#3f9a62", "#c8403a", "#e8b030", "#7a4aa8", "#f2eee2", "#d8683a"];
   return (
     <Town t={t + 4} gold>
-      <group position={[-42, 0, 3.5]}>
-        <Ink geometry={box(11, 0.5, 6.4)} material={roof} position={[0, 5.2, 0]} px={2} /><Ink geometry={box(0.5, 5.2, 0.5)} material={wh} position={[-4.6, 2.6, 2.4]} px={1.6} cast={false} /><Ink geometry={box(0.5, 5.2, 0.5)} material={wh} position={[4.6, 2.6, 2.4]} px={1.6} cast={false} />
-        <Board p={[0, 4.2, 3.4]} w={2.2} h={1.1} tex={sign} legs={false} />
-        {[-3, 0, 3].map((x, i) => <Pump key={i} p={[x, 0, 0.4]} t={t} empty={t > 2.0 + i * 0.5} />)}
-        <mesh material={empt} position={[0, 3.2, 3.5]}><planeGeometry args={[2.2, 1.1]} /></mesh>
-      </group>
-      {[0, 1, 2, 3, 4, 5].map((i) => { const shake = Math.sin(t * 14 + i) * 0.01; return <Car key={i} p={[-33 + i * 4.6 + shake, 0.05, 3.2 + (i % 2) * 0.1]} rot={Math.PI} color={["#2f6aa8", "#3f9a62", "#c8403a", "#e8b030", "#7a4aa8", "#f2eee2"][i]} />; })}
-      {[0, 1, 2].map((i) => <P key={i} look={LOOKS[i * 4]} p={[-30 + i * 2.6, 0.2, 7.4]} cam={cam} t={t} s={1.4} expr={t > 2.2 ? "worried" : "grin"} pose={t > 2.6 ? "cross" : "hold"} seed={i + 40} />)}
+      <GasStation p={[-49.5, 0, 0]} t={t} empty={t > emptyAt} />
+      <Car p={[-52.5, 0.05, -2.9]} rot={Math.PI / 2} color="#2f6aa8" /><Car p={[-46.5, 0.05, -2.9]} rot={Math.PI / 2} color="#c8403a" />
+      {colsC.map((c, i) => <Car key={i} p={[-38 + i * 5 + Math.sin(t * 14 + i) * 0.01, 0.05, 2.4]} rot={Math.PI} color={c} />)}
+      {[0, 1, 2].map((i) => <P key={i} look={LOOKS[i * 4]} p={[-44 + i * 2.6, 0.2, 0.2]} cam={cam} t={t} s={1.4} expr={t > emptyAt ? "worried" : "grin"} pose={t > emptyAt + 0.4 ? "cross" : "hold"} seed={i + 40} />)}
       <Walkers t={t} cam={cam} n={3} seed={7} />
     </Town>
   );
 };
 const QuitSign: React.FC<{ p: V3; t: number; at: number }> = ({ p, t, at }) => { const m = useMemo(() => new THREE.MeshBasicMaterial({ map: signTex("I QUIT!", "#fff4d8", "#c8283a", 512, 220), side: THREE.DoubleSide }), []); const k = clamp((t - at) / 0.25); if (t < at) return null; return <mesh material={m} position={[p[0], p[1] + 3.5 + 0.2 * Math.sin((t - at) * 3), p[2]]} scale={[k * 1.3, k * 1.3, 1]}><planeGeometry args={[1.8, 0.8]} /></mesh>; };
 export const T10Quit: React.FC<SceneProps> = ({ t, cam }) => {
-  const people: [string, number, string][] = [["cap", -17, "bus"], ["vendor", -10, "cashier"], ["woman", -23, "teacher"], ["craftsman", 4, "plumber"], ["engineer", 20, "mechanic"], ["scientist", 12, "doctor"]];
+  const people: [string, number, string][] = [["cap", -14, "bus"], ["guest", -9, "cashier"], ["woman", -4, "teacher"], ["craftsman", 1, "plumber"], ["engineer", 6, "mechanic"], ["scientist", 11, "doctor"]];
   const at = [wordIn(10, "bus", 2.0), wordIn(10, "cashier", 3.2), wordIn(10, "teacher", 4.6), wordIn(10, "plumber", 6.4), wordIn(10, "mechanic", 7.4), wordIn(10, "doctor", 8.6)];
   return (
     <Town t={t}>
@@ -296,7 +300,7 @@ const BreadRoom: React.FC<SceneProps & { prices: [string, number][]; shot: numbe
       <Counter p={[-5, 0, -2.6]} w={6} />
       {[0, 1, 2, 3, 4].map((i) => <Loaf key={i} p={[-6.5 + i * 0.85, 2.2, -2.6]} rot={0.2} />)}
       <group position={[0.4, 0, -1.0]} scale={1 + 0.12 * Math.max(0, 1 - jump * 4)}><PriceTag p={[0, 5.0, -4.8]} price={price} s={2.6} /></group>
-      <P look="baker" p={[-4.8, 0.1, -4.2]} cam={cam} t={t} s={1.65} expr={price === "$3" ? "grin" : "shock"} pose={price === "$3" ? "idle" : "cheer"} seed={2} />
+      <P look="baker" p={[-0.4, 0.1, -3.6]} cam={cam} t={t} s={1.65} expr={price === "$3" ? "grin" : "shock"} pose={price === "$3" ? "idle" : "cheer"} seed={2} />
       {[0, 1, 2, 3, 4, 5].map((i) => <P key={i} look={LOOKS[(i * 5 + 3) % LOOKS.length]} p={[-1 + i * 1.7, 0.2, 2.0 + (i % 2) * 0.9]} cam={cam} t={t} s={1.4} expr="shock" pose={price === "$3" ? "hold" : "cheer"} seed={i + 80} emph={0.6} />)}
     </Room>
   );
@@ -305,17 +309,21 @@ export const T13Prices1: React.FC<SceneProps> = (p) => <BreadRoom {...p} prices=
 export const T14Prices2: React.FC<SceneProps> = (p) => <BreadRoom {...p} prices={[["$20", 0], ["$50", wordIn(14, "fifty", 1.0)], ["$100", wordIn(14, "hundred", 3.2)]]} shot={14} />;
 export const T15Couch: React.FC<SceneProps> = ({ t, cam }) => {
   const sofa = useMemo(() => toon("#b8505a"), []); const cush = useMemo(() => toon("#d86a74"), []); const wd = useMemo(() => toon("#6a4630"), []);
+  const k = smooth(t / 4.4); const cx = 3 - 9 * k; const bob = Math.sin(t * 7) * 0.04 * (t > 0.5 ? 1 : 0);
   return (
     <Town t={t}>
-      <group position={[-2, 0.2, 7.8]}>
+      <Van p={[-17, 0.2, 4.2]} rot={Math.PI} />
+      <group position={[cx, 1.1 + bob, 7.0]}>
         <Ink geometry={box(4.2, 1.0, 1.7)} material={sofa} position={[0, 0.7, 0]} px={2} cast={false} /><Ink geometry={box(4.2, 1.5, 0.5)} material={sofa} position={[0, 1.5, -0.6]} px={2} cast={false} />
         {[-1.4, 0, 1.4].map((x, i) => <Ink key={i} geometry={box(1.3, 0.34, 1.3)} material={cush} position={[x, 1.35, 0.15]} px={1.4} cast={false} />)}
         {[-2.2, 2.2].map((x, i) => <Ink key={i} geometry={box(0.4, 0.95, 1.7)} material={sofa} position={[x, 1.0, 0]} px={1.6} cast={false} />)}
         {[-1.8, 1.8].map((x, i) => <Ink key={i} geometry={box(0.18, 0.4, 0.18)} material={wd} position={[x, 0.2, 0.6]} px={1.2} cast={false} />)}
-        <PriceTag p={[0, 3.4, 0]} price="$10,000" s={1.7} />
+        <PriceTag p={[0, 3.3, 0]} price="$10,000" s={1.6} />
       </group>
-      <P look="farmer" p={[3.0, 0.2, 8.0]} cam={cam} t={t} s={1.6} expr="smug" pose="hold" seed={3} /><P look="owner" p={[-6.2, 0.2, 7.6]} cam={cam} t={t} s={1.6} expr={t > 3 ? "grin" : "worried"} pose={t > 3 ? "cheer" : "idle"} seed={9} />
-      <Bills t={t} born={3.0} n={40} area={[8, 7, 4]} center={[-1, 0, 8]} fall={1.4} />
+      <P look="boss" p={[cx + 3.3, 0.2, 7.0]} cam={cam} t={t} s={1.55} expr="grin" pose="hold" seed={3} yaw={-0.9} /><P look="engineer" p={[cx - 3.3, 0.2, 7.0]} cam={cam} t={t} s={1.55} expr="strain" pose="hold" seed={6} yaw={0.9} />
+      <P look="owner" p={[cx - 7.2, 0.2, 7.4]} cam={cam} t={t} s={1.6} expr="laugh" pose="walk" yaw={0.9} seed={9} />
+      <P look="woman" p={[6.4, 0.2, 7.4]} cam={cam} t={t} s={1.5} expr="laugh" pose="cheer" seed={11} emph={1} />
+      <Bills t={t} born={0.4} n={30} area={[8, 7, 4]} center={[6, 0, 7.5]} fall={1.4} />
     </Town>
   );
 };
@@ -327,10 +335,10 @@ export const T16Lemonade: React.FC<SceneProps> = ({ t, cam }) => {
         <Ink geometry={box(3.4, 0.16, 1.5)} material={wd} position={[0, 1.5, 0]} px={1.6} cast={false} />{[-1.5, 1.5].map((x, i) => <Ink key={i} geometry={box(0.14, 1.5, 0.14)} material={wd} position={[x, 0.75, 0]} px={1.4} cast={false} />)}
         <Ink geometry={box(3.6, 0.9, 0.12)} material={tb} position={[0, 1.0, 0.7]} px={1.4} cast={false} />
         <mesh material={gl} position={[-0.8, 2.2, 0]}><cylinderGeometry args={[0.38, 0.32, 1.1, 14]} /></mesh><mesh material={lem} position={[-0.8, 2.1, 0]}><cylinderGeometry args={[0.34, 0.3, 0.8, 14]} /></mesh>
-        <Board p={[1.2, 0, 1.3]} w={2.4} h={0.9} tex={signTex("LEMONADE $200", "#fff4d8", "#c8283a", 768, 220)} />
+        <Board p={[3.6, 0, 0.4]} w={2.4} h={0.9} tex={signTex("LEMONADE $200", "#fff4d8", "#c8283a", 768, 220)} />
       </group>
-      <P look="catcher" p={[0.6, 0.2, 6.2]} cam={cam} t={t} s={1.15} expr="proud" pose="cheer" seed={5} emph={0.6} />
-      {[0, 1, 2, 3].map((i) => { const k = smooth((t * 0.5 - i * 0.18)); return <P key={i} look={LOOKS[(i * 3 + 1) % LOOKS.length]} p={[-12 + i * -1.5 + k * 9.0, 0.2, 9.2 + (i % 2) * 0.4]} cam={cam} t={t} s={1.45} pose="walk" yaw={0.9} expr="grin" seed={i + 90} />; })}
+      <P look="cap" p={[0.6, 0.2, 6.2]} cam={cam} t={t} s={1.15} expr="proud" pose="cheer" seed={5} emph={0.6} />
+      {[0, 1, 2, 3].map((i) => { const k = smooth((t * 0.5 - i * 0.18)); return <P key={i} look={LOOKS[(i * 3 + 1) % LOOKS.length]} p={[-12 + i * -1.5 + k * 9.0, 0.2, 3.4 + (i % 2) * 0.5]} cam={cam} t={t} s={1.45} pose="walk" yaw={0.9} expr="grin" seed={i + 90} />; })}
       <Bills t={t} born={wordIn(16, "pays", 4.0)} n={30} area={[8, 6, 4]} center={[0, 0, 7.5]} fall={1.4} />
     </Town>
   );
@@ -340,7 +348,7 @@ export const T17Empty: React.FC<SceneProps> = ({ t, cam }) => (
     <ShelfUnit p={[-6.5, 0, -7.2]} kind="empty" seed={2} /><ShelfUnit p={[-1.5, 0, -7.2]} kind="empty" seed={3} /><ShelfUnit p={[4, 0, -7.2]} kind="cans" seed={8} fill={0.08} /><ShelfUnit p={[-10.4, 0, -3]} kind="empty" seed={4} rot={Math.PI / 2} />
     <Counter p={[7.4, 0, -3.4]} w={6} />
     <Board p={[0.5, 3.8, -7.4]} w={3.2} h={0.9} tex={signTex("SOLD OUT", "#d8283a", "#fff6e0", 768, 220)} legs={false} />
-    <P look="vendor" p={[7.8, 0.1, -4.8]} cam={cam} t={t} s={1.5} expr="worried" pose="cross" seed={3} />
+    <P look="clerk" p={[7.8, 0.1, -4.8]} cam={cam} t={t} s={1.5} expr="worried" pose="cross" seed={3} />
     {[0, 1, 2].map((i) => <P key={i} look={LOOKS[i * 3]} p={[-4 + i * 3.4, 0.1, 0.2 + (i % 2) * 1.0]} cam={cam} t={t} s={1.45} expr="shock" pose="hold" seed={i + 20} />)}
   </Room>
 );
@@ -352,7 +360,7 @@ export const T18Pipe: React.FC<SceneProps> = ({ t, cam }) => {
       <group position={[2, 0, 2.2]}>
         <Ink geometry={new THREE.CylinderGeometry(0.22, 0.22, 0.5, 12)} material={toon("#5a5a64")} position={[0, 0.2, 0]} px={1.6} cast={false} />
         {k > 0 ? jets.map((q, i) => <mesh key={i} material={wm} position={[q.x, q.y * k, q.z]}><sphereGeometry args={[q.s, 8, 6]} /></mesh>) : null}
-        <mesh material={pool} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]} scale={[k * Math.min(5, 1 + t * 0.9), k * Math.min(5, 1 + t * 0.9), 1]}><circleGeometry args={[1.5, 36]} /></mesh>
+        <mesh material={pool} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]} scale={[k * Math.min(2.4, 0.8 + t * 0.35), k * Math.min(2.4, 0.8 + t * 0.35), 1]}><circleGeometry args={[1.5, 36]} /></mesh>
       </group>
       <Board p={[6.5, 0, 0.3]} w={2.8} h={1.0} tex={signTex("PLUMBER $100,000", "#fff4d8", "#c8283a", 768, 220)} />
       {[0, 1, 2, 3, 4].map((i) => <P key={i} look={LOOKS[(i * 4 + 1) % LOOKS.length]} p={[-6 + i * 2.6, 0.2, 5.6 + (i % 2) * 0.8]} cam={cam} t={t} s={1.45} expr="shock" pose={t > burst ? "cheer" : "idle"} seed={i + 15} emph={1} />)}
@@ -386,7 +394,7 @@ export const T21Mayor: React.FC<SceneProps> = ({ t, cam }) => {
   return (
     <Town t={t}>
       <P look="official" p={[0, 0.2, 3.4]} cam={cam} t={t} s={1.9} expr={t > cry ? "worried" : "grin"} pose="hold" seed={1} handR={<group><Ink geometry={box(0.5, 0.15, 0.3)} material={sand} px={1.2} cast={false} /><Ink geometry={box(0.46, 0.06, 0.28)} material={bread} position={[0, 0.1, 0]} px={1} cast={false} /></group>} />
-      {[-7, -4.4, 4.4, 7].map((x, i) => <group key={i}><P look="pullman" p={[x, 0.2, 5.6]} cam={cam} t={t} s={1.45} expr="think" pose="hold" seed={i + 7} /><Ink geometry={box(0.9, 0.7, 0.8)} material={cm} position={[x + (x > 0 ? -0.9 : 0.9), 2.2, 5.4]} px={1.6} cast={false} /></group>)}
+      {[-7, -4.4, 4.4, 7].map((x, i) => <group key={i}><P look="pullman" p={[x, 0.2, 5.6]} cam={cam} t={t} s={1.45} expr="think" pose="hold" seed={i + 7} /><group position={[x + (x > 0 ? -0.9 : 0.9), 2.2, 5.4]}><Ink geometry={box(0.7, 0.55, 0.6)} material={cm} px={1.4} cast={false} /><Ink geometry={new THREE.CylinderGeometry(0.2, 0.26, 0.5, 12)} material={toon("#9aa6b4")} position={[x > 0 ? -0.55 : 0.55, 0, 0]} rotation={[0, 0, Math.PI / 2]} px={1.2} cast={false} /><mesh position={[x > 0 ? -0.82 : 0.82, 0, 0]} rotation={[0, Math.PI / 2, 0]}><circleGeometry args={[0.17, 12]} /><meshBasicMaterial color="#5ab8e8" /></mesh></group></group>)}
       {t > cry ? Array.from({ length: 8 }, (_, i) => { const ph = ((t - cry) * 1.4 + i * 0.2) % 1; return <mesh key={i} position={[(i % 2 ? 0.5 : -0.5) * (0.4 + ph), 3.6 - ph * 1.5, 3.9]}><sphereGeometry args={[0.07, 8, 6]} /><meshBasicMaterial color="#7ac8f2" /></mesh>; }) : null}
       <Crowd t={t} cam={cam} n={18} c={[0, 0.2, -1.2]} w={22} d={2.4} seed={9} expr="shock" />
     </Town>
@@ -406,7 +414,7 @@ export const T22Cash: React.FC<SceneProps> = ({ t, cam }) => {
 };
 export const T23Inflate: React.FC<SceneProps> = ({ t, cam }) => {
   const k = smooth(t / 5.5); const r = 1.1 + 2.1 * k + Math.sin(t * 6) * 0.04 * k; const bm = useMemo(() => new THREE.MeshToonMaterial({ color: "#7fbf6a", gradientMap: undefined }), []);
-  const tex = useMemo(() => new THREE.MeshBasicMaterial({ map: signTex("$", "#00000000", "#2f6a3a", 256, 256), transparent: true }), []);
+  const tex = useMemo(() => new THREE.MeshBasicMaterial({ map: cv(256, 256, (g) => { g.fillStyle = "#2f6a3a"; g.font = "400 210px 'Lilita One', Impact, sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("$", 128, 134); }), transparent: true, depthWrite: false }), []);
   const g = useMemo(() => new THREE.SphereGeometry(1, 28, 20), []); const loaf = useMemo(() => new THREE.MeshBasicMaterial({ color: "#d8a050" }), []);
   return (
     <Town t={t}>
@@ -422,7 +430,7 @@ export const T23Inflate: React.FC<SceneProps> = ({ t, cam }) => {
 };
 export const T24Back: React.FC<SceneProps> = ({ t, cam }) => {
   const go = [0, 1, 2, 3, 4, 5].map((i) => clamp((t - 0.6 - i * 0.55) / 2.4));
-  const specs: [string, number, number][] = [["cap", -17, 5.0], ["vendor", -10, 4.6], ["craftsman", 3, 4.2], ["engineer", 22, 4.8], ["scientist", 13, 4.4], ["woman", -26, 4.6]];
+  const specs: [string, number, number][] = [["cap", -17, 5.0], ["guest", -10, 4.6], ["craftsman", 3, 4.2], ["engineer", 22, 4.8], ["scientist", 13, 4.4], ["woman", -26, 4.6]];
   return (
     <Town t={t + 4} gold>
       {specs.map(([lk, tx, sz], i) => { const k = smooth(go[i]); const sx = tx + (i % 2 ? 12 : -12); return <P key={i} look={lk as any} p={[sx + (tx - sx) * k, 0.2, sz + (1 - k) * 2.4]} cam={cam} t={t} s={1.5} pose={k < 0.98 ? "walk" : "cheer"} yaw={k < 0.98 ? (tx - sx > 0 ? 0.9 : -0.9) : undefined} expr={k < 0.98 ? "deadpan" : "grin"} seed={i + 100} />; })}
