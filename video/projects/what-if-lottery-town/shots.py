@@ -4,7 +4,7 @@ SHOTS = [
  [("It is a small town of three thousand people.", 1.0, 0.5, 0.55)],
  [("Every week, for ten years, everyone has put in one dollar, to buy a single ticket together.", 1.03, 0.4, 0.6)],
  [("This week, the numbers match.", 0.97, 0.7, 0.4), ("The jackpot is three billion dollars.", 0.96, 0.8, 0.35), ("Split three thousand ways, that is one million dollars each.", 0.98, 0.7, 0.7)],
- [("Monday, eight in the morning.", 0.97, 0.5, 0.3), ("A man in a suit walks into the town hall with a giant check, and a very long list.", 1.03, 0.4, 0.5)],
+ [("Monday morning.", 0.97, 0.6, 0.35), ("A man in a suit walks into the town hall with a giant check, and a very long list.", 1.03, 0.4, 0.5)],
  [("Every name in town is on it.", 1.0, 0.5, 0.3), ("The mayor. The baker. The bus driver. The kid who delivers newspapers.", 1.04, 0.3, 0.3), ("One million dollars each.", 0.96, 0.7, 0.5)],
  [("The town goes silent for exactly three seconds.", 0.97, 0.6, 0.9), ("Then it screams.", 0.95, 1.0, 0.8)],
  [("Tuesday. The shopping spree.", 0.98, 0.5, 0.45), ("The car dealer sells every car on his lot in one hour.", 1.03, 0.4, 0.3), ("Then he sells the cars that are not even built yet.", 1.03, 0.4, 0.5)],

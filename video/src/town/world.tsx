@@ -85,7 +85,7 @@ export const Street: React.FC<{ x0?: number; x1?: number; z0?: number; z1?: numb
 
 /* ------------------------------------------------------------------ buildings */
 export type BProps = { p: V3; w: number; h: number; d?: number; rot?: number; wall?: string; wallKind?: "brick" | "siding" | "paint"; roof?: string; roofType?: "flat" | "gable"; sign?: string; signBg?: string; signFg?: string; awning?: [string, string]; doorColor?: string; cols?: number; floors?: number; lit?: boolean; shopFront?: boolean; chimney?: boolean; pediment?: boolean; columns?: boolean; clock?: boolean; simple?: boolean };
-export const Building: React.FC<BProps> = ({ p, w, h, d = 6, rot = 0, wall = "#c06a4a", wallKind = "brick", roof = "#5a3a34", roofType = "flat", sign, signBg, signFg, awning, doorColor = "#5a3418", cols, floors = 2, lit = true, shopFront = false, chimney = false, pediment = false, columns = false, clock = false, simple = false }) => {
+const BuildingImpl: React.FC<BProps> = ({ p, w, h, d = 6, rot = 0, wall = "#c06a4a", wallKind = "brick", roof = "#5a3a34", roofType = "flat", sign, signBg, signFg, awning, doorColor = "#5a3418", cols, floors = 2, lit = true, shopFront = false, chimney = false, pediment = false, columns = false, clock = false, simple = false }) => {
   const wm = useMemo(() => toon(wallKind === "brick" ? rep(brickTex(wall), w / 3.4, h / 3.4) : wallKind === "siding" ? rep(sidingTex(wall), w / 3, h / 3) : wall), [wall, wallKind, w, h]);
   const rm = useMemo(() => toon(roof), [roof]); const trim = useMemo(() => toon("#f1e8d4"), []); const dark = useMemo(() => toon("#3a2630"), []);
   const door = useMemo(() => toon(doorColor), [doorColor]);
@@ -96,17 +96,19 @@ export const Building: React.FC<BProps> = ({ p, w, h, d = 6, rot = 0, wall = "#c
   const gable = useMemo(() => { const s = new THREE.Shape(); s.moveTo(-w / 2 - 0.35, 0); s.lineTo(w / 2 + 0.35, 0); s.lineTo(0, w * 0.3); s.closePath(); return new THREE.ExtrudeGeometry(s, { depth: d + 0.7, bevelEnabled: true, bevelSize: 0.06, bevelThickness: 0.06, bevelSegments: 2 }); }, [w, d]);
   const signM = useMemo(() => (sign ? new THREE.MeshBasicMaterial({ map: signTex(sign, signBg, signFg) }) : null), [sign, signBg, signFg]);
   const awnM = useMemo(() => (awning ? toon(rep(awningTex(awning[0], awning[1]), 1, 1), { side: THREE.DoubleSide }) : null), [awning]);
+  const feat = useMemo(() => { const r = rng(Math.floor(Math.abs(p[0]) * 13 + h * 7 + 1)); return { tank: r() < 0.35, ac: Math.floor(r() * 3), balc: !shopFront && floors >= 3 && r() < 0.65, flowers: r() < 0.5, plants: r() < 0.7, blade: shopFront && r() < 0.65, pil: r() < 0.7, fcol: ["#e8506a", "#f2c53a", "#ffffff", "#b86ad8", "#ff8a3a"][Math.floor(r() * 5)], vent: r() < 0.5 }; }, [p, h, shopFront, floors]);
+  const fboxM = toon("#6a4630"), fleafM = toon("#4f9a46"), fblomM = toon(feat.fcol), metalM = toon("#c8ccd4"), tankM = toon("#8a5a34"), railM = toon("#2f3a3a");
   const wins: React.ReactNode[] = [];
   for (let f = shopFront ? 1 : 0; f < floors; f++) for (let c = 0; c < nC; c++) {
     const x = -w / 2 + ((c + 0.5) * w) / nC; const y = (shopFront ? 3.6 : 0) + (f - (shopFront ? 1 : 0)) * fh + fh * 0.58; if (f === 0 && !shopFront && Math.abs(x) < 0.9) continue;
     wins.push(simple ? <group key={`${f}_${c}`} position={[x, y, d / 2]}>
       <Ink geometry={box(1.1, 1.4, 0.12)} material={trim} px={1.2} cast={false} outline={false} />
-      <mesh material={glass} position={[0, 0, 0.08]}><planeGeometry args={[0.84, 1.14]} /></mesh>
+      <mesh material={glass} position={[0, 0, 0.08]}><planeGeometry args={[0.84, 1.14]} /></mesh>{feat.flowers && f >= 1 ? <FlowerBox m1={fboxM} m2={fleafM} m3={fblomM} /> : null}
       <mesh material={trim} position={[0, 0, 0.1]}><boxGeometry args={[0.07, 1.14, 0.05]} /></mesh>
       <Ink geometry={box(1.35, 0.14, 0.3)} material={trim} position={[0, -0.76, 0.1]} px={1.2} cast={false} outline={false} />
     </group> : <group key={`${f}_${c}`} position={[x, y, d / 2]}>
       <Ink geometry={box(1.15, 1.45, 0.14)} material={trim} px={1.4} cast={false} />
-      <mesh material={glass} position={[0, 0, 0.09]}><planeGeometry args={[0.86, 1.16]} /></mesh>
+      <mesh material={glass} position={[0, 0, 0.09]}><planeGeometry args={[0.86, 1.16]} /></mesh>{feat.flowers && f >= 1 ? <FlowerBox m1={fboxM} m2={fleafM} m3={fblomM} /> : null}
       <Ink geometry={box(0.06, 1.16, 0.06)} material={trim} position={[0, 0, 0.11]} px={1} cast={false} /><Ink geometry={box(0.86, 0.06, 0.06)} material={trim} position={[0, 0, 0.11]} px={1} cast={false} />
       <Ink geometry={box(1.4, 0.14, 0.34)} material={trim} position={[0, -0.78, 0.1]} px={1.4} cast={false} />
       <Ink geometry={box(0.28, 1.3, 0.1)} material={dark} position={[-0.74, 0, 0.06]} px={1} cast={false} /><Ink geometry={box(0.28, 1.3, 0.1)} material={dark} position={[0.74, 0, 0.06]} px={1} cast={false} />
@@ -121,6 +123,13 @@ export const Building: React.FC<BProps> = ({ p, w, h, d = 6, rot = 0, wall = "#c
         <Ink geometry={box(w - 0.2, 0.2, d - 0.2)} material={rm} position={[0, h + 0.45, 0]} px={1.6} cast={false} />
       </>)}
       {chimney ? <Ink geometry={box(0.8, 2.4, 0.8)} material={chimM} position={[w * 0.28, h + w * 0.18, -d * 0.2]} px={1.8} /> : null}
+      {feat.pil ? [-1, 1].map((k) => <Ink key={k} geometry={box(0.36, h, 0.16)} material={trim} position={[k * (w / 2 - 0.16), h / 2, d / 2 + 0.07]} px={1.2} cast={false} outline={false} />) : null}
+      {roofType === "flat" && feat.tank ? <group position={[-w * 0.22, h + 0.55, -d * 0.12]}>{[[-0.5, -0.5], [0.5, -0.5], [-0.5, 0.5], [0.5, 0.5]].map(([x, z], i) => <mesh key={i} material={railM} position={[x, 0.5, z]}><boxGeometry args={[0.1, 1.0, 0.1]} /></mesh>)}<Ink geometry={geo("Cylinder", 0.78, 0.78, 1.3, 14)} material={tankM} position={[0, 1.6, 0]} px={1.6} cast={false} /><Ink geometry={geo("Cone", 0.9, 0.55, 14)} material={railM} position={[0, 2.5, 0]} px={1.4} cast={false} /></group> : null}
+      {roofType === "flat" ? Array.from({ length: feat.ac }, (_, i) => <Ink key={i} geometry={box(1.0, 0.6, 0.8)} material={metalM} position={[w * 0.22 + i * 1.3 - 0.6, h + 0.75, d * 0.1]} px={1.2} cast={false} outline={false} />) : null}
+      {roofType === "flat" && feat.vent ? <mesh material={railM} position={[w * 0.05, h + 1.4, -d * 0.25]}><cylinderGeometry args={[0.04, 0.04, 2.0, 6]} /></mesh> : null}
+      {feat.balc ? Array.from({ length: floors - 1 }, (_, fi) => { const y = (fi + 1) * fh + fh * 0.58 - 0.55; return <group key={fi} position={[0, y, d / 2 + 0.5]}><Ink geometry={box(2.1, 0.14, 0.95)} material={trim} px={1.2} cast={false} outline={false} /><Ink geometry={box(2.1, 0.07, 0.07)} material={railM} position={[0, 0.55, 0.44]} px={1} cast={false} outline={false} />{[-1, -0.5, 0, 0.5, 1].map((x, i) => <mesh key={i} material={railM} position={[x, 0.3, 0.44]}><boxGeometry args={[0.05, 0.5, 0.05]} /></mesh>)}</group>; }) : null}
+      {feat.plants ? [shopFront ? -w / 2 + 0.7 : -1.45, shopFront ? w / 2 - 0.7 : 1.45].map((x, i) => <group key={i} position={[x, 0, d / 2 + 0.95]}><Ink geometry={geo("Cylinder", 0.28, 0.2, 0.5, 10)} material={toon("#b8683a")} position={[0, 0.3, 0]} px={1.2} cast={false} outline={false} /><Ink geometry={geo("Sphere", 0.38, 10, 8)} material={fleafM} position={[0, 0.85, 0]} px={1.2} cast={false} outline={false} /></group>) : null}
+      {feat.blade && signM ? <group position={[-w / 2 + 0.45, 3.2, d / 2 + 0.7]}><Ink geometry={box(0.08, 0.08, 1.2)} material={railM} position={[0, 0.5, 0]} px={1} cast={false} outline={false} /><Ink geometry={box(0.12, 0.7, 0.95)} material={toon(signFg ?? "#7a1f22")} position={[0, 0, 0.1]} px={1.2} cast={false} /></group> : null}
       {wins}
       {/* door */}
       {!shopFront ? <group position={[0, 0, d / 2]}>
@@ -149,6 +158,10 @@ export const Building: React.FC<BProps> = ({ p, w, h, d = 6, rot = 0, wall = "#c
   );
 };
 
+const FlowerBox: React.FC<{ m1: THREE.Material; m2: THREE.Material; m3: THREE.Material }> = ({ m1, m2, m3 }) => (
+  <group position={[0, -0.92, 0.3]}><mesh material={m1}><boxGeometry args={[1.2, 0.22, 0.3]} /></mesh>{[-0.4, 0, 0.4].map((x, i) => <mesh key={i} material={i === 1 ? m3 : m2} position={[x, 0.16, 0]}><sphereGeometry args={[0.15, 8, 6]} /></mesh>)}{[-0.2, 0.2].map((x, i) => <mesh key={i} material={m3} position={[x, 0.22, 0.04]}><sphereGeometry args={[0.1, 8, 6]} /></mesh>)}</group>
+);
+export const Building = React.memo(BuildingImpl);
 /* ------------------------------------------------------------------ street props */
 export const Tree: React.FC<{ p: V3; s?: number; seed?: number; col?: string }> = ({ p, s = 1, seed = 1, col = "#4f9a46" }) => {
   const trunk = useMemo(() => toon("#6a4630"), []); const leaf = useMemo(() => [toon(col), toon("#5fae55"), toon("#3f8a3e")], [col]);
