@@ -366,7 +366,8 @@ export const Ink: React.FC<InkProps> = ({
 };
 
 /* ---------- geometry helpers ---------- */
-export const box = (w: number, h: number, d: number) => new THREE.BoxGeometry(w, h, d);
+const boxCache = new Map<string, THREE.BoxGeometry>();
+export const box = (w: number, h: number, d: number) => { const key = `${w},${h},${d}`; let g = boxCache.get(key); if (!g) { g = new THREE.BoxGeometry(w, h, d); boxCache.set(key, g); } return g; };
 
 /** Rectangle with rectangular holes, extruded. Front face lies at z=0, back at z=-depth. */
 export const wallWithHoles = (

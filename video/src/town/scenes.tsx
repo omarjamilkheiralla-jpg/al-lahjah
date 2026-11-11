@@ -7,7 +7,7 @@ import { emo } from "../full/scenes";
 import { Sky, Puffs, SunDust } from "../emu/world";
 import { INKD } from "../full/paint";
 import timing from "./timing.json";
-import { Ink, box, toon, rng, clamp, cv, rep, signTex, roadTex, CityGround, Skyline, Plaza, Lawn, Van, GasStation, Street, Building, Tree, Lamp, Bench, Car, Boat, Helicopter, Bills, Sun, Board, type V3, type BProps } from "./world";
+import { Ink, box, toon, geo, rng, clamp, cv, rep, signTex, roadTex, CityGround, Skyline, Plaza, Lawn, Van, GasStation, Street, Building, Tree, Lamp, Bench, Car, Boat, Helicopter, Bills, Sun, Board, type V3, type BProps } from "./world";
 
 export type SceneProps = { t: number; cam: V3 };
 const smooth = (x: number) => { const k = clamp(x); return k * k * (3 - 2 * k); };
@@ -98,7 +98,7 @@ const Room: React.FC<{ w: number; d: number; h: number; wall: string; t: number;
         <Ink geometry={box(3.0, 2.6, 0.16)} material={trim} px={1.6} cast={false} /><mesh material={sky} position={[0, 0, 0.1]}><planeGeometry args={[2.6, 2.2]} /></mesh>
         <Ink geometry={box(0.1, 2.2, 0.08)} material={trim} position={[0, 0, 0.14]} px={1} cast={false} /><Ink geometry={box(2.6, 0.1, 0.08)} material={trim} position={[0, 0, 0.14]} px={1} cast={false} />
       </group>
-      {[-w * 0.25, w * 0.1].map((x, i) => <group key={i} position={[x, h - 0.2, -d * 0.1]}><Ink geometry={new THREE.CylinderGeometry(0.05, 0.05, 1.2, 6)} material={toon("#3a2630")} position={[0, 0.6, 0]} px={1} cast={false} /><Ink geometry={new THREE.ConeGeometry(0.7, 0.55, 14, 1, true)} material={toon("#e8c870", { side: THREE.DoubleSide })} position={[0, -0.1, 0]} px={1.4} cast={false} /><mesh position={[0, -0.35, 0]}><sphereGeometry args={[0.16, 10, 8]} /><meshBasicMaterial color="#fff2b8" /></mesh></group>)}
+      {[-w * 0.25, w * 0.1].map((x, i) => <group key={i} position={[x, h - 0.2, -d * 0.1]}><Ink geometry={geo("Cylinder", 0.05, 0.05, 1.2, 6)} material={toon("#3a2630")} position={[0, 0.6, 0]} px={1} cast={false} /><Ink geometry={geo("Cone", 0.7, 0.55, 14, 1, true)} material={toon("#e8c870", { side: THREE.DoubleSide })} position={[0, -0.1, 0]} px={1.4} cast={false} /><mesh position={[0, -0.35, 0]}><sphereGeometry args={[0.16, 10, 8]} /><meshBasicMaterial color="#fff2b8" /></mesh></group>)}
       {children}
     </group>
   );
@@ -141,7 +141,7 @@ const tvTex = (stage: number) => cv(512, 320, (g, w, h) => {
 const TV: React.FC<{ p: V3; stage: number; rot?: number }> = ({ p, stage, rot = 0 }) => { const m = useMemo(() => new THREE.MeshBasicMaterial({ map: tvTex(stage) }), [stage]); const dk = useMemo(() => toon("#2a2a34"), []); return <group position={p} rotation={[0, rot, 0]}><Ink geometry={box(3.9, 2.5, 0.4)} material={dk} px={2} cast={false} /><mesh material={m} position={[0, 0, 0.22]}><planeGeometry args={[3.6, 2.2]} /></mesh></group>; };
 const PriceTag: React.FC<{ p: V3; price: string; s?: number; rot?: number }> = ({ p, price, s = 1, rot = 0 }) => { const m = useMemo(() => new THREE.MeshBasicMaterial({ map: signTex(price, "#fff4d8", "#c8283a", 512, 256) }), [price]); const dk = useMemo(() => toon("#3a2630"), []); return <group position={p} rotation={[0, rot, 0]} scale={s}><Ink geometry={box(1.7, 0.95, 0.12)} material={dk} px={1.6} cast={false} /><mesh material={m} position={[0, 0, 0.07]}><planeGeometry args={[1.56, 0.8]} /></mesh></group>; };
 const Loaf: React.FC<{ p: V3; s?: number; rot?: number }> = ({ p, s = 1, rot = 0 }) => { const m = useMemo(() => toon("#d89a48"), []); const g = useMemo(() => { const x = new THREE.CapsuleGeometry(0.28, 0.7, 6, 14); x.rotateZ(Math.PI / 2); return x; }, []); return <Ink geometry={g} material={m} position={p} rotation={[0, rot, 0]} scale={[s, s * 0.8, s]} px={1.4} cast={false} />; };
-const Oven: React.FC<{ p: V3; t: number; on?: number }> = ({ p, t, on = 1 }) => { const br = useMemo(() => toon("#a8553a"), []); const dk = useMemo(() => toon("#2a2a34"), []); const fire = useMemo(() => new THREE.MeshBasicMaterial({ color: "#ff9a30" }), []); return <group position={p}><Ink geometry={box(3.6, 3.2, 1.8)} material={br} position={[0, 1.6, 0]} px={2} cast={false} /><Ink geometry={box(2.2, 1.3, 0.2)} material={dk} position={[0, 1.2, 0.95]} px={1.6} cast={false} /><mesh material={fire} position={[0, 1.2, 1.07]} scale={[1, (0.5 + 0.5 * on) * (0.92 + 0.08 * Math.sin(t * 9)), 1]}><planeGeometry args={[1.8, 0.9]} /></mesh><Ink geometry={new THREE.CylinderGeometry(0.4, 0.5, 2.2, 12)} material={dk} position={[1.2, 4.2, -0.4]} px={1.6} cast={false} /></group>; };
+const Oven: React.FC<{ p: V3; t: number; on?: number }> = ({ p, t, on = 1 }) => { const br = useMemo(() => toon("#a8553a"), []); const dk = useMemo(() => toon("#2a2a34"), []); const fire = useMemo(() => new THREE.MeshBasicMaterial({ color: "#ff9a30" }), []); return <group position={p}><Ink geometry={box(3.6, 3.2, 1.8)} material={br} position={[0, 1.6, 0]} px={2} cast={false} /><Ink geometry={box(2.2, 1.3, 0.2)} material={dk} position={[0, 1.2, 0.95]} px={1.6} cast={false} /><mesh material={fire} position={[0, 1.2, 1.07]} scale={[1, (0.5 + 0.5 * on) * (0.92 + 0.08 * Math.sin(t * 9)), 1]}><planeGeometry args={[1.8, 0.9]} /></mesh><Ink geometry={geo("Cylinder", 0.4, 0.5, 2.2, 12)} material={dk} position={[1.2, 4.2, -0.4]} px={1.6} cast={false} /></group>; };
 
 /* ------------------------------------------------------------------ scenes */
 export const T0Hook: React.FC<SceneProps> = ({ t, cam }) => (
@@ -160,7 +160,7 @@ export const T2Pool: React.FC<SceneProps> = ({ t, cam }) => {
     <Room w={22} d={16} h={8.5} wall="#d8c6a0" t={t}>
       <ShelfUnit p={[-6.5, 0, -7.2]} kind="cans" seed={2} /><ShelfUnit p={[-1.5, 0, -7.2]} kind="bread" seed={3} /><ShelfUnit p={[-10.4, 0, -3]} kind="cans" seed={4} rot={Math.PI / 2} />
       <Counter p={[3.4, 0, -3.4]} w={6} />
-      <group position={[2.4, 1.86, -3.4]}><mesh material={glass}><cylinderGeometry args={[0.75, 0.75, 2.5, 22]} /></mesh><mesh material={cash} position={[0, -1.25 + jarH / 2, 0]}><cylinderGeometry args={[0.7, 0.7, jarH, 20]} /></mesh><Ink geometry={new THREE.CylinderGeometry(0.8, 0.8, 0.2, 20)} material={toon("#8a5a34")} position={[0, 1.35, 0]} px={1.4} cast={false} /></group>
+      <group position={[2.4, 1.86, -3.4]}><mesh material={glass}><cylinderGeometry args={[0.75, 0.75, 2.5, 22]} /></mesh><mesh material={cash} position={[0, -1.25 + jarH / 2, 0]}><cylinderGeometry args={[0.7, 0.7, jarH, 20]} /></mesh><Ink geometry={geo("Cylinder", 0.8, 0.8, 0.2, 20)} material={toon("#8a5a34")} position={[0, 1.35, 0]} px={1.4} cast={false} /></group>
       <Board p={[-3.2, 3.1, -7.4]} w={3.0} h={0.8} tex={signTex("TICKET FUND $1", "#f6efd8", "#2f6a4a", 768, 200)} legs={false} />
       <Board p={[9.2, 3.1, -7.4]} w={3.0} h={1.0} tex={signTex(weeks[wi], "#2f3f6a", "#ffe9a0", 768, 220)} legs={false} />
       <P look="clerk" p={[3.8, 0.1, -4.8]} cam={cam} t={t} s={1.5} expr="grin" pose="idle" seed={3} />
@@ -174,7 +174,7 @@ export const T3Numbers: React.FC<SceneProps> = ({ t, cam }) => {
     <Room w={24} d={16} h={9} wall="#a9d0d2" t={t}>
       <TV p={[0, 5.4, -7.5]} stage={final} />
       <Counter p={[-8, 0, -4.8]} w={6} />
-      {[0, 1, 2, 3, 4, 5].map((i) => { const x = -6 + i * 2.5; return <group key={i}><Ink geometry={new THREE.CylinderGeometry(0.5, 0.45, 1.5, 14)} material={toon("#d8483a")} position={[x, 0.75, -1.2 + (i % 2) * 1.6]} px={1.6} cast={false} /><P look={LOOKS[(i * 5 + 1) % LOOKS.length]} p={[x, 1.55, -1.2 + (i % 2) * 1.6]} cam={[0, 4, -7]} t={t} s={1.25} expr={final >= 6 ? "shock" : "worried"} pose={final >= 6 ? "cheer" : "hold"} seed={i + 4} yaw={0} shadow={false} /></group>; })}
+      {[0, 1, 2, 3, 4, 5].map((i) => { const x = -6 + i * 2.5; return <group key={i}><Ink geometry={geo("Cylinder", 0.5, 0.45, 1.5, 14)} material={toon("#d8483a")} position={[x, 0.75, -1.2 + (i % 2) * 1.6]} px={1.6} cast={false} /><P look={LOOKS[(i * 5 + 1) % LOOKS.length]} p={[x, 1.55, -1.2 + (i % 2) * 1.6]} cam={[0, 4, -7]} t={t} s={1.25} expr={final >= 6 ? "shock" : "worried"} pose={final >= 6 ? "cheer" : "hold"} seed={i + 4} yaw={0} shadow={false} /></group>; })}
       <P look="baker" p={[-8, 0.1, -6.2]} cam={cam} t={t} s={1.5} expr={final >= 6 ? "shock" : "think"} pose="hold" seed={22} />
       {final >= 6 ? <Bills t={t - s1} born={0} n={40} area={[18, 9, 10]} center={[0, 0, 0]} /> : null}
     </Room>
@@ -185,7 +185,7 @@ export const T4Monday: React.FC<SceneProps> = ({ t, cam }) => (
   <Town t={t} gold>
     <CheckEasel p={[0.6, 0.0, 0.6]} />
     <P look="clerk" p={[-3.4, 0.1, 1.6]} cam={cam} t={t} s={1.6} expr="smug" pose="point" seed={8} />
-    <Ink geometry={new THREE.CylinderGeometry(0.1, 0.1, 0.1, 6)} material={toon("#000")} position={[0, -9, 0]} px={1} cast={false} />
+    <Ink geometry={geo("Cylinder", 0.1, 0.1, 0.1, 6)} material={toon("#000")} position={[0, -9, 0]} px={1} cast={false} />
     <Crowd t={t} cam={cam} n={22} c={[0, 0.2, 5.6]} w={22} d={3.6} seed={3} expr="think" />
     <Walkers t={t} cam={cam} n={4} seed={9} /><Sun p={[-60, 20, -110]} s={80} /><SunDust t={t} n={30} area={[30, 8, 16]} />
   </Town>
@@ -242,7 +242,7 @@ export const T8Boat: React.FC<SceneProps> = ({ t, cam }) => (
     <Bills t={t} born={0.8} n={24} area={[10, 7, 6]} center={[158, 0, 10]} fall={1.0} />
   </Town>
 );
-const Pump: React.FC<{ p: V3; t: number; empty?: boolean }> = ({ p, empty = false }) => { const r = useMemo(() => toon("#d8483a"), []); const dk = useMemo(() => toon("#2a2a34"), []); const sc = useMemo(() => new THREE.MeshBasicMaterial({ color: empty ? "#d8483a" : "#9ad8c0" }), [empty]); return <group position={p}><Ink geometry={box(0.9, 2.0, 0.7)} material={r} position={[0, 1.0, 0]} px={1.8} cast={false} /><mesh material={sc} position={[0, 1.5, 0.37]}><planeGeometry args={[0.6, 0.35]} /></mesh><Ink geometry={box(1.1, 0.2, 0.9)} material={dk} position={[0, 0.1, 0]} px={1.4} cast={false} /><Ink geometry={new THREE.TorusGeometry(0.22, 0.05, 8, 14, Math.PI * 1.5)} material={dk} position={[0.52, 1.0, 0]} rotation={[0, 0, 0.5]} px={1} cast={false} /></group>; };
+const Pump: React.FC<{ p: V3; t: number; empty?: boolean }> = ({ p, empty = false }) => { const r = useMemo(() => toon("#d8483a"), []); const dk = useMemo(() => toon("#2a2a34"), []); const sc = useMemo(() => new THREE.MeshBasicMaterial({ color: empty ? "#d8483a" : "#9ad8c0" }), [empty]); return <group position={p}><Ink geometry={box(0.9, 2.0, 0.7)} material={r} position={[0, 1.0, 0]} px={1.8} cast={false} /><mesh material={sc} position={[0, 1.5, 0.37]}><planeGeometry args={[0.6, 0.35]} /></mesh><Ink geometry={box(1.1, 0.2, 0.9)} material={dk} position={[0, 0.1, 0]} px={1.4} cast={false} /><Ink geometry={geo("Torus", 0.22, 0.05, 8, 14, Math.PI * 1.5)} material={dk} position={[0.52, 1.0, 0]} rotation={[0, 0, 0.5]} px={1} cast={false} /></group>; };
 export const T9Gas: React.FC<SceneProps> = ({ t, cam }) => {
   const emptyAt = 2.6; const colsC = ["#2f6aa8", "#3f9a62", "#c8403a", "#e8b030", "#7a4aa8", "#f2eee2", "#d8683a"];
   return (
@@ -358,7 +358,7 @@ export const T18Pipe: React.FC<SceneProps> = ({ t, cam }) => {
   return (
     <Town t={t}>
       <group position={[2, 0, 2.2]}>
-        <Ink geometry={new THREE.CylinderGeometry(0.22, 0.22, 0.5, 12)} material={toon("#5a5a64")} position={[0, 0.2, 0]} px={1.6} cast={false} />
+        <Ink geometry={geo("Cylinder", 0.22, 0.22, 0.5, 12)} material={toon("#5a5a64")} position={[0, 0.2, 0]} px={1.6} cast={false} />
         {k > 0 ? jets.map((q, i) => <mesh key={i} material={wm} position={[q.x, q.y * k, q.z]}><sphereGeometry args={[q.s, 8, 6]} /></mesh>) : null}
         <mesh material={pool} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]} scale={[k * Math.min(2.4, 0.8 + t * 0.35), k * Math.min(2.4, 0.8 + t * 0.35), 1]}><circleGeometry args={[1.5, 36]} /></mesh>
       </group>
@@ -394,7 +394,7 @@ export const T21Mayor: React.FC<SceneProps> = ({ t, cam }) => {
   return (
     <Town t={t}>
       <P look="official" p={[0, 0.2, 3.4]} cam={cam} t={t} s={1.9} expr={t > cry ? "worried" : "grin"} pose="hold" seed={1} handR={<group><Ink geometry={box(0.5, 0.15, 0.3)} material={sand} px={1.2} cast={false} /><Ink geometry={box(0.46, 0.06, 0.28)} material={bread} position={[0, 0.1, 0]} px={1} cast={false} /></group>} />
-      {[-7, -4.4, 4.4, 7].map((x, i) => <group key={i}><P look="pullman" p={[x, 0.2, 5.6]} cam={cam} t={t} s={1.45} expr="think" pose="hold" seed={i + 7} /><group position={[x + (x > 0 ? -0.9 : 0.9), 2.2, 5.4]}><Ink geometry={box(0.7, 0.55, 0.6)} material={cm} px={1.4} cast={false} /><Ink geometry={new THREE.CylinderGeometry(0.2, 0.26, 0.5, 12)} material={toon("#9aa6b4")} position={[x > 0 ? -0.55 : 0.55, 0, 0]} rotation={[0, 0, Math.PI / 2]} px={1.2} cast={false} /><mesh position={[x > 0 ? -0.82 : 0.82, 0, 0]} rotation={[0, Math.PI / 2, 0]}><circleGeometry args={[0.17, 12]} /><meshBasicMaterial color="#5ab8e8" /></mesh></group></group>)}
+      {[-7, -4.4, 4.4, 7].map((x, i) => <group key={i}><P look="pullman" p={[x, 0.2, 5.6]} cam={cam} t={t} s={1.45} expr="think" pose="hold" seed={i + 7} /><group position={[x + (x > 0 ? -0.9 : 0.9), 2.2, 5.4]}><Ink geometry={box(0.7, 0.55, 0.6)} material={cm} px={1.4} cast={false} /><Ink geometry={geo("Cylinder", 0.2, 0.26, 0.5, 12)} material={toon("#9aa6b4")} position={[x > 0 ? -0.55 : 0.55, 0, 0]} rotation={[0, 0, Math.PI / 2]} px={1.2} cast={false} /><mesh position={[x > 0 ? -0.82 : 0.82, 0, 0]} rotation={[0, Math.PI / 2, 0]}><circleGeometry args={[0.17, 12]} /><meshBasicMaterial color="#5ab8e8" /></mesh></group></group>)}
       {t > cry ? Array.from({ length: 8 }, (_, i) => { const ph = ((t - cry) * 1.4 + i * 0.2) % 1; return <mesh key={i} position={[(i % 2 ? 0.5 : -0.5) * (0.4 + ph), 3.6 - ph * 1.5, 3.9]}><sphereGeometry args={[0.07, 8, 6]} /><meshBasicMaterial color="#7ac8f2" /></mesh>; }) : null}
       <Crowd t={t} cam={cam} n={18} c={[0, 0.2, -1.2]} w={22} d={2.4} seed={9} expr="shock" />
     </Town>
@@ -421,7 +421,7 @@ export const T23Inflate: React.FC<SceneProps> = ({ t, cam }) => {
       <group position={[0, 0, 4.2]}>
         <Ink geometry={g} material={bm} position={[0, 2.4 + r * 0.9, 0]} scale={r} px={2.4} cast={false} />
         <mesh material={tex} position={[0, 2.4 + r * 0.9, r * 1.02]} scale={[r * 1.2, r * 1.2, 1]}><planeGeometry args={[1.4, 1.4]} /></mesh>
-        <Ink geometry={new THREE.CylinderGeometry(0.03, 0.03, 2.4, 6)} material={toon("#f6efe2")} position={[0, 1.2, 0]} px={1} cast={false} />
+        <Ink geometry={geo("Cylinder", 0.03, 0.03, 2.4, 6)} material={toon("#f6efe2")} position={[0, 1.2, 0]} px={1} cast={false} />
       </group>
       <Loaf p={[4.2, 0.4, 7.0]} s={0.9} rot={0.4} />
       {[0, 1, 2, 3, 4, 5].map((i) => <P key={i} look={LOOKS[(i * 5 + 2) % LOOKS.length]} p={[-9 + i * 3.6, 0.2, 7.4 + (i % 2) * 0.8]} cam={cam} t={t} s={1.45} expr={k > 0.7 ? "shock" : "think"} pose={k > 0.7 ? "cheer" : "point"} seed={i + 50} emph={k} />)}
