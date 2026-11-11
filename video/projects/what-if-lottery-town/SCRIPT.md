@@ -12,7 +12,7 @@ What if every person in one small town won a million dollars on the same morning
 
 Three thousand people. Three thousand millionaires.
 
-By the end of the week, a loaf of bread costs one hundred dollars, nobody will fix a sink for any price, and the richest town on Earth is starving.
+Starting now.
 
 ### MONDAY
 
