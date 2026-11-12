@@ -48,3 +48,29 @@ Use this whenever the user says "style 1". It is a fictional/theoretical story t
 **QA**: one frame per shot at 50% scale, 4-6 at a time (about 8 min per batch in the cloud), look at every shot for blocking objects, characters in the lens, floating props, collisions, then a captions frame. Be honest that audio and motion were not heard/seen.
 
 **Files**: `video/projects/what-if-lottery-town/{SCRIPT.md,shots.py,make_voice.py,make_timing.py,make_audio.py}`, `video/src/town/{world,scenes,looks,TownFull}.tsx`, `video/render_town.bat`, composition id `Town`.
+
+## STYLE 2: "Doubling escalation" what-if (learned from the user's reference "What if every burp was twice as loud as the last?")
+Use this whenever the user says "style 2". Reference file: 720x1280, 30 fps, 100 s, NO narration, only rising music/SFX (loudness grows from near silence to very loud across the video).
+
+**Idea / format**
+- A what-if with ONE rule that doubles/escalates each step ("every burp is twice as loud as the last", "every step is twice as long as the last"). The video is a counter that climbs through real, checkable scales: ~35 steps in 100 s (about 2.8 s per step), constant rhythm.
+- Scale ladder = the story: human/street level -> city -> region -> whole planet from space -> planet breaks apart -> ONE joke ending ("You survived. So did your soda."). Each step compares the number to a real thing (a blender, a jet engine, Krakatoa, a Hiroshima bomb, Chelyabinsk, Tunguska, a lightning bolt, the dinosaur asteroid, a second of the Sun, the energy holding Earth together). Every comparison must be verified; round honestly; skip steps that have no good comparison (the reference skips numbers, e.g. #1, #3, #4, #5, #7, #8, #9, #11...).
+- First frame = the title as an italic serif question centred over the opening scene ("What if every burp was twice as loud as the last?"), then straight into step 1. Last card = a question to the viewer ("Which burp would you survive? Comment the number.").
+- Hashtags/title are keywords: science, physics, whatif.
+
+**On-screen text (HUD, top-left, stays all video, only the numbers change)**
+1. small spaced caps label: "BURP #6"
+2. huge light serif number: "109 dB"
+3. small spaced caps line: the comparison ("ALMOST THE WORLD-RECORD BURP (112 dB)")
+4. small spaced caps line: "ENERGY ≈ 300 MICROGRAMS OF TNT"
+5. red rounded pill: "TWICE AS LOUD EVERY BURP" (the rule, always visible)
+6. below, one italic serif caption sentence, 4-9 words, with a dry joke or the consequence ("Grandma clutches her handbag.", "Nobody is clapping.", "Weather forecast: 100% chance of burp.")
+- A small "YOU" tag with a thin leader line follows the hero when seen from above. Text is white on the scene, no boxes, a soft dark shadow only when needed.
+
+**Look**
+- Clean low-poly / blocky 3D world, flat shading, soft shadows, grey fog sky; NOT painted. The hero is a blocky figure in bright colours (yellow shirt, green shorts, blue cap); everybody else is plain grey mannequins so the hero reads instantly.
+- Cameras follow the ladder: eye-level in front of the walking hero -> higher angle -> top-down city -> continent -> globe from space (moon in the corner) -> debris field with the hero floating. Camera always moves; the pull-back is the escalation.
+- Effects grow with the numbers: sound rings, dust rings, debris and paper flying, cracked windows, collapsing blocks, a glowing red ground, a planet that glows, cracks and breaks into plates.
+- Audio: no voice. Ambient bed that gets louder every step, a hit per step, a bass swell, silence for the final joke.
+
+**How to build it with our pipeline**: Remotion + three; HUD as an HTML overlay (numbers from a data table, one step per row: n, value, comparison, energy, caption, camera key, effect); same camera key system with monotone warp; 9:16 1080x1920; 30 or 60 fps; deterministic particles driven by the frame number; QA one frame per step. Facts table must be verified before building and the energy/dB/TNT arithmetic double-checked.
