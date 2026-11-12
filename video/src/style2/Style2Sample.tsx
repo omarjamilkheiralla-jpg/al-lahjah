@@ -180,9 +180,9 @@ const CAMF: ((s: number, hero: V3) => Frame)[] = [
   (s) => { const k = ease(s / 2.5); return { p: lerp3([-12, 5, 14.5], [6, 7.5, 15], k), l: lerp3([-1, 6.0, 1.6], [0, 6.4, 1.6], k), fov: 58, focus: 17, range: 26, bokeh: 1.6 }; },
   (s, h) => { const k = ease(s / 2.5); const base = lerp3([-72, 9, 30], [18, 34, 56], k); const f = clamp((s - 0.45) / 1.35); return { p: [base[0] + (h[0] + 48) * 0.4 * (1 - k), base[1], base[2]], l: [h[0] * 0.9, 4 + h[1] * 0.4, 0], fov: 56, focus: 40, range: 90, bokeh: 1.8 + f }; },
   (s) => { const k = ease(s / 2.5); return { p: lerp3([-110, 30, 190], [-250, 235, 430], k), l: lerp3([10, 110, 0], [15, 215, 0], k), fov: 60, focus: 260, range: 600, bokeh: 0.9 }; },
-  (s) => { const k = ease(s / 2.5); return { p: lerp3([5.6, 0.7, 4.2], [3.4, 0.9, 2.2], k), l: lerp3([0, 0.55, 0], [0, 0.45, 0], k), fov: 56, focus: 4, range: 12, bokeh: 1.2 }; },
-  (s) => { const k = ease(s / 2.5); return { p: lerp3([-6, 3, 30], [4, -1, 22], k), l: [0, 2.2, 0], fov: 55, focus: 30, range: 60, bokeh: 0.6 }; },
-  (s) => { const k = ease(s / 2.5); return { p: lerp3([-6, -6, 26], [30, 12, 50], k), l: lerp3([0, -2, 0], [2, 6, 0], k), fov: 54, focus: 40, range: 100, bokeh: 0.6 }; },
+  (s) => { const k = ease(s / 2.5); return { p: lerp3([6.5, 1.5, 6.2], [4.2, 1.3, 3.6], k), l: lerp3([0, 0.5, 0], [0, 0.45, 0], k), fov: 56, focus: 9, range: 400, bokeh: 0.15 }; },
+  (s) => { const k = ease(s / 2.5); return { p: lerp3([-6, 3, 30], [4, -1, 22], k), l: [0, 3.2, 0], fov: 55, focus: 30, range: 400, bokeh: 0.15 }; },
+  (s) => { const k = ease(s / 2.5); return { p: lerp3([0, 11, 50], [0, 11, 66], k), l: [0, 11, 0], fov: 54, focus: 60, range: 400, bokeh: 0.15 }; },
 ];
 const YOU: ((s: number, hero: V3) => V3)[] = [
   (s, h) => [h[0], h[1] + 3.6, h[2]], (s, h) => [h[0], h[1] + 3.8, h[2]], (s, h) => [h[0], h[1] + 4.2, h[2]], () => [70, 6, 20],
