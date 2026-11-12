@@ -15,7 +15,7 @@ import { Ink, box, toon, geo, rep, signTex, Car, Tree, Building, type V3 } from 
 
 /** STYLE 2 sample v2: "What if every step you took was twice as long as the last?"  (step n = 0.75 m x 2^(n-1)) */
 export const FPS = 60;
-const TITLE_D = 2.6, STEP_D = 2.5, END_D = 2.4;
+const TITLE_D = 2.6, STEP_D = 2.5, END_D = 0;
 type Step = { n: number; val: string; name: string; sub: string; cap: string };
 const STEPS: Step[] = [
   { n: 1, val: "0.75 m", name: "A NORMAL STEP", sub: "ABOUT 2½ FEET", cap: "You take a normal step." },
@@ -38,18 +38,33 @@ const memo = <T,>(k: string, f: () => T): T => { const m = ((memo as any).c ??= 
 const BM = (c: string) => memo("bm" + c, () => new THREE.MeshBasicMaterial({ color: c }));
 
 /* ------------------------------------------------------------------ people */
-const P: React.FC<{ look: string; p: V3; cam: V3; t: number; s?: number; pose?: any; expr?: any; yaw?: number; seed?: number; tint?: string; emph?: number }> = ({ look, p, cam, t, s = 1.5, pose = "idle", expr = "deadpan", yaw, seed = 1, tint, emph }) => (
+const GAIT = 1.25;
+/** leg swing that matches the ground speed, so feet do not slide */
+const ampFor = (speed: number, s: number) => Math.min(2.6, Math.max(0.6, Math.asin(Math.min(0.9, speed / (7 * GAIT / Math.PI) / (2 * 0.68 * s))) / 0.17));
+const P: React.FC<{ look: string; p: V3; cam: V3; t: number; s?: number; pose?: any; expr?: any; yaw?: number; seed?: number; tint?: string; emph?: number; speed?: number; handR?: React.ReactNode; lean?: number }> = ({ look, p, cam, t, s = 1.5, pose = "idle", expr = "deadpan", yaw, seed = 1, tint, emph, speed = 0, handR, lean }) => (
   <>
-    <Person2 look={look as any} expr={expr} t={t} position={p} yaw={yaw ?? yawToward(p, cam)} scale={s} seed={seed} pose={pose} tint={tint} emph={emph} />
+    <Person2 look={look as any} expr={expr} t={t} position={p} yaw={yaw ?? yawToward(p, cam)} scale={s} seed={seed} pose={pose} tint={tint} emph={emph} handR={handR} lean={lean} gait={pose === "walk" ? GAIT : 1} amp={pose === "walk" ? ampFor(speed || 1.2, s) : 1} />
     {p[1] < 0.5 ? <ContactShadow position={[p[0], p[1] + 0.02, p[2]]} r={0.42 * s} /> : null}
   </>
 );
 const GREY = "#b4bcc8";
-/** people on the pavements, walking both ways, everybody except the hero is slightly greyed so the hero reads at once */
-const Walkers: React.FC<{ t: number; cam: V3; n?: number; seed?: number; x0?: number; x1?: number }> = ({ t, cam, n = 14, seed = 1, x0 = -40, x1 = 40 }) => {
-  const w = useMemo(() => { const r = seeded(seed * 5); return Array.from({ length: n }, (_, i) => ({ z: i % 2 ? -2.7 + (r() - 0.5) * 1.2 : 7.4 + (r() - 0.5) * 1.2, sp: 1.3 + r() * 1.0, off: r() * (x1 - x0), dir: i % 3 ? 1 : -1, look: CROWD[(i * 7 + seed * 3) % CROWD.length] })); }, [n, seed, x0, x1]);
-  return <>{w.map((q, i) => { const L = x1 - x0; const x = x0 + ((((q.off + t * q.sp * q.dir) % L) + L) % L); return <P key={i} look={q.look} p={[x, 0.2, q.z]} cam={cam} t={t} s={1.45} pose="walk" yaw={q.dir > 0 ? 0.9 : -0.9} seed={i + 4 + seed} tint={GREY} />; })}</>;
+const Prop: React.FC<{ g: string; m: string; p: V3; s?: V3; r?: V3 }> = ({ g, m, p, s = [1, 1, 1], r }) => <Ink geometry={g === "box" ? box(1, 1, 1) : g === "sph" ? geo("Sphere", 0.5, 12, 10) : g === "cyl" ? geo("Cylinder", 0.5, 0.5, 1, 12) : geo("Cone", 0.5, 1, 14)} material={toon(m)} position={p} scale={s} rotation={r} px={1.2} cast={false} outline={false} />;
+const Balloons: React.FC<{ t: number }> = ({ t }) => <group>{[["#e8264a", -0.2], ["#2f7ae8", 0.05], ["#f5c518", 0.28]].map(([c, dx], i) => <group key={i} position={[Number(dx) + Math.sin(t * 2 + i) * 0.05, 1.5 + i * 0.14, 0]}><Prop g="sph" m={c as string} p={[0, 0.3, 0]} s={[0.46, 0.55, 0.46]} /><Prop g="box" m="#f2f2f2" p={[0, -0.55, 0]} s={[0.012, 1.1, 0.012]} /></group>)}</group>;
+const PIZZA: ((t: number) => React.ReactNode)[] = [
+  (t) => <Balloons t={t} />,
+  () => <group><Prop g="cyl" m="#f2f2f2" p={[0, 0.05, 0]} s={[0.2, 0.3, 0.2]} /><Prop g="cyl" m="#6a4630" p={[0, 0.23, 0]} s={[0.21, 0.05, 0.21]} /></group>,
+  () => <group>{[0, 1, 2, 3, 4].map((i) => <Prop key={i} g="box" m={i % 2 ? "#e8d8b0" : "#d8483a"} p={[0, 0.12 + i * 0.09, 0]} s={[0.62, 0.07, 0.62]} />)}</group>,
+  () => <group><Prop g="cyl" m="#6a4630" p={[0, 0.5, 0]} s={[0.03, 1.0, 0.03]} /><Prop g="cone" m="#2f7ae8" p={[0, 1.1, 0]} s={[1.3, 0.38, 1.3]} /></group>,
+  () => <group><Prop g="cyl" m="#f2f2f2" p={[0, 0.3, 0]} s={[0.025, 0.6, 0.025]} /><Prop g="sph" m="#ff5fa8" p={[0, 0.72, 0]} s={[0.5, 0.5, 0.18]} /></group>,
+  () => <group>{[["#e8264a", -0.1], ["#f5c518", 0], ["#ffffff", 0.1]].map(([c, x], i) => <Prop key={i} g="sph" m={c as string} p={[Number(x), 0.35 + i * 0.05, 0]} s={[0.26, 0.26, 0.26]} />)}<Prop g="cyl" m="#3f8a3a" p={[0, 0.1, 0]} s={[0.05, 0.4, 0.05]} /></group>,
+  () => <Prop g="box" m="#e6e2d6" p={[0, 0.12, 0]} s={[0.5, 0.62, 0.03]} />,
+  () => <group><Prop g="cone" m="#f0c870" p={[0, 0.05, 0]} s={[0.28, 0.4, 0.28]} r={[Math.PI, 0, 0]} /><Prop g="sph" m="#ffe6f0" p={[0, 0.34, 0]} s={[0.34, 0.34, 0.34]} /></group>,
+];
+const Walkers: React.FC<{ t: number; cam: V3; n?: number; seed?: number; x0?: number; x1?: number; heroX?: number }> = ({ t, cam, n = 14, seed = 1, x0 = -40, x1 = 40, heroX }) => {
+  const w = useMemo(() => { const r = seeded(seed * 5); return Array.from({ length: n }, (_, i) => ({ z: i % 2 ? -2.7 + (r() - 0.5) * 1.2 : 6.0 + (r() - 0.5) * 0.4, sp: 0.9 + r() * 0.8, off: r() * (x1 - x0), dir: i % 3 ? 1 : -1, look: CROWD[(i * 7 + seed * 3) % CROWD.length], prop: i % 3 === 0 ? -1 : (i * 5 + seed) % PIZZA.length })); }, [n, seed, x0, x1]);
+  return <>{w.map((q, i) => { const L = x1 - x0; const x = x0 + ((((q.off + t * q.sp * q.dir) % L) + L) % L); const near = heroX !== undefined && Math.abs(x - heroX) < 3.6 && q.z > 5; return <P key={i} look={q.look} p={[x, 0.2, q.z]} cam={cam} t={t} s={1.45} pose="walk" speed={q.sp} yaw={q.dir > 0 ? 0.9 : -0.9} seed={i + 4 + seed} tint={GREY} expr={near ? "shock" : "deadpan"} handR={q.prop >= 0 ? PIZZA[q.prop](t) : undefined} />; })}</>;
 };
+const Pigeon: React.FC<{ p: V3; t: number; ph: number }> = ({ p, t, ph }) => { const peck = Math.max(0, Math.sin(t * 4 + ph)); return <group position={[p[0] + Math.sin(t * 0.6 + ph) * 0.5, p[1], p[2]]} rotation={[0, Math.sin(t * 0.6 + ph) > 0 ? 0 : Math.PI, 0]}><Prop g="sph" m="#9aa2ae" p={[0, 0.3, 0]} s={[0.5, 0.36, 0.34]} /><group position={[0.24, 0.42 - peck * 0.2, 0]} rotation={[0, 0, -peck * 0.7]}><Prop g="sph" m="#7a8290" p={[0, 0, 0]} s={[0.2, 0.2, 0.2]} /><Prop g="cone" m="#f0a030" p={[0.13, -0.02, 0]} s={[0.07, 0.14, 0.07]} r={[0, 0, -Math.PI / 2]} /></group>{[-0.07, 0.07].map((z, i) => <Prop key={i} g="box" m="#e8806a" p={[0.02 + Math.sin(t * 6 + ph + i * 3) * 0.04, 0.08, z]} s={[0.025, 0.16, 0.025]} />)}</group>; };
 const Traffic: React.FC<{ t: number }> = ({ t }) => {
   const cars = [["#c8403a", 1, 9], ["#2f6aa8", -1, 7.5], ["#e8b030", 1, 6.2], ["#3f9a62", -1, 8.3], ["#f2eee2", 1, 5.4]] as const;
   return <>{cars.map(([c, d, sp], i) => { const L = 110; const x = -55 + ((((i * 31 + t * sp * d) % L) + L) % L); return <Car key={i} p={[x, 0.05, d > 0 ? 3.9 : 0.5]} rot={d > 0 ? 0 : Math.PI} color={c} />; })}</>;
@@ -170,14 +185,14 @@ const Sun: React.FC<{ p: V3; s: number }> = ({ p, s }) => { const m = useMemo(()
 type Frame = { p: V3; l: V3; fov: number; roll?: number; focus?: number; range?: number; bokeh?: number };
 /** the hero for the four earth-level steps: where he is, what he is doing */
 const heroAt = (idx: number, s: number): { p: V3; pose: string; expr: string } => {
-  if (idx === 0) return { p: [2 + s * 2.9, 0.2, 2.4], pose: "walk", expr: "smug" };
+  if (idx === 0) return { p: [-9 + s * 2.2, 0.2, 7.2], pose: "walk", expr: "smug" };
   if (idx === 1) { const k = clamp((s - 0.7) / 1.15); return { p: [-6.8 + 13.6 * ease(k), 0.2 + Math.sin(Math.PI * k) * 5.4, 1.6], pose: k > 0 && k < 1 ? "cheer" : "idle", expr: k > 0.05 && k < 1 ? "laugh" : "grin" }; }
   if (idx === 2) { const k = clamp((s - 0.45) / 1.35); return { p: [-48 + 96 * ease(k), 0.2 + Math.sin(Math.PI * k) * 14, 0], pose: k > 0 && k < 1 ? "cheer" : "idle", expr: k > 0.05 && k < 1 ? "laugh" : "grin" }; }
   return { p: [70, 0.2, 20], pose: "cheer", expr: "grin" };
 };
 const CAMF: ((s: number, hero: V3) => Frame)[] = [
-  (s, h) => ({ p: [h[0] + 8.6, 2.5 + Math.sin(s * 2.2) * 0.05, 3.3], l: [h[0] - 4, 2.7, 1.6], fov: 58, focus: 9, range: 13, bokeh: 2.4 }),
-  (s) => { const k = ease(s / 2.5); return { p: lerp3([-12, 5, 14.5], [6, 7.5, 15], k), l: lerp3([-1, 6.0, 1.6], [0, 6.4, 1.6], k), fov: 58, focus: 17, range: 26, bokeh: 1.6 }; },
+  (s, h) => ({ p: [h[0] + 0.8, 3.2 + Math.sin(s * 2.5) * 0.04, 13.6], l: [h[0] + 1.6, 2.6, 0], fov: 58, focus: 6.8, range: 12, bokeh: 1.8 }),
+  (s) => { const k = ease(s / 2.5); return { p: lerp3([-12, 5, 13.4], [6, 7.5, 13.8], k), l: lerp3([-1, 6.0, 1.6], [0, 6.4, 1.6], k), fov: 58, focus: 17, range: 26, bokeh: 1.6 }; },
   (s, h) => { const k = ease(s / 2.5); const base = lerp3([-72, 9, 30], [18, 34, 56], k); const f = clamp((s - 0.45) / 1.35); return { p: [base[0] + (h[0] + 48) * 0.4 * (1 - k), base[1], base[2]], l: [h[0] * 0.9, 4 + h[1] * 0.4, 0], fov: 56, focus: 40, range: 90, bokeh: 1.8 + f }; },
   (s) => { const k = ease(s / 2.5); return { p: lerp3([-110, 30, 190], [-250, 235, 430], k), l: lerp3([10, 110, 0], [15, 215, 0], k), fov: 60, focus: 260, range: 600, bokeh: 0.9 }; },
   (s) => { const k = ease(s / 2.5); return { p: lerp3([6.5, 1.5, 6.2], [4.2, 1.3, 3.6], k), l: lerp3([0, 0.5, 0], [0, 0.45, 0], k), fov: 56, focus: 9, range: 400, bokeh: 0.15 }; },
@@ -185,17 +200,26 @@ const CAMF: ((s: number, hero: V3) => Frame)[] = [
   (s) => { const k = ease(s / 2.5); return { p: lerp3([0, 11, 50], [0, 11, 66], k), l: [0, 11, 0], fov: 54, focus: 60, range: 400, bokeh: 0.15 }; },
 ];
 const YOU: ((s: number, hero: V3) => V3)[] = [
-  (s, h) => [h[0], h[1] + 3.6, h[2]], (s, h) => [h[0], h[1] + 3.8, h[2]], (s, h) => [h[0], h[1] + 4.2, h[2]], () => [70, 6, 20],
+  (s, h) => [h[0], h[1] + 3.8, h[2]], (s, h) => [h[0], h[1] + 3.8, h[2]], (s, h) => [h[0], h[1] + 4.2, h[2]], () => [70, 6, 20],
   () => [0, 0.03, 0], () => [-6.29, 0.2, 6.6], () => [0, -5.8, 4],
 ];
 
+const BONK = 3.9;
 const SceneStreet: React.FC<{ t: number; s: number; cam: V3 }> = ({ t, s, cam }) => {
-  const h = heroAt(0, s);
+  const h = heroAt(0, s); const bonkM = useMemo(() => new THREE.MeshBasicMaterial({ map: signTex("BONK!", "#fff4d8", "#e8264a", 512, 200), transparent: true }), []);
+  const hit = s >= BONK; const px = hit ? 1.35 - Math.min(0.5, (s - BONK) * 1.2) : 1.35 - (BONK - s) * 0.9;
+  const phone = <group><Prop g="box" m="#222a36" p={[0, 0.1, 0]} s={[0.2, 0.34, 0.04]} /><Prop g="box" m="#8ad0f0" p={[0, 0.1, 0.03]} s={[0.17, 0.28, 0.01]} /></group>;
   return (
     <Town t={t}>
-      <Traffic t={t} /><Walkers t={t} cam={cam} n={16} seed={1} />
-      <P look="hero" p={h.p} cam={cam} t={t} s={1.7} pose={h.pose} expr={h.expr} seed={3} />
-      {[[-6, 3.4], [3, 1.9], [-14, 2.8]].map(([x, z], i) => <P key={i} look={CROWD[(i * 9 + 4) % CROWD.length]} p={[x, 0.2, z]} cam={cam} t={t} s={1.5} pose="walk" yaw={0.9} seed={i + 40} tint={GREY} />)}
+      <Traffic t={t} /><Walkers t={t} cam={cam} n={16} seed={1} heroX={h.p[0]} />
+      <P look="hero" p={h.p} cam={cam} t={t} s={1.7} pose={h.pose} expr={h.expr} seed={3} speed={2.2} yaw={0.9} />
+      {/* gag 1: a man staring at his phone walks into the lamp post */}
+      <group position={[1.9, 0, 6.0]}><Prop g="cyl" m="#2f3a3a" p={[0, 2.1, 0]} s={[0.22, 4.2, 0.22]} /><Prop g="sph" m="#fff2b0" p={[0, 4.4, 0]} s={[0.6, 0.6, 0.6]} /></group>
+      <P look={CROWD[11]} p={[px, 0.2, 6.0]} cam={cam} t={t} s={1.5} pose={hit ? "idle" : "walk"} speed={1.0} yaw={0.9} seed={31} tint={GREY} expr={hit ? "shock" : "deadpan"} handR={phone} lean={hit ? -0.25 : 0} />
+      {hit ? <group position={[px, 3.9, 6.8]}><mesh material={bonkM} scale={[Math.min(1, (s - BONK) * 5) * 1.5, Math.min(1, (s - BONK) * 5) * 0.6, 1]}><planeGeometry args={[2, 0.8]} /></mesh>{[0, 1, 2, 3].map((i) => <mesh key={i} material={BM("#ffd23a")} position={[Math.cos(t * 6 + i * 1.57) * 0.55, -0.9 + Math.sin(t * 6 + i * 1.57) * 0.12, 0]}><sphereGeometry args={[0.1, 8, 6]} /></mesh>)}</group> : null}
+      {/* gag 2: pigeons on the pavement, one pecks at a dropped ice cream */}
+      {[[-6, 8.4, 0.2], [-5.2, 8.7, 1.4], [-3.6, 8.5, 2.6]].map(([x, z, ph], i) => <Pigeon key={i} p={[x, 0.2, z]} t={t} ph={ph} />)}
+      <Prop g="sph" m="#ffe6f0" p={[-4.6, 0.35, 8.55]} s={[0.4, 0.3, 0.4]} /><Prop g="cone" m="#f0c870" p={[-4.6, 0.12, 8.55]} s={[0.28, 0.3, 0.28]} r={[Math.PI, 0.3, 1.2]} />
     </Town>
   );
 };
@@ -318,7 +342,6 @@ export const Style2Sample: React.FC<{ audio?: boolean }> = ({ audio = true }) =>
       {flash > 0 ? <AbsoluteFill style={{ background: "#ffffff", opacity: flash }} /> : null}
       {!inTitle && !ending ? <Hud step={STEPS[idx]} k={local} you={you} /> : null}
       {inTitle ? <AbsoluteFill style={{ justifyContent: "flex-start", padding: "300px 80px 0", color: "#fff", fontFamily: "'Playfair Display', Georgia, serif", fontStyle: "italic", fontSize: 76, lineHeight: 1.18, textShadow: "0 3px 18px rgba(10,14,30,.7)", opacity: ease(local / 0.1) * (1 - ease((local - 0.88) / 0.12)), transform: `translateY(${(1 - ease(local / 0.1)) * 24}px)` }}>What if every step you took was twice as long as the last?</AbsoluteFill> : null}
-      {ending ? <AbsoluteFill style={{ background: "rgba(5,8,22,.55)", justifyContent: "center", padding: "0 90px", color: "#fff", fontFamily: "'Playfair Display', Georgia, serif", fontStyle: "italic", fontSize: 66, lineHeight: 1.25, textAlign: "center", opacity: ease((t - (TITLE_D + STEPS.length * STEP_D)) / 0.35) }}>Which step surprised you most?<br />Comment the number.</AbsoluteFill> : null}
       {audio ? <Audio src={staticFile("style2_mix.wav")} /> : null}
     </AbsoluteFill>
   );

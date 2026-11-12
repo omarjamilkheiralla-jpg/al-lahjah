@@ -4,7 +4,7 @@ import sys, wave
 import numpy as np
 from scipy.signal import lfilter, fftconvolve, butter
 SR = 44100; rng = np.random.default_rng(7)
-TITLE, STEP, END, NS = 2.6, 2.5, 2.4, 7
+TITLE, STEP, END, NS = 2.6, 2.5, 0.0, 7
 END0 = TITLE + NS * STEP; TOTAL = END0 + END; N = int(SR * TOTAL); T = np.arange(N) / SR
 BPM = 124; BEAT = 60 / BPM
 def hz(m): return 440 * 2 ** ((m - 69) / 12)
@@ -97,8 +97,6 @@ for i in range(NS):
 put(fx, riser(TITLE - 0.15, 0.6), 0.0, 0.35)
 put(fx, impact(), TITLE + (NS - 1) * STEP, 1.1)
 put(fx, bell(93, 2.4), TITLE + (NS - 1) * STEP + 0.05, 0.4)
-# ---- end card: a soft resolving chord
-put(music, sum(saw(hz(m), int(SR * 2.4), (-0.005, 0.005)) for m in [57, 60, 64, 69]) / 4 * np.minimum(1, np.arange(int(SR * 2.4)) / SR / 0.3) * np.exp(-np.arange(int(SR * 2.4)) / SR / 1.2), END0 + 0.1, 0.35)
 mus = reverb(lowpass(music, 9000) + fx, 1.4, 0.30)
 x = mus * 0.9 + drums * 0.95 + amb * 0.55
 x /= max(1e-6, np.abs(x).max()) / 0.92

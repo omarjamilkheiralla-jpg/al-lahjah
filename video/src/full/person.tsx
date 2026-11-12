@@ -64,10 +64,12 @@ export type PersonProps = {
   stripes?: boolean;
   /** head wiggle (shaking head when angry, nodding when pleased) */
   emph?: number;
+  gait?: number;
+  amp?: number;
 };
 
 export const Person2: React.FC<PersonProps> = ({
-  look, expr = "deadpan", t, position = [0, 0, 0], yaw = 0, scale = 1, seed = 1, pose = "idle", power = 1, lean = 0, tint = "#ffffff", handR, handL, still, stripes, emph = 0,
+  look, expr = "deadpan", t, position = [0, 0, 0], yaw = 0, scale = 1, seed = 1, pose = "idle", power = 1, lean = 0, tint = "#ffffff", handR, handL, still, stripes, emph = 0, gait = 1, amp = 1,
 }) => {
   const r = useMemo(() => rng(seed), [seed]);
   const ph = useMemo(() => r() * 6, [r]);
@@ -92,7 +94,7 @@ export const Person2: React.FC<PersonProps> = ({
   const nod = still ? 0 : Math.sin(t * 1.3 + ph) * 0.03 + (pose === "sleep" ? 0.12 : 0) + Math.sin(t * 6 + ph) * 0.05 * emph;
   const ang = angles(pose, t, ph, power);
   const walking = pose === "walk";
-  const step = Math.sin(t * 7 + ph);
+  const step = Math.sin(t * 7 * gait + ph);
 
   const Arm: React.FC<{ s: number; e: number; x: number; prop?: React.ReactNode; z: number }> = ({ s, e, x, prop, z }) => (
     <group position={[x, 1.2, z]} rotation={[0, 0, s]}>
@@ -113,8 +115,8 @@ export const Person2: React.FC<PersonProps> = ({
       {/* legs */}
       <group position={[0, bob * 0.3, 0]}>
         {[-1, 1].map((side) => {
-          const sw = walking ? side * step * 0.17 : 0;
-          const lift = walking ? Math.max(0, side * step) * 0.07 : 0;
+          const sw = walking ? side * step * 0.17 * amp : 0;
+          const lift = walking ? Math.max(0, side * step) * 0.07 * Math.min(2, amp) : 0;
           return (
             <group key={side} position={[side * 0.11, 0.7 + lift, 0.001]} rotation={[0, 0, sw]}>
               <mesh geometry={legGeo} material={ink} />
