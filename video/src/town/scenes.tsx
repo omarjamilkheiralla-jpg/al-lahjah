@@ -478,3 +478,12 @@ export const TThumb: React.FC<SceneProps> = ({ t, cam }) => (
     <Bills t={t + 1.5} born={0} n={90} area={[16, 9, 6]} center={[0, 0, 0.5]} fall={1.6} />
   </Room>
 );
+
+/** thumbnail scene 2: one clean idea, a whole crowd cheering in front of the giant check */
+export const TThumb2: React.FC<SceneProps> = ({ t, cam }) => (
+  <Town t={t} gold>
+    <CheckEasel p={[0.4, 0, -1.0]} />
+    {[-6.2, -3.7, -1.2, 1.3, 3.8, 6.3].map((x, i) => <P key={i} look={LOOKS[(i * 7 + 3) % LOOKS.length]} p={[x + (i % 2) * 0.2, 0.2, 5.2 + (i % 2) * 0.9]} cam={[0, 3, 12]} t={t + i * 0.3} s={2.6} expr="laugh" pose="cheer" seed={i + 11} emph={1} yaw={0} />)}
+    <Bills t={t + 1.2} born={0} n={110} area={[22, 11, 8]} center={[0, 0, 4]} fall={1.4} />
+  </Town>
+);
