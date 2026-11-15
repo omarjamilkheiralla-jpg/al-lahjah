@@ -29,7 +29,7 @@ export const TownThumb: React.FC = () => {
 
 const Rig2: React.FC = () => {
   const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
-  useLayoutEffect(() => { camera.fov = 52; camera.updateProjectionMatrix(); camera.position.set(0, 1.5, 12.5); camera.up.set(0, 1, 0); camera.lookAt(0, 3.7, 0); camera.updateMatrixWorld(); });
+  useLayoutEffect(() => { camera.fov = 48; camera.updateProjectionMatrix(); camera.position.set(0, 1.9, 13.5); camera.up.set(0, 1, 0); camera.lookAt(0, 3.2, 0); camera.updateMatrixWorld(); });
   return null;
 };
 export const TownThumb2: React.FC = () => {
@@ -39,9 +39,9 @@ export const TownThumb2: React.FC = () => {
   if (!ok) return <AbsoluteFill style={{ background: "#c33" }} />;
   return (
     <AbsoluteFill style={{ background: "#000" }}>
-      <ThreeCanvas width={width} height={height} flat camera={{ fov: 52, near: 0.1, far: 400, position: [0, 1.5, 12.5] }} gl={{ antialias: true }}>
+      <ThreeCanvas width={width} height={height} flat camera={{ fov: 48, near: 0.1, far: 400, position: [0, 1.9, 13.5] }} gl={{ antialias: true }}>
         <Rig2 /><TThumb2 t={1.6} cam={[0, 3, 12]} />
-        <PostFX focus={7.5} range={5} bokeh={2.2} frame={frame} grain={0.1} />
+        <PostFX focus={10.2} range={3.4} bokeh={3.4} frame={frame} grain={0.08} />
       </ThreeCanvas>
     </AbsoluteFill>
   );

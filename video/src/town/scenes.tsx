@@ -479,11 +479,13 @@ export const TThumb: React.FC<SceneProps> = ({ t, cam }) => (
   </Room>
 );
 
-/** thumbnail scene 2: one clean idea, a whole crowd cheering in front of the giant check */
-export const TThumb2: React.FC<SceneProps> = ({ t, cam }) => (
+/** thumbnail scene 2 (clean): three big cheering people apart from each other, a soft crowd behind, money in front */
+export const TThumb2: React.FC<SceneProps> = ({ t }) => (
   <Town t={t} gold>
-    <CheckEasel p={[0.4, 0, -1.0]} />
-    {[-6.2, -3.7, -1.2, 1.3, 3.8, 6.3].map((x, i) => <P key={i} look={LOOKS[(i * 7 + 3) % LOOKS.length]} p={[x + (i % 2) * 0.2, 0.2, 5.2 + (i % 2) * 0.9]} cam={[0, 3, 12]} t={t + i * 0.3} s={2.6} expr="laugh" pose="cheer" seed={i + 11} emph={1} yaw={0} />)}
-    <Bills t={t + 1.2} born={0} n={110} area={[22, 11, 8]} center={[0, 0, 4]} fall={1.4} />
+    <CheckEasel p={[0.2, 0, -3.0]} />
+    {[-9, -6.4, -3.6, 3.6, 6.4, 9].map((x, i) => <P key={"b" + i} look={LOOKS[(i * 5 + 8) % LOOKS.length]} p={[x, 0.2, -0.2 - (i % 2) * 0.8]} cam={[0, 3, 12]} t={t + i * 0.37} s={2.3} expr="laugh" pose="cheer" seed={i + 31} emph={1} yaw={0} />)}
+    {[[-3.7, "t03"], [0.1, "t17"], [3.9, "t09"]].map(([x, lk], i) => <P key={i} look={lk as string} p={[x as number, 0.2, 3.2 + (i === 1 ? 0.9 : 0)]} cam={[0, 3, 12]} t={t + i * 0.3} s={3.0} expr="laugh" pose="cheer" seed={i + 11} emph={1} yaw={0} />)}
+    <Bills t={t + 1.1} born={0} n={70} area={[20, 10, 3]} center={[0, 0, 1.0]} fall={1.4} />
+    <Bills t={t + 0.4} born={0} n={26} area={[14, 8, 2]} center={[0, 0, 8.4]} fall={1.8} seed={9} />
   </Town>
 );
