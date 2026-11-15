@@ -1,32 +1,53 @@
-# HANDOFF: read this first in a new session
+# HANDOFF: everything a new session needs (read this first, then STYLE_GUIDE.md)
 
-Work branch: `claude/magical-cannon-9igec5` (everything below is pushed there). Start the new session on THIS branch, not main.
-The user renders every video on their own Windows PC (never render full videos in the cloud). Commands they use (one at a time, in PowerShell):
-`cd C:\Users\jamil\al-lahjah` -> `git checkout -- video/package-lock.json` -> `git pull` -> `cd video` -> `npx remotion render src/index.ts <Composition> out\<name>.mp4 --gl=angle --concurrency=2 --crf=17`
-If Chrome runs out of memory use `--concurrency=1`. Always `git pull` first.
+Branch with all work: `claude/magical-cannon-9igec5` (about 90 commits, all pushed). Start the new session on THIS branch, not main. Do not open a pull request unless the user asks. A stop hook forces commit + push at the end of every turn.
 
-## Rule book (read these)
-- `video/STYLE_GUIDE.md`  house style, voice rule (Kokoro `am_liam`, no pitch tricks), "You see," beat, ta-ding ending, zero tolerance for stray lines/seams, QA procedure.
-  - **STYLE 1** = "What if" day-by-day story (reference build: lottery town).
-  - **STYLE 2** = silent doubling-escalation counter (learned from the user's burp reference; sample = "every step twice as long").
-- `.claude/skills/shorts-style/SKILL.md` (same rules) and `.claude/skills/stop-slop/` (writing-style skill, MIT, vetted).
+## 1. Who the user is and how to talk to them
+- Runs a faceless YouTube channel, working name "Unlikely True": strange facts, stories and what-if videos, animated, in the style of Zack D. Films (strange hook, story, explanation, payoff). Cartoon people in detailed painted 3D worlds.
+- NOT a programmer. Windows PC (user folder `C:\Users\jamil`, repo `C:\Users\jamil\al-lahjah`), Radeon RX 6800M laptop GPU. Renders every video HIMSELF; the cloud cannot render full videos (software GL, no GPU). I only render single test frames.
+- Wants: short, plain answers; ONE command per code block, in order, each starting from a known folder; honesty about what was and was not checked (I cannot hear audio and cannot watch motion); no jargon; no wall of text. Gets frustrated by vague messages ("what are you saying") and by repeated mistakes. When he sends a screenshot of an error, solve that error only.
+- Always remind him to `git pull` before rendering. Standard render sequence (PowerShell, one at a time):
+  `cd C:\Users\jamil\al-lahjah` / `git checkout -- video/package-lock.json` / `git pull` / `cd video` / `npx remotion render src/index.ts <CompositionId> out\<name>.mp4 --gl=angle --concurrency=2 --crf=17` (add `--image-format=jpeg --jpeg-quality=92 --timeout=300000`). If Chrome runs out of memory use `--concurrency=1`. Use a NEW output file name each time (a locked old file gives EPERM). Running `npx` from the wrong folder gives a network error: he must be inside `...\al-lahjah\video`.
 
-## Videos built (composition id -> files)
-- `Full` Chicago hotel, `Rats` Hanoi rats, `Anti` Antikythera (Shorts, 1080x1920 60 fps) - done and uploaded.
-- `Emu` Emu War (Shorts) - built, user rendered it and sent glitch fixes (fixed, pushed). Files `src/emu/*`, `projects/emu-war/*`.
-- `Town` "What if a whole town won the lottery" (long, 1920x1080, 50 fps, ~2:45). Files `src/town/{world,scenes,looks,TownFull,Thumb}.tsx`, `projects/what-if-lottery-town/*` (script, shots.py, make_voice/timing/audio). Thumbnails: `projects/what-if-lottery-town/thumbnail_clean.png` (latest, user wanted clean + depth + clear idea).
-- `Style2Sample` "What if every step you took was twice as long as the last?" (20 s sample, 1080x1920, 60 fps). `src/style2/Style2Sample.tsx`, audio `projects/style2-steps-sample/make_audio.py`. User asked for more depth/details/funny gags; v3 (characters facing camera, BONK gag, pigeons, props) is pushed but the user has not yet reported on it. Space steps (20/25/30) were not checked in rendered frames.
-- Unbuilt scripts for approval: `projects/what-if-moon`, `what-if-no-lies`, `what-if-truth-serum` (user rejected tone/topic; moon video on hold).
+## 2. Standing rules the user gave (never break)
+- Voice: Kokoro `am_liam`, steady, version-5 voice, NO pitch shifting or processing. Chatterbox was deleted (too "zesty"), never reinstall. Speed formula `1+(sp-1)*0.35`, gain <= 0.8 dB.
+- "You see," is its own beat: generated INSIDE its full sentence, cut at the comma gap (25 ms fades), 0.42 s pause inserted, verified by transcription; must not sound like "You'll see"; no sound effect may land on it.
+- End every video with the "ta-ding". Write numbers/abbreviations as words ("Monday morning", not "8 a.m."). Merge tiny fragments into full sentences.
+- ZERO tolerance for stray lines, seams, thin low-quality surfaces, glitches (objects phasing, hats cut off, characters sideways, people walking in place or overlapping). Every surface needs texture/detail; depth in everything; different camera angle every shot; camera never still.
+- Check every shot at full size; be honest about what was not verified. Thumbnails must come from the video's own world (real frames or a close-up render of its scene), never unrelated art. Descriptions: no sources, but include the disclaimer lines and the "synthetic (AI-generated) voice" line.
+- Hooks: no foreshadowing of the ending; explain what started the premise, then go straight into the story. No wisdom talk / moral speeches, little yapping. Not a facts-lecture format unless asked.
+- If the user's idea is false as science, say so and offer a topic where the claim is true (he accepted this: Moon "collapse by day 7" was dropped).
 
-## Known facts / gotchas
-- Flat painted characters (`Person2`) face +z: always film them from +z (never along the street), keep cameras at z <= 14 in the Town world (front-row awnings reach z ~15.6).
-- Never create geometry/materials/textures inside render code (memory leak crashed Chrome at frame 2016); use the cached helpers in `src/town/world.tsx` and `React.memo` static scenery.
-- Kokoro voice model files are NOT in the repo. They lived in the old session's scratchpad (`kokoro-v1.0.onnx`, `voices-v1.0.bin` from the kokoro-onnx releases) and `kokoro_onnx`, `faster-whisper`, `soundfile`, `scipy` must be pip-installed again before regenerating any narration. `ffmpeg` is available.
-- Voice text rules: write numbers/abbreviations as words ("Monday morning", not "8 a.m."), merge tiny fragments, verify by transcription; I cannot hear audio, say so honestly.
-- User preferences: no wisdom/moral talk, little yapping, no foreshadowing hooks, real city (not isolated buildings), varied characters, thumbnails clean and clear, descriptions without sources but with the disclaimer + synthetic-voice lines, be honest about what was not checked.
-- Stop hook: commit and push all changes before ending a turn.
+## 3. Rule books and skills
+- `video/STYLE_GUIDE.md` (also copied in `.claude/skills/shorts-style/SKILL.md`): house style v2, narrator rule, zero-tolerance section, **STYLE 1** (what-if day-by-day story; reference = lottery town) and **STYLE 2** (silent doubling-escalation counter learned from the user's "every burp twice as loud" reference; HUD text block top-left, blocky/clean 3D, rising soundtrack).
+- Skills committed in `.claude/skills/` (all vetted, markdown only unless noted): `shorts-style`, `stop-slop` (plain writing), `video-lens` (YouTube transcript to HTML report; needs Python + youtube-transcript-api + yt-dlp; cloud network may block YouTube), `content-strategy`, `social`, `copywriting`, `ui-ux-pro-max`, official Remotion skills `remotion-best-practices`, `remotion-markup`, `remotion-render`, `remotion-captions`, and motion skills `animation-principles`, `shot-composition`, `motion-art-direction`, `color-motion`, `remotion-video`.
+- Deliberately NOT added: video-use (live-footage editor, needs paid ElevenLabs), hyperframes, claude-code-video-toolkit, pexo, maverick animate skills, other marketingskills. `agent-browser` is installed on the user's PC only (needs Chrome path env var).
+- The user also has these skills in his PC's Claude Code (`C:\Users\jamil\.claude\skills`), but cloud sessions only see what is in the repo.
 
-## Added skills (in repo, `.claude/skills/`)
-- `stop-slop` (writing style) and `video-lens` (YouTube transcript -> HTML summary; needs `pip install youtube-transcript-api yt-dlp`; the cloud network may block YouTube, so it may only work on the user's PC).
-- `content-strategy`, `social`, `copywriting` (from coreyhaines31/marketingskills, markdown only, vetted): use for video topic planning, titles/descriptions, Shorts/post copy. The rest of that repo was NOT added on purpose (too many skills slow every session).
-- Official Remotion skills from remotion-dev/skills (v4.0.543): `remotion-best-practices` (router), `remotion-markup`, `remotion-render`, `remotion-captions`. Not added on purpose: maps, saas, license, upgrade, studio, interactivity, multimedia, create, docs.
+## 4. Technical stack
+- `video/` = Remotion 4.0.541 + three 0.187 + @react-three/fiber 9 + drei + `postprocessing` (custom `src/hotel/PostFX.tsx`: DOF, bloom, grain, vignette, driven once per frame). 60 fps for Shorts (1080x1920), 50 fps and 1920x1080 for Town, 30/60 for Style 2. Fonts shipped in `public/fonts` (Lilita One, Rye, Playfair Display).
+- House look: toon materials (3-band gradient), inverted-hull ink outlines (`Ink` in `src/hotel/kit.tsx`, ink #351f22/#2a1a1e), painted canvas textures, flat painted 2D characters `Person2` (`src/full/person.tsx`, art in `src/full/paint.ts`) standing in 3D worlds, soft `ContactShadow`, captions of 1-4 words (Lilita One), cut flash + punch zoom, camera key paths with a monotone cubic time warp.
+- IMPORTANT geometry facts: flat characters face +z, so film them from +z (looking along -z); at yaw>0.3 they mirror. Camera must never look along their plane (they become sticks). In the Town world keep camera z <= 14 (front-row awnings reach z~15.6). `Person2` has `gait`/`amp` props so the walk cycle can match ground speed (no foot sliding).
+- NEVER allocate geometry/materials/textures inside render code (leak crashed Chrome at frame 2016). Use the cached helpers in `src/town/world.tsx` (`box`, `geo`, `toon`, `rep`) and `React.memo` static scenery.
+- Anti-glitch lessons: seamless wrapped textures, welded (mergeVertices) meshes before outlining, planar UV for blob textures, no characters inside furniture, hats drawn at 78% inside the head canvas, no thin ripple lines.
+- Audio: `projects/<name>/make_audio.py` (numpy synth: sections, SFX, ducking, loudnorm -14 LUFS to `public/<name>_mix.wav`). Voice: `projects/<name>/make_voice.py` + `shots.py` or in-script phrase list; captions timing from faster-whisper `small.en`, aligned to the real script words (`make_timing.py`). Needed Python packages: `kokoro_onnx`, `faster-whisper`, `soundfile`, `numpy`, `scipy`, `pillow`; `ffmpeg` exists. The Kokoro model files (`kokoro-v1.0.onnx`, `voices-v1.0.bin`) are NOT in the repo; they must be downloaded again from the kokoro-onnx releases. Run Python with `-I` (isolated); add the script folder to `sys.path` manually.
+- Cloud still rendering: `npx remotion still src/index.ts <Id> out.png --frame=N --scale=0.5 --props='{"captions":false,"audio":false}' --gl=swangle`; heavy scenes take 1-25 minutes; run 4-6 in parallel with long timeouts; contact-sheet with PIL. Space scenes (Earth with clouds) are very slow in software GL.
+
+## 5. Videos built (composition id -> source)
+- `Full` Chicago hotel lifted (Short ~52 s) `src/hotel`, `src/full`, `projects/chicago-hotel`. Uploaded.
+- `Rats` Hanoi rats "Cut Every Tail" (Short) `src/rats`, `projects/hanoi-rats`. Uploaded. Thumbnails `ThumbRatsV/H`.
+- `Anti` Antikythera "The Computer in the Shipwreck" (Short) `src/anti`, `projects/antikythera`. Uploaded: 1.3k views in 4 hours, 3 subscribers.
+- `Emu` The Emu War (Short ~57 s, 11 shots) `src/emu`, `projects/emu-war`. The user rendered it and reported glitches (map text, soldier legs lean, wooden floor, guns aimed wrong way, a lone emu); all fixed and pushed; not re-confirmed by him.
+- `Town` "What if an entire town won the lottery?" (long, 1920x1080, 50 fps, about 2:45, 27 shots, narration 164 s) `src/town/{world,scenes,looks,TownFull,Thumb}.tsx`, `projects/what-if-lottery-town/*` (SCRIPT.md, shots.py, make_voice/timing/audio.py, thumbnails `thumbnail_clean.png` is the latest and the one he liked best direction-wise). A real city (continuous streets, skyline, plaza, suburb, gas station inside the street), 44 generated crowd looks, funny scenes. Title/description were written (no sources, disclaimer + synthetic voice line). He rendered it more than once (OOM crash fixed). Possible loose ends: he said "a bit of lag" (50 fps can judder on 60 Hz screens; offer 60 fps), voice lines were fixed ("Monday morning", merged hook line), "You see," first half is only 0.40 s (could not hear it).
+- `Style2Sample` "What if every step you took was twice as long as the last?" (20 s sample, 1080x1920, 60 fps) `src/style2/Style2Sample.tsx`, `projects/style2-steps-sample/make_audio.py`. Steps 1/5/8/10/20/25/30 = 0.75 m x 2^(n-1): 0.75 m, 12 m school bus, 96 m football field, 384 m Empire State, 393 km ~ ISS height, 12,583 km ~ Earth's width, 402,653 km past the Moon (all verified; space steps are "not to scale" on screen). v1 (blocky boxes) was rejected as "perfume bottles, no depth, bad music"; v2/v3 use painted characters, a real city, stadium, tower, detailed Earth/Moon, DOF, a composed soundtrack, a walking hero with BONK/pigeon/prop gags, no end card. The user has NOT yet reported on v3; bus step and space steps (20/25/30) were never checked in a finished frame.
+- Others: `Main` demo, `Avatar`/`AvatarHi` channel profile pictures (character design he picked, "smoothed").
+- Unbuilt scripts: `projects/what-if-moon` (on hold), `what-if-no-lies`, `what-if-truth-serum` (user rejected as too wordy/too wise).
+
+## 6. Research the user asked for (summary)
+- Best long-form niches found: animated history / strange true stories (medium competition), mysteries/dark history, business/money stories (highest pay), game lore (copyright risk). Long-form views are rising but watch time is falling, so keep Shorts-fast pacing; Shorts feeding long videos helps. Vendor blogs are unreliable; numbers are directional.
+
+## 7. Suggested next steps (ask the user)
+1. Get his feedback on the Style 2 sample v3 and the lottery town render; fix at the source.
+2. Build a full Style 2 video (pick idea, e.g. the doubling-step one at ~60-90 s) or a new Style 1 idea; write the script first and WAIT for his approval before building.
+3. Offer 60 fps if motion feels laggy; offer to re-check unchecked shots.
+4. Keep this file and `STYLE_GUIDE.md` up to date when anything changes.
