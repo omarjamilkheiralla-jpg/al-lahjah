@@ -3,299 +3,206 @@ import React, { useLayoutEffect } from "react";
 import { AbsoluteFill, Audio, staticFile, useCurrentFrame, useVideoConfig, useDelayRender } from "remotion";
 import { ThreeCanvas } from "@remotion/three";
 import { useThree } from "@react-three/fiber";
-import { loadFonts } from "../full/fonts";
 import { PostFX } from "../hotel/PostFX";
-import { box, cyl, ico, cone, sph, plane, M, BM, Mesh, Human, BEN, GARY, GREYP, walkPose, seeded, ease, clamp, lerp, type V3, type Pose, type Expr } from "./kit";
+import { box, cyl, ico, cone, sph, M, BM, ease, clamp, lerp, seeded, type V3 } from "./kit";
+import { Mesh } from "./kit2";
+import { Person, BEN2, GARY2, MIA2, GREY2, walkP, type Pose3 as Pose2 } from "./kit3";
+import { City, Sky, Table, Chair, Explosion, Car } from "./world2";
 
-/** STYLE 3 sample: "What if your luck doubled every minute?" 4 quick scenarios, about 2.5 s each, 10 s total. */
+/** STYLE 3 sample v2: "What if your luck doubled every minute?" 10 s = title beat + 3 scenarios, replicating the reference reel's look. */
 export const FPS = 30;
 export const S3_TOTAL = 10;
-const SD = 2.5;
-type Sc = { luck: string; tier: string; minute: number; cap: string; shout: number };
-const SCS: Sc[] = [
-  { luck: "1", tier: "AN AVERAGE DAY", minute: 1, cap: "Walks outside. Finds a coin.", shout: 1.55 },
-  { luck: "2", tier: "GREEN LIGHTS", minute: 2, cap: "Every light is green.", shout: 1.7 },
-  { luck: "4", tier: "FREE COFFEE", minute: 3, cap: "Catches coffee without looking.", shout: 1.7 },
-  { luck: "8", tier: "BIRDS HAVE AIM", minute: 4, cap: "The pigeon changed its mind.", shout: 1.7 },
+type Seg = { t0: number; t1: number };
+const SEG: Seg[] = [{ t0: 0, t1: 2.3 }, { t0: 2.3, t1: 4.6 }, { t0: 4.6, t1: 7.0 }, { t0: 7.0, t1: 10 }];
+const HUD = [
+  null,
+  { luck: "1", tier: "", minute: 1, cap: "Finds a coin on the ground.", pill: "MAIN CHARACTER" },
+  { luck: "4", tier: "A FALLING TRAY", minute: 3, cap: "Minute 3: 4 luck. He didn't even look.", pill: "MAIN CHARACTER" },
+  { luck: "8", tier: "A MOVIE POSTER", minute: 4, cap: "", pill: "MAIN CHARACTER" },
 ];
 const TONE = [
-  { sky: "#a9dcf5", fog: "#cfe8f2", sun: "#fff1d6", hemi: "#fff0d8" },
-  { sky: "#a2d3ee", fog: "#d6e4ea", sun: "#ffe9c4", hemi: "#ffeccc" },
-  { sky: "#f2c9a0", fog: "#efd2b4", sun: "#ffd29a", hemi: "#ffe0c0" },
-  { sky: "#f0a67e", fog: "#e8b898", sun: "#ffb878", hemi: "#ffd0a8" },
+  { top: "#6aa8d8", mid: "#bcdcea", hor: "#f6e2c0", sun: "#ffe0b0", hemi: "#ffeed8", key: 3.0, fog: "#e8dcc8" },
+  { top: "#6aa8d8", mid: "#bcd8e6", hor: "#f6dcb8", sun: "#ffdca8", hemi: "#ffe8d0", key: 3.1, fog: "#e8d8c0" },
+  { top: "#70a0cc", mid: "#d0d4d8", hor: "#f2c898", sun: "#ffcf98", hemi: "#ffe0c0", key: 3.0, fog: "#ecd0b0" },
+  { top: "#50407a", mid: "#b8627a", hor: "#f29a5a", sun: "#ff9a58", hemi: "#e8a888", key: 2.0, fog: "#d89a70" },
 ];
 
-/* ------------------------------------------------------------------ street world (static, memoised) */
-const BCOL = ["#e59a86", "#efc088", "#e8dcb0", "#c06a50", "#9ccdb2", "#8fb0d8", "#e8a8b8", "#d9b070"];
-const TRIM = "#f4ecd8";
-const Facade: React.FC<{ x: number; w: number; h: number; col: string; side: 1 | -1; seed: number }> = React.memo(({ x, w, h, col, side, seed }) => {
-  const r = seeded(seed); const cols = Math.max(1, Math.floor(w / 1.9)); const floors = Math.max(1, Math.floor((h - 3.4) / 2.5));
-  const stripes = ["#d8483a", "#f4ecd8", "#e8b030", "#3f8a5a"][seed % 4];
-  return (
-    <group position={[x, 0, side > 0 ? -4 : 14]} rotation={[0, side > 0 ? 0 : Math.PI, 0]}>
-      <Mesh g={box(w, h, 6)} m={M(col, { map: seed % 2 ? "brick" : "plaster", rx: w / 2, ry: h / 2 })} p={[0, h / 2, -3]} cast={false} />
-      <Mesh g={box(w + 0.3, 0.45, 0.5)} m={M(TRIM, { map: "plaster", rx: 2, ry: 1 })} p={[0, h + 0.05, 0.05]} cast={false} />
-      <Mesh g={box(w + 0.2, 0.18, 0.3)} m={M(TRIM, { map: "plaster", rx: 2, ry: 1 })} p={[0, 3.2, 0.1]} cast={false} />
-      {Array.from({ length: cols }, (_, c) => {
-        const cx = -w / 2 + (c + 0.5) * (w / cols);
-        return (
-          <group key={c}>
-            {Array.from({ length: floors }, (_, f) => (
-              <group key={f} position={[cx, 4.6 + f * 2.5, 0.03]}>
-                <Mesh g={box(1.15, 1.55, 0.12)} m={M(TRIM, { map: "plaster" })} cast={false} />
-                <Mesh g={plane(0.92, 1.3)} m={BM(r() < 0.35 ? "#ffd98a" : "#7fb0d0")} p={[0, 0, 0.07]} cast={false} recv={false} />
-                <Mesh g={box(0.08, 1.3, 0.04)} m={M(TRIM)} p={[0, 0, 0.1]} cast={false} />
-                <Mesh g={box(0.92, 0.06, 0.04)} m={M(TRIM)} p={[0, 0.1, 0.1]} cast={false} />
-                <Mesh g={box(1.3, 0.1, 0.3)} m={M("#d8d0bc", { map: "plaster" })} p={[0, -0.82, 0.12]} cast={false} />
-                {r() < 0.4 ? <><Mesh g={box(1.1, 0.2, 0.26)} m={M("#6a4a30", { map: "wood" })} p={[0, -0.64, 0.24]} cast={false} /><Mesh g={ico(0.2, 0)} m={M(r() < 0.5 ? "#e86a8a" : "#f2c316")} p={[-0.3, -0.5, 0.26]} cast={false} /><Mesh g={ico(0.2, 0)} m={M("#3f9a4a")} p={[0.05, -0.48, 0.26]} cast={false} /><Mesh g={ico(0.2, 0)} m={M(r() < 0.5 ? "#e86a8a" : "#fff")} p={[0.35, -0.5, 0.26]} cast={false} /></> : null}
-              </group>
-            ))}
-            {c % 2 === 0 ? (
-              <group position={[cx, 0, 0.05]}>
-                <Mesh g={box(1.6, 2.2, 0.1)} m={BM(r() < 0.5 ? "#ffe6a8" : "#9fd0e8")} p={[0, 1.55, 0.04]} cast={false} recv={false} />
-                <Mesh g={box(1.75, 0.12, 0.14)} m={M("#3a2e2a", { map: "wood" })} p={[0, 2.68, 0.1]} cast={false} /><Mesh g={box(1.75, 0.12, 0.14)} m={M("#3a2e2a", { map: "wood" })} p={[0, 0.42, 0.1]} cast={false} />
-                {Array.from({ length: 6 }, (_, i) => <Mesh key={i} g={box(0.28, 0.5, 1.5)} m={M(i % 2 ? stripes : "#f4ecd8", { map: "fabric" })} p={[-0.72 + i * 0.29, 2.95, 0.7]} r={[0.5, 0, 0]} cast />)}
-              </group>
-            ) : (
-              <group position={[cx, 0, 0.05]}><Mesh g={box(1.1, 2.3, 0.12)} m={M("#7a4a30", { map: "wood", rx: 1, ry: 2 })} p={[0, 1.15, 0.05]} cast={false} /><Mesh g={ico(0.06, 0)} m={M("#e8c050", { metal: 0.6, rough: 0.4 })} p={[0.38, 1.1, 0.14]} cast={false} /></group>
-            )}
-          </group>
-        );
-      })}
-    </group>
-  );
-});
-const Tree: React.FC<{ p: V3; s?: number }> = React.memo(({ p, s = 1 }) => (
-  <group position={p} scale={s}>
-    <Mesh g={cyl(0.12, 0.2, 1.6, 6)} m={M("#6a4a32", { map: "wood", rx: 1, ry: 2 })} p={[0, 0.8, 0]} />
-    <Mesh g={ico(0.95, 1)} m={M("#4a9a48", { map: "grass", rx: 1, ry: 1 })} p={[0, 2.2, 0]} s={[1, 0.9, 1]} />
-    <Mesh g={ico(0.7, 1)} m={M("#5aab52", { map: "grass" })} p={[0.45, 2.75, 0.1]} />
-    <Mesh g={ico(0.6, 1)} m={M("#3f8a40", { map: "grass" })} p={[-0.45, 2.55, -0.1]} />
-  </group>
-));
-const Lamp: React.FC<{ p: V3 }> = React.memo(({ p }) => (
-  <group position={p}>
-    <Mesh g={cyl(0.07, 0.1, 4.2, 6)} m={M("#2f3a46", { map: "metal", metal: 0.4, rough: 0.5 })} p={[0, 2.1, 0]} />
-    <Mesh g={box(0.9, 0.08, 0.08)} m={M("#2f3a46")} p={[0.4, 4.15, 0]} />
-    <Mesh g={cyl(0.18, 0.28, 0.2, 6)} m={M("#2f3a46")} p={[0.8, 4.05, 0]} />
-    <Mesh g={sph(0.12)} m={BM("#fff2c0")} p={[0.8, 3.93, 0]} cast={false} recv={false} />
-  </group>
-));
-const ParkedCar: React.FC<{ p: V3; col: string; rot?: number }> = React.memo(({ p, col, rot = 0 }) => (
-  <group position={p} rotation={[0, rot, 0]}>
-    <Mesh g={box(4.2, 0.7, 1.8)} m={M(col, { rough: 0.35, metal: 0.25 })} p={[0, 0.65, 0]} />
-    <Mesh g={box(2.2, 0.62, 1.64)} m={M(col, { rough: 0.35, metal: 0.25 })} p={[-0.2, 1.3, 0]} />
-    <Mesh g={box(2.0, 0.46, 1.68)} m={BM("#8fc4e0")} p={[-0.2, 1.32, 0]} cast={false} recv={false} />
-    {[-1.3, 1.3].map((x, i) => [-0.9, 0.9].map((z, j) => <Mesh key={`${i}${j}`} g={cyl(0.38, 0.38, 0.28, 10)} m={M("#222228", { rough: 0.9 })} p={[x, 0.38, z]} r={[Math.PI / 2, 0, 0]} />))}
-    {[-0.6, 0.6].map((z, i) => <Mesh key={i} g={box(0.08, 0.2, 0.34)} m={BM("#fff4c0")} p={[2.12, 0.78, z]} cast={false} recv={false} />)}
-  </group>
-));
-const Street: React.FC = React.memo(() => {
-  const near: [number, number][] = []; let x = -30; let i = 0; const r = seeded(77);
-  while (x < 34) { const w = 5 + Math.floor(r() * 3); near.push([x + w / 2, w]); x += w; i++; }
-  return (
-    <group>
-      <Mesh g={box(200, 0.12, 60)} m={M("#8a8f98", { map: "asphalt", rx: 40, ry: 12 })} p={[0, -0.06, 4]} cast={false} />
-      <Mesh g={box(200, 0.16, 6.2)} m={M("#c8c2b4", { map: "tiles", rx: 60, ry: 2 })} p={[0, 0.0, -0.9]} />
-      <Mesh g={box(200, 0.2, 0.25)} m={M("#9a9486", { map: "plaster", rx: 60, ry: 1 })} p={[0, 0.0, 2.3]} />
-      <Mesh g={box(200, 0.16, 4)} m={M("#c8c2b4", { map: "tiles", rx: 60, ry: 2 })} p={[0, 0.0, 11]} />
-      {Array.from({ length: 28 }, (_, k) => <Mesh key={k} g={box(1.6, 0.02, 0.18)} m={M("#f0d24a")} p={[-34 + k * 2.6, 0.01, 5.6]} cast={false} />)}
-      {[3, 12].map((cx) => Array.from({ length: 7 }, (_, k) => <Mesh key={`${cx}${k}`} g={box(0.45, 0.02, 3.8)} m={M("#f2f2f2")} p={[cx + k * 0.9, 0.01, 5.6]} cast={false} />))}
-      {near.map(([cx, w], k) => <Facade key={`n${k}`} x={cx} w={w} h={9 + ((k * 5) % 6)} col={BCOL[k % BCOL.length]} side={1} seed={k + 3} />)}
-      {near.map(([cx, w], k) => <Facade key={`f${k}`} x={cx} w={w} h={9 + ((k * 3) % 7)} col={BCOL[(k + 3) % BCOL.length]} side={-1} seed={k + 40} />)}
-      {Array.from({ length: 12 }, (_, k) => ({ x: -26 + k * 5.4 + (k % 2) * 0.8, k })).filter((q) => q.x < -6 || q.x > 8.5).map((q) => <Tree key={q.k} p={[q.x, 0.08, 1.9]} s={0.9 + (q.k % 3) * 0.1} />)}
-      {[-24, -13.5, -3.0, 18, 28].map((x, k) => <Lamp key={k} p={[x, 0.08, 2.1]} />)}
-      <ParkedCar p={[-9, 0.06, 3.3]} col="#d8483a" /><ParkedCar p={[7.5, 0.06, 3.4]} col="#2f6aa8" /><ParkedCar p={[-17, 0.06, 3.3]} col="#e8b030" rot={Math.PI} />
-      {Array.from({ length: 8 }, (_, k) => <Mesh key={k} g={box(2.4 + (k % 3), 7 + (k * 3) % 9, 3)} m={M("#c9d3de", { map: "plaster", rx: 2, ry: 3 })} p={[-26 + k * 8, 12 + (k * 3) % 9 / 2 + 6, -26]} cast={false} />)}
-    </group>
-  );
-});
+/* ------------------------------------------------------------------ small props */
+const Cup: React.FC<{ lid?: boolean }> = ({ lid = true }) => <group><Mesh g={cyl(0.042, 0.032, 0.11, 8)} m={M("#f4f1ea", { map: "fabric" })} rim={false} /><Mesh g={cyl(0.043, 0.043, 0.012, 8)} m={M("#d8d2c6")} p={[0, 0.058, 0]} rim={false} />{lid ? <Mesh g={cyl(0.046, 0.046, 0.012, 8)} m={M("#c9b79c")} p={[0, 0.07, 0]} rim={false} /> : null}<Mesh g={cyl(0.044, 0.04, 0.05, 8)} m={M("#b07a48", { map: "wood" })} p={[0, -0.01, 0]} rim={false} /></group>;
+const Tray: React.FC<{ n: number }> = ({ n }) => <group><Mesh g={cyl(0.24, 0.24, 0.015, 14)} m={M("#c4c8cf", { metal: 0.6, rough: 0.35, map: "metal" })} rim={false} />{Array.from({ length: n }, (_, i) => <group key={i} position={[0, 0.07 + i * 0.1, 0]}><Cup lid={i === n - 1} /></group>)}</group>;
+const Cone: React.FC<{ ball?: boolean }> = ({ ball = true }) => <group><Mesh g={cone(0.04, 0.14, 6)} m={M("#d8a050", { map: "wood" })} p={[0, 0.0, 0]} r={[Math.PI, 0, 0]} rim={false} />{ball ? <Mesh g={ico(0.055, 1)} m={M("#ff8fb8")} p={[0, 0.1, 0]} rim={false} /> : null}</group>;
+const Coin: React.FC<{ p: V3; t: number; spin?: number }> = ({ p, t, spin = 9 }) => <group position={p} rotation={[Math.PI / 2 + Math.sin(t * 5) * 0.4, t * spin, 0]}><Mesh g={cyl(0.07, 0.07, 0.016, 14)} m={M("#ffd54a", { metal: 0.6, rough: 0.3, emissive: "#c88a10", ei: 0.25 })} rim={false} /></group>;
+const Glint: React.FC<{ p: V3; k: number }> = ({ p, k }) => <group position={p} scale={Math.max(0.001, k)}><mesh geometry={box(0.34, 0.025, 0.025)} material={BM("#fff8c8")} /><mesh geometry={box(0.025, 0.34, 0.025)} material={BM("#fff8c8")} /></group>;
 
-/* ------------------------------------------------------------------ props */
-const Coin: React.FC<{ p: V3; t: number; r?: number }> = ({ p, t, r = 0 }) => (
-  <group position={p} rotation={[Math.PI / 2 + Math.sin(t * 8) * 0.3 + r, t * 9, 0]}><Mesh g={cyl(0.11, 0.11, 0.025, 14)} m={M("#ffc83a", { metal: 0.7, rough: 0.25, emissive: "#ff9a10", ei: 0.35 })} /></group>
-);
-const Glint: React.FC<{ p: V3; k: number }> = ({ p, k }) => <group position={p} scale={k}><Mesh g={box(0.5, 0.04, 0.04)} m={BM("#fff8c8")} cast={false} recv={false} /><Mesh g={box(0.04, 0.5, 0.04)} m={BM("#fff8c8")} cast={false} recv={false} /></group>;
-const Cone: React.FC<{ ball?: boolean }> = ({ ball = true }) => <group><Mesh g={cone(0.06, 0.2, 6)} m={M("#d8a050", { map: "wood" })} p={[0, 0.05, 0]} r={[Math.PI, 0, 0]} />{ball ? <Mesh g={ico(0.085, 1)} m={M("#ff8fb8")} p={[0, 0.2, 0]} /> : null}</group>;
-const Umbrella: React.FC = () => <group position={[0, 0.02, 0]}><Mesh g={cyl(0.012, 0.012, 0.7, 5)} m={M("#2c2c32")} p={[0, 0.3, 0]} /><Mesh g={cone(0.34, 0.14, 8)} m={M("#d8483a", { map: "fabric" })} p={[0, 0.7, 0]} /></group>;
-const TLight: React.FC<{ p: V3; green: number; red?: boolean }> = ({ p, green, red }) => (
-  <group position={p}>
-    <Mesh g={cyl(0.07, 0.09, 3.2, 6)} m={M("#2f3a46", { map: "metal", metal: 0.4 })} p={[0, 1.6, 0]} />
-    <Mesh g={box(0.4, 1.1, 0.3)} m={M("#242a32", { map: "metal", metal: 0.4 })} p={[0, 3.3, 0]} />
-    <Mesh g={sph(0.12)} m={BM(red ? "#ff3a2a" : green > 0.5 ? "#2c1010" : "#ff3a2a")} p={[0, 3.62, 0.16]} cast={false} recv={false} />
-    <Mesh g={sph(0.12)} m={BM("#3a3418")} p={[0, 3.3, 0.16]} cast={false} recv={false} />
-    <Mesh g={sph(0.12)} m={BM(!red && green > 0.5 ? "#3aff6a" : "#0f2a14")} p={[0, 2.98, 0.16]} cast={false} recv={false} />
-    {!red && green > 0.5 ? <Mesh g={plane(0.8, 0.8)} m={BM("#44ff7a", { opacity: 0.5, add: true })} p={[0, 2.98, 0.4]} cast={false} recv={false} /> : null}
-    {red ? <Mesh g={plane(1.2, 1.2)} m={BM("#ff3a2a", { opacity: 0.4, add: true })} p={[0, 3.62, 0.4]} cast={false} recv={false} /> : null}
-  </group>
-);
-const Cup: React.FC = () => <group><Mesh g={cyl(0.065, 0.05, 0.16, 8)} m={M("#f4f4f0", { map: "fabric" })} /><Mesh g={cyl(0.07, 0.07, 0.025, 8)} m={M("#6a4630")} p={[0, 0.09, 0]} /><Mesh g={cyl(0.068, 0.068, 0.05, 8)} m={M("#c88a50", { map: "wood" })} p={[0, 0, 0]} /></group>;
-const Pigeon: React.FC<{ p: V3; t: number; flap?: number }> = ({ p, t, flap = 0 }) => (
-  <group position={p}>
-    <Mesh g={ico(0.2, 1)} m={M("#98a0ac", { map: "fabric" })} s={[1.3, 0.9, 0.9]} />
-    <group position={[0.22, 0.12, 0]}><Mesh g={ico(0.1, 1)} m={M("#7a8290")} /><Mesh g={cone(0.03, 0.09, 4)} m={M("#f0a030")} p={[0.1, -0.01, 0]} r={[0, 0, -Math.PI / 2]} /><Mesh g={sph(0.018, 6, 5)} m={BM("#101010")} p={[0.07, 0.03, 0.07]} /></group>
-    {[-1, 1].map((k) => <group key={k} position={[0, 0.05, k * 0.13]} rotation={[k * (0.3 + flap * Math.sin(t * 40) * 0.9), 0, 0]}><Mesh g={box(0.3, 0.025, 0.2)} m={M("#848c98")} p={[-0.02, 0, k * 0.09]} /></group>)}
-    <Mesh g={box(0.2, 0.03, 0.12)} m={M("#6f7784")} p={[-0.28, 0.0, 0]} />
-  </group>
-);
-const Cloud: React.FC<{ p: V3; k: number; t: number }> = ({ p, k, t }) => {
-  if (k <= 0.01) return null;
-  return (
-    <group position={p} scale={k}>
-      {([[0, 0, 0, 0.55], [0.5, -0.05, 0.1, 0.42], [-0.5, -0.05, -0.1, 0.45], [0.2, 0.2, 0, 0.4]] as number[][]).map((c, i) => <Mesh key={i} g={ico(c[3], 1)} m={M("#6f7886", { map: "fabric", rough: 1 })} p={[c[0], c[1], c[2]]} cast={false} />)}
-      {Array.from({ length: 14 }, (_, i) => { const y = -((t * 3.2 + i * 0.37) % 1.6); return <Mesh key={i} g={box(0.012, 0.22, 0.012)} m={BM("#bfe0ff", { opacity: 0.8 })} p={[((i * 37) % 11) / 11 * 1.0 - 0.5, y - 0.3, ((i * 53) % 7) / 7 * 0.5 - 0.25]} cast={false} recv={false} />; })}
-    </group>
-  );
-};
-
-/* ------------------------------------------------------------------ scenes */
-const Cam = (keys: { t: number; p: V3; l: V3; fov?: number; roll?: number }[], s: number) => {
+/* ------------------------------------------------------------------ cameras */
+type Key = { t: number; p: V3; l: V3; fov?: number; roll?: number };
+const Cam = (keys: Key[], s: number, tt: number) => {
   let i = 0; while (i < keys.length - 2 && s > keys[i + 1].t) i++;
   const a = keys[i], b = keys[Math.min(keys.length - 1, i + 1)]; const k = ease((s - a.t) / Math.max(1e-4, b.t - a.t));
   const m = (u: V3, v: V3): V3 => [lerp(u[0], v[0], k), lerp(u[1], v[1], k), lerp(u[2], v[2], k)];
-  return { p: m(a.p, b.p), l: m(a.l, b.l), fov: lerp(a.fov ?? 50, b.fov ?? 50, k), roll: lerp(a.roll ?? 0, b.roll ?? 0, k) };
+  const p = m(a.p, b.p); const l = m(a.l, b.l);
+  p[0] += Math.sin(tt * 1.7) * 0.012; p[1] += Math.sin(tt * 2.3 + 1) * 0.01; l[0] += Math.sin(tt * 1.3) * 0.01;
+  return { p, l, fov: lerp(a.fov ?? 45, b.fov ?? 45, k), roll: lerp(a.roll ?? 0, b.roll ?? 0, k) + Math.sin(tt * 0.9) * 0.004 };
 };
-const FACE_X = Math.PI / 2, FACE_NX = -Math.PI / 2;
-const gPose = (s: number, fall: boolean, dist: number): Pose => ({ ...walkPose(dist, 0.35), expr: "calm" });
-
-const S1: React.FC<{ s: number; t: number }> = ({ s, t }) => {
-  const bx = s < 0.8 ? -1.1 + s * 1.5 : 0.1; const walking = s < 0.8;
-  const c = clamp((s - 0.8) / 0.25) * (1 - clamp((s - 1.25) / 0.3));
-  const coinOnGround = s < 1.05;
-  const toss = clamp((s - 1.5) / 0.7); const coinY = 1.55 + Math.sin(toss * Math.PI) * 0.9;
-  const ballFall = clamp((s - 1.15) / 0.45); const ballY = lerp(1.1, 0.12, ballFall * ballFall);
-  const shout = s > SCS[0].shout;
-  const bp: Pose = walking ? { ...walkPose(bx, 0.5), expr: "calm" } : { crouch: c * 0.85, lean: c * 0.5, rArm: [-1.0 * c - 0.2 * (1 - c), 0.05], rElbow: 0.2, expr: s > 1.3 ? "smile" : "calm", headX: -c * 0.3, headY: s > 1.45 ? -0.3 : 0 };
-  const held = s > 1.05 && s < 1.5;
-  return (
-    <>
-      <Human look={BEN} p={[bx, 0.08, 0.9]} yaw={FACE_X} pose={bp} handR={held ? <Coin p={[0, -0.02, 0.05]} t={t} /> : undefined} />
-      {coinOnGround ? <Coin p={[0.7, 0.2, 1.0]} t={t * 0.4} /> : null}
-      {s >= 1.5 ? <Coin p={[0.32, coinY, 1.05]} t={t * 3} /> : null}
-      {s > 1.05 && s < 1.5 ? <Glint p={[0.5, 0.9, 1.15]} k={1 - Math.abs((s - 1.2) / 0.3)} /> : null}
-      <Human look={GARY} p={[2.4, 0.08, 0.7]} yaw={FACE_NX} pose={{ expr: shout ? "shout" : s > 1.2 ? "shock" : "smile", headY: 0.15, rArm: [-0.9, 0.2], rElbow: 0.9, lArm: [0.1, -0.1], bob: shout ? Math.abs(Math.sin(t * 22)) * 0.02 : 0 }} handR={<Cone ball={s < 1.15} />} />
-      {s >= 1.15 ? <><Mesh g={ico(0.085, 1)} m={M("#ff8fb8")} p={[1.95 + ballFall * 0.1, ballY, 0.95]} />{ballFall >= 1 ? <Mesh g={cyl(0.2, 0.22, 0.02, 10)} m={M("#ff8fb8")} p={[2.05, 0.1, 0.95]} /> : null}</> : null}
-      <Human look={GREYP(2)} p={[-3.4, 0.08, 4.4]} yaw={FACE_X} pose={walkPose(-3.4 + s * 1.2, 0.4)} s={1} />
-    </>
-  );
-};
-const S2: React.FC<{ s: number; t: number }> = ({ s, t }) => {
-  const bx = -1.6 + 1.7 * s; const lx = [0.4, 1.8, 3.2]; const gt = [0.47, 1.29, 2.1];
-  const shout = s > SCS[1].shout; const press = s > 0.3 && !shout && Math.sin(t * 16) > 0;
-  return (
-    <>
-      <Human look={BEN} p={[bx, 0.08, 0.9]} yaw={FACE_X} pose={{ ...walkPose(bx, 0.45), expr: s > 1.2 ? "smug" : "calm", headY: 0.2 }} />
-      {lx.map((x, i) => <TLight key={i} p={[x, 0.08, 1.9]} green={s > gt[i] ? 1 : 0} />)}
-      <TLight p={[4.6, 0.08, 1.9]} green={0} red />
-      <Human look={GARY} p={[4.3, 0.08, 0.75]} yaw={Math.PI * 0.7} pose={{ expr: shout ? "shout" : "annoyed", rArm: [press ? -1.3 : -1.0, 0.3], rElbow: press ? 0.6 : 0.9, lArm: shout ? [-2.6, -0.4] : [0, -0.1], headY: -0.1, bob: shout ? Math.abs(Math.sin(t * 22)) * 0.03 : 0 }} handL={undefined} />
-      {s > 1.2 ? <Cloud p={[4.3, 3.0, 0.75]} k={ease((s - 1.2) / 0.4)} t={t} /> : null}
-    </>
-  );
-};
-const S3: React.FC<{ s: number; t: number }> = ({ s, t }) => {
-  const bx = -0.2 + s * 0.35; const cupY = lerp(5.6, 1.15, clamp((s - 0.3) / 0.7) ** 2); const caught = s > 1.0;
-  const shout = s > SCS[2].shout;
-  const gFall = clamp((s - 1.0) / 0.5); const gY = lerp(2.4, 0.15, gFall * gFall);
-  return (
-    <>
-      <Human look={BEN} p={[bx, 0.08, 0.9]} yaw={FACE_X * 0.75} pose={{ ...walkPose(bx * 3, 0.35), rArm: caught ? [-1.2, 0.15] : [-0.35, 0.1], rElbow: caught ? 1.0 : 0.3, expr: "smug", headY: 0.5, headX: -0.05 }} handR={caught ? <group position={[0, 0.05, 0]}><Cup /></group> : undefined} />
-      {!caught ? <Mesh g={cyl(0.065, 0.05, 0.16, 8)} m={M("#f4f4f0")} p={[bx + 0.52, cupY, 1.15]} r={[s * 5, 0, s * 3]} /> : null}
-      <Mesh g={box(1.5, 0.12, 0.5)} m={M("#3a2e2a", { map: "wood" })} p={[0.9, 4.1, 1.1]} />
-      <Human look={GREYP(1)} p={[0.9, 4.18, 0.75]} yaw={0} pose={{ expr: "smile", rArm: [-1.5, 0], rElbow: 0.5 }} s={0.95} />
-      <Human look={GARY} p={[2.6, 0.08, 0.9]} yaw={FACE_NX * 0.8} pose={{ expr: shout ? "shout" : "sad", rArm: [-0.8, 0.2], rElbow: 1.0, headX: gFall > 0.8 ? 0.35 : 0, bob: shout ? Math.abs(Math.sin(t * 22)) * 0.02 : 0 }} />
-      {s > 1.0 ? <Mesh g={cyl(0.065, 0.05, 0.16, 8)} m={M("#f4f4f0")} p={[2.15, gY, 1.1]} r={[gFall >= 1 ? 1.4 : s * 4, 0, 0]} /> : null}
-      {gFall >= 1 ? <Mesh g={cyl(0.28, 0.3, 0.012, 12)} m={M("#6a4630")} p={[2.3, 0.1, 1.15]} /> : null}
-      {s > 1.4 ? <Cloud p={[2.6, 3.0, 0.9]} k={ease((s - 1.4) / 0.4)} t={t} /> : null}
-    </>
-  );
-};
-const S4: React.FC<{ s: number; t: number }> = ({ s, t }) => {
-  const bx = s < 1.0 ? -1.8 + 1.8 * s : 0.0; const walking = s < 1.0;
-  const drop = clamp((s - 0.45) / 0.9); const dk = ease(drop);
-  const bp: V3 = [lerp(-0.9, 1.85, dk), lerp(3.35, 2.05, drop * drop) + Math.sin(dk * Math.PI) * 0.0, 0.9 + Math.sin(dk * Math.PI) * 0.55];
-  const shout = s > SCS[3].shout; const hit = drop >= 1;
-  const bpose: Pose = walking ? { ...walkPose(bx, 0.45), expr: "calm", headX: -0.2 * clamp((s - 0.4) / 0.4) } : { expr: "shock", headX: -0.3, headY: hit ? -0.5 : 0, rArm: [-0.4, 0.5], lArm: [-0.4, -0.5], rElbow: 0.5, lElbow: 0.5 };
-  return (
-    <>
-      <mesh geometry={box(7, 0.03, 0.03)} material={M("#222")} position={[0.5, 3.5, 0.9]} />
-      <Mesh g={cyl(0.06, 0.08, 3.6, 6)} m={M("#2f3a46", { map: "metal", metal: 0.4 })} p={[-3, 1.8, 0.9]} /><Mesh g={cyl(0.06, 0.08, 3.6, 6)} m={M("#2f3a46", { map: "metal", metal: 0.4 })} p={[4, 1.8, 0.9]} />
-      <Pigeon p={[-0.9, 3.65, 0.9]} t={t} flap={s > 0.6 && s < 0.9 ? 1 : 0} />
-      <Human look={BEN} p={[bx, 0.08, 0.9]} yaw={FACE_X} pose={bpose} />
-      {drop > 0 && !hit ? <Mesh g={ico(0.07, 1)} m={BM("#ffffff")} p={bp} /> : null}
-      <Human look={GARY} p={[1.9, 0.08, 0.8]} yaw={FACE_NX * 0.5} pose={{ expr: shout ? "shout" : hit ? "sad" : "calm", rArm: [-0.4, 0.1], lArm: [-0.8, -0.35], lElbow: 0.5, bob: shout ? Math.abs(Math.sin(t * 22)) * 0.02 : 0 }} handL={<Umbrella />} hat={hit ? <Mesh g={ico(0.1, 1)} m={BM("#ffffff")} p={[0.02, 0.2, 0.02]} s={[1.2, 0.55, 1.2]} /> : undefined} />
-      {s > 1.35 ? <Cloud p={[1.9, 3.1, 0.8]} k={ease((s - 1.35) / 0.4)} t={t} /> : null}
-    </>
-  );
-};
-const SCENES = [S1, S2, S3, S4];
-const CAMS: ((s: number) => ReturnType<typeof Cam>)[] = [
-  (s) => Cam([{ t: 0, p: [-0.4, 1.3, 8.2], l: [0.1, 1.0, 0.9], fov: 46 }, { t: 1.3, p: [1.1, 1.2, 8.0], l: [1.2, 1.0, 0.9], fov: 48 }, { t: 2.5, p: [2.0, 1.3, 7.4], l: [2.3, 1.3, 0.8], fov: 44, roll: 0.03 }], s),
-  (s) => Cam([{ t: 0, p: [-1.4, 1.3, 8.0], l: [-0.6, 1.3, 0.9], fov: 50 }, { t: 1.4, p: [1.6, 1.3, 8.0], l: [2.0, 1.4, 0.9], fov: 50 }, { t: 2.5, p: [3.6, 1.3, 7.6], l: [4.1, 1.6, 0.9], fov: 46, roll: -0.04 }], s),
-  (s) => Cam([{ t: 0, p: [2.8, 2.6, 8.2], l: [1.0, 1.6, 0.9], fov: 48 }, { t: 1.1, p: [1.4, 1.3, 7.2], l: [1.0, 1.3, 0.9], fov: 46 }, { t: 2.5, p: [2.4, 1.3, 7.2], l: [2.3, 1.3, 0.9], fov: 46 }], s),
-  (s) => Cam([{ t: 0, p: [-2.4, 0.5, 6.6], l: [-0.8, 2.8, 0.9], fov: 54 }, { t: 1.0, p: [-0.5, 0.8, 7.4], l: [0.4, 2.4, 0.9], fov: 50 }, { t: 1.4, p: [1.2, 1.3, 8.0], l: [1.5, 1.8, 0.8], fov: 46 }, { t: 2.5, p: [1.6, 1.4, 7.2], l: [1.9, 2.1, 0.8], fov: 44, roll: 0.03 }], s),
+const CAMS: ((s: number, tt: number) => ReturnType<typeof Cam>)[] = [
+  (s, tt) => Cam([{ t: 0, p: [-3.2, 1.0, 4.6], l: [0.0, 1.0, -0.6], fov: 40, roll: 0.03 }, { t: 2.3, p: [-1.2, 1.15, 4.0], l: [0.3, 1.1, -0.5], fov: 38, roll: -0.02 }], s, tt),
+  (s, tt) => Cam([{ t: 0, p: [0.9, 0.55, 4.6], l: [0.0, 1.15, 0.0], fov: 42, roll: -0.03 }, { t: 1.2, p: [0.5, 0.8, 4.2], l: [0.0, 1.1, 0.0], fov: 38 }, { t: 2.3, p: [-0.6, 1.2, 3.9], l: [0.1, 1.1, 0.0], fov: 36, roll: 0.03 }], s, tt),
+  (s, tt) => Cam([{ t: 0, p: [-0.5, 1.1, 4.2], l: [0.2, 1.62, 0.0], fov: 38, roll: 0.03 }, { t: 1.2, p: [0.3, 1.25, 3.6], l: [0.2, 1.62, 0.0], fov: 34 }, { t: 2.4, p: [0.8, 1.2, 3.3], l: [0.1, 1.6, 0.0], fov: 32, roll: -0.03 }], s, tt),
+  (s, tt) => s < 1.7
+    ? Cam([{ t: 0, p: [4.8, 0.42, 6.1], l: [-2.5, 1.7, 5.4], fov: 55, roll: 0.03 }, { t: 1.7, p: [3.4, 0.52, 6.0], l: [-2.2, 2.0, 5.4], fov: 50, roll: -0.02 }], s, tt)
+    : Cam([{ t: 1.7, p: [0.5, 1.7, 2.5], l: [0.0, 1.72, 0.0], fov: 34, roll: 0.02 }, { t: 3.0, p: [0.2, 1.7, 1.9], l: [0.0, 1.72, 0.0], fov: 31, roll: -0.01 }], s, tt),
 ];
 
+/* ------------------------------------------------------------------ scenes (s = seconds since the scene started) */
+const blinkAt = (t: number) => (t % 3.4) < 0.12 ? 1 : 0;
+const SceneA: React.FC<{ s: number; t: number }> = ({ s, t }) => {
+  const talk = (Math.sin(t * 13) > 0 ? 0.5 : 0.05) * (Math.sin(t * 2.2) > -0.2 ? 1 : 0);
+  const bx = -2.6 + s * 1.9;
+  return (
+    <>
+      <Table p={[0, 0.1, -0.4]} /><Chair p={[-0.95, 0.1, -0.35]} yaw={-1.45} /><Chair p={[0.95, 0.1, -0.4]} yaw={1.5} />
+      <Person look={GARY2} p={[-0.95, 0.1, -0.3]} yaw={0.95} pose={{ sit: true, expr: "smug", lean: -0.22, headY: -0.25, headX: 0.04, rArm: [-0.75, 0.3], rElbow: 1.0, lArm: [0.25, -0.15], lElbow: 0.3, blink: blinkAt(t) }} itemR={<Cone />} />
+      <Person look={MIA2} p={[0.95, 0.1, -0.4]} yaw={-1.05} pose={{ sit: true, expr: "smile", lean: 0.08, headY: 0.3, headZ: 0.04, mouthOpen: talk, rArm: [-0.9, 0.2], rElbow: 1.1, lArm: [-0.4, -0.1], lElbow: 0.7, blink: blinkAt(t + 1) }} />
+      <Person look={BEN2} p={[bx, 0.1, -2.5]} yaw={Math.PI / 2 - 0.35} pose={{ ...walkP(bx, 0.42), expr: "calm", headY: 0.4, rGrip: 1 }} itemR={<Cup />} rim="#ffe2a8" />
+      <Person look={GREY2(1)} p={[3.4, 0.1, -1.6]} yaw={-1.3} pose={walkP(3.4 - s * 1.2, 0.4)} />
+    </>
+  );
+};
+const SceneB: React.FC<{ s: number; t: number }> = ({ s, t }) => {
+  const z = s < 0.7 ? lerp(-1.6, -0.2, s / 0.7) : -0.2; const walking = s < 0.7;
+  const c = ease((s - 0.95) / 0.35) * (1 - ease((s - 1.45) / 0.3)); const up = s > 1.55;
+  const toss = clamp((s - 1.7) / 0.55); const cy = 1.25 + Math.sin(toss * Math.PI) * 0.65; const caught = s > 2.25;
+  const bPose: Pose2 = walking ? { ...walkP(-z * 1.0, 0.4), headX: 0.28, expr: "calm", rGrip: 1, rArm: [-0.6, 0.12], rElbow: 1.3, lElbow: 0.3 } : { crouch: c * 0.8, lean: c * 0.55, headX: 0.35 * (1 - c * 0.7), lArm: [-1.1 * c - 0.1, -0.1], lElbow: 0.4, lGrip: up ? 0.7 : 0.1, rArm: [-0.6, 0.12], rElbow: 1.3, rGrip: 1, expr: up ? "smug" : "calm", headY: up ? -0.15 : 0, blink: blinkAt(t) };
+  const fall = clamp((s - 1.0) / 0.5);
+  return (
+    <>
+      <Person look={BEN2} p={[0, 0.1, z]} yaw={0.22} pose={bPose} itemR={<Cup />} itemL={up && !caught ? <Coin p={[0, -0.04, 0.03]} t={t} spin={0} /> : undefined} rim="#ffe2a8" />
+      {s < 1.2 ? <Coin p={[0.18, 0.2, 0.25]} t={t * 0.4} /> : null}
+      {s >= 1.7 && s < 2.25 ? <Coin p={[-0.18, cy, 0.3]} t={t * 3} /> : null}
+      {s > 1.25 && s < 1.65 ? <Glint p={[0.15, 0.55, 0.4]} k={1 - Math.abs((s - 1.45) / 0.2)} /> : null}
+      <Table p={[-1.6, 0.1, -3.4]} /><Chair p={[-2.35, 0.1, -3.3]} yaw={-1.5} />
+      <Person look={GARY2} p={[-2.35, 0.1, -3.2]} yaw={1.3} pose={{ sit: true, expr: s > 1.1 ? "shock" : "smug", lean: -0.1, rArm: [-0.8, 0.3], rElbow: 1.0 }} itemR={<Cone ball={s < 1.0} />} />
+      {s >= 1.0 ? <Mesh g={ico(0.055, 1)} m={M("#ff8fb8")} p={[-2.0, lerp(0.95, 0.12, fall * fall), -3.0]} rim={false} /> : null}
+    </>
+  );
+};
+const SceneC: React.FC<{ s: number; t: number }> = ({ s, t }) => {
+  const n = s < 0.7 ? 1 : s < 1.1 ? 2 : s < 1.5 ? 3 : s < 1.9 ? 4 : 5;
+  const fallers = [0.35, 0.8, 1.2, 1.6, 2.0].map((t0, i) => ({ i, k: clamp((s - t0) / 0.5) }));
+  const stackTop = 0.1 + n * 0.1; const stackY = 1.02;
+  const catchR = clamp((s - 1.9) / 0.15);
+  return (
+    <>
+      <Person look={BEN2} p={[0, 0.1, 0]} yaw={0.12} pose={{ expr: s > 1.0 ? "smug" : "calm", lArm: [-0.75, -0.2], lElbow: 1.5, lGrip: 0.3, rArm: [-1.0 - catchR * 0.5, 0.25], rElbow: 0.9, rGrip: 0.2 + catchR * 0.2, headX: -0.04, headY: 0.18 * Math.sin(t * 0.8), blink: blinkAt(t) }} itemL={<group position={[0, -0.04, 0.02]} rotation={[0.75 + 1.5, 0, 0]}><Tray n={n - 1 > 0 ? n - 1 : 0} /></group>} rim="#ffe2a8" />
+      {fallers.map(({ i, k }) => (k > 0 && k < 1 && i + 1 > 0 ? <group key={i} position={[lerp(-0.7, -0.38, ease(k)), lerp(4.8, 1.0 + (i * 0.1), k * k), 0.38]} rotation={[k * 5, 0, k * 2]}><Cup /></group> : null))}
+      <Table p={[-1.9, 0.1, -3.0]} /><Chair p={[-2.6, 0.1, -2.9]} yaw={-1.5} />
+      <Person look={MIA2} p={[-2.6, 0.1, -2.85]} yaw={1.2} pose={{ sit: true, expr: "shock", mouthOpen: 0.7, rArm: [-1.3, 0.4], rElbow: 1.3, lArm: [-0.4, -0.1] }} />
+      <Person look={GREY2(3)} p={[2.4, 0.1, -2.0]} yaw={-0.8} pose={walkP(2.4 - s * 1.4, 0.4)} />
+    </>
+  );
+};
+const SceneD: React.FC<{ s: number; t: number }> = ({ s, t }) => {
+  const close = s >= 1.7;
+  const ex = s - 0.5;
+  const bx = lerp(-1.8, -0.2, clamp(s / 1.7));
+  const flyT = clamp((s - 0.5) / 1.4);
+  return (
+    <>
+      {!close ? (
+        <>
+          <group>
+            {ex < 0 ? <Car p={[-5.8, 0.1, 5.4]} col="#d83a2a" /> : <Car p={[-5.8, 0.1, 5.4]} col="#d83a2a" wreck />}
+            <Explosion p={[-5.8, 0.1, 5.4]} t={ex} />
+          </group>
+          <Person look={BEN2} p={[bx, 0.1, 6.0]} yaw={Math.PI / 2 + 0.25} pose={{ ...walkP(bx * 0.95, 0.4), expr: "calm", headY: -0.3, blink: blinkAt(t) }} rim="#ffd8a0" />
+          {flyT > 0 && flyT < 1 ? <Person look={GREY2(2)} p={[-5.8 + flyT * 3.5, 0.1 + 2 + 8 * flyT - 11 * flyT * flyT, 5.0]} yaw={1.2} pose={{ rArm: [-2.7, 0.5], lArm: [-2.7, -0.5], expr: "shock", legSpread: 0.15, crouch: 0.2, mouthOpen: 1 }} /> : null}
+        </>
+      ) : (
+        <>
+          <Person look={{ ...BEN2 }} p={[0, 0.1, 0]} yaw={0.08} pose={{ expr: "smug", headX: 0.04, headY: 0.06, shadesOn: s > 2.0, rArm: s > 1.85 && s < 2.15 ? [-2.3, 0.15] : [0.05, 0.12], rElbow: s > 1.85 && s < 2.15 ? 1.8 : 0.2, blink: 0 }} rim="#ffcf88" />
+          <Explosion p={[1.2, 0.1, -3.8]} t={s + 0.3 - 0.5 + 0.4} />
+        </>
+      )}
+    </>
+  );
+};
+const SCENES = [SceneA, SceneB, SceneC, SceneD];
+
+/* ------------------------------------------------------------------ rig, lights, text */
 const Rig: React.FC<{ p: V3; l: V3; fov: number; roll?: number }> = ({ p, l, fov, roll = 0 }) => {
   const camera = useThree((st) => st.camera) as THREE.PerspectiveCamera;
-  useLayoutEffect(() => { camera.fov = fov; camera.near = 0.05; camera.far = 400; camera.updateProjectionMatrix(); camera.position.set(...p); camera.up.set(0, 1, 0); camera.lookAt(...l); camera.rotateZ(roll); camera.updateMatrixWorld(); });
+  useLayoutEffect(() => { camera.fov = fov; camera.near = 0.05; camera.far = 500; camera.updateProjectionMatrix(); camera.position.set(...p); camera.up.set(0, 1, 0); camera.lookAt(...l); camera.rotateZ(roll); camera.updateMatrixWorld(); });
   return null;
 };
-const Lights: React.FC<{ i: number }> = ({ i }) => {
+const Lights: React.FC<{ i: number; focus: V3 }> = ({ i, focus }) => {
   const tn = TONE[i];
   return (
     <>
-      <color attach="background" args={[tn.sky]} /><fog attach="fog" args={[tn.fog, 22, 70]} />
-      <hemisphereLight args={[tn.hemi, "#f0d0a8", 1.9]} />
-      <directionalLight color={tn.sun} intensity={3.0} position={[-6, 12, 9]} castShadow shadow-mapSize-width={2048} shadow-mapSize-height={2048} shadow-camera-left={-9} shadow-camera-right={9} shadow-camera-top={8} shadow-camera-bottom={-6} shadow-camera-near={1} shadow-camera-far={40} shadow-bias={-0.0004} shadow-normalBias={0.03} />
+      <Sky top={tn.top} mid={tn.mid} hor={tn.hor} /><fog attach="fog" args={[tn.fog, 28, 130]} />
+      <hemisphereLight args={[tn.hemi, "#e8c9a0", 1.5]} />
+      <directionalLight color={tn.sun} intensity={tn.key} position={[focus[0] - 5, 8, focus[2] + 7]} target-position={focus} castShadow shadow-mapSize-width={2048} shadow-mapSize-height={2048} shadow-camera-left={-7} shadow-camera-right={7} shadow-camera-top={6} shadow-camera-bottom={-5} shadow-camera-near={1} shadow-camera-far={30} shadow-bias={-0.0004} shadow-normalBias={0.025} />
+      <directionalLight color="#ffe6b8" intensity={i === 3 ? 2.6 : 1.6} position={[focus[0] + 4, 5, focus[2] - 8]} />
     </>
   );
 };
-
-const sans = "Arial, Helvetica, 'Liberation Sans', sans-serif"; const serif = "'Playfair Display', Georgia, serif";
-const Hud: React.FC<{ sc: Sc; s: number }> = ({ sc, s }) => {
-  const ent = ease(s / 0.18); const capIn = ease((s - 0.1) / 0.2); const shout = s > sc.shout; const pop = ease((s - sc.shout) / 0.1);
+const FONTS: [string, string, string, string][] = [
+  ["Inter", "fonts/inter-latin-600-normal.woff2", "600", "normal"], ["Inter", "fonts/inter-latin-700-normal.woff2", "700", "normal"], ["Inter", "fonts/inter-latin-800-normal.woff2", "800", "normal"], ["Inter", "fonts/inter-latin-900-normal.woff2", "900", "normal"],
+  ["Lora", "fonts/lora-latin-400-normal.woff2", "400", "normal"], ["Lora", "fonts/lora-latin-400-italic.woff2", "400", "italic"], ["Playfair Display", "fonts/PlayfairDisplay-Variable.ttf", "400 900", "normal"],
+];
+let fp: Promise<void> | null = null;
+const loadFonts3 = () => (fp ??= Promise.all(FONTS.map(async ([fam, path, w, st]) => { const f = new FontFace(fam, `url(${staticFile(path)})`, { weight: w, style: st }); await f.load(); (document as any).fonts.add(f); })).then(() => undefined).catch(() => undefined));
+const sans = "Inter, Arial, Helvetica, sans-serif"; const lora = "Lora, Georgia, serif"; const num = "'Playfair Display', Georgia, serif";
+const Hud: React.FC<{ h: NonNullable<(typeof HUD)[number]>; s: number }> = ({ h, s }) => {
+  const ent = ease(s / 0.2); const capIn = ease((s - 0.15) / 0.25);
   return (
-    <AbsoluteFill style={{ pointerEvents: "none" }}>
-      <div style={{ position: "absolute", left: 60, top: 150, color: "#fff", textShadow: "0 2px 12px rgba(10,14,30,.55)" }}>
-        <div style={{ fontFamily: sans, fontSize: 28, letterSpacing: 6, fontWeight: 600 }}>LUCK</div>
-        <div style={{ fontFamily: serif, fontSize: 150, fontWeight: 400, lineHeight: 1.05, fontFeatureSettings: '"lnum" 1', transform: `scale(${0.88 + 0.12 * ent})`, transformOrigin: "0 100%", opacity: 0.4 + 0.6 * ent }}>{sc.luck}</div>
-        <div style={{ fontFamily: sans, fontSize: 29, letterSpacing: 3.5, fontWeight: 700, marginTop: 4 }}>{sc.tier}</div>
-        <div style={{ fontFamily: sans, fontSize: 25, letterSpacing: 3, fontWeight: 500, marginTop: 4 }}>MINUTE {sc.minute}</div>
-        <div style={{ display: "flex", gap: 12, marginTop: 14 }}>
-          <div style={{ background: "#d8274f", padding: "8px 18px", borderRadius: 6, fontFamily: sans, fontSize: 23, letterSpacing: 2.5, fontWeight: 700 }}>×2 EVERY MINUTE</div>
-          <div style={{ background: shout ? "#f4f4f4" : "#f6b31c", color: "#16161a", padding: "8px 18px", borderRadius: 6, fontFamily: sans, fontSize: 23, letterSpacing: 2.5, fontWeight: 800, textShadow: "none" }}>{shout ? "SIDE CHARACTER" : "MAIN CHARACTER"}</div>
+    <AbsoluteFill style={{ pointerEvents: "none", color: "#fff" }}>
+      <div style={{ position: "absolute", left: 58, top: 190, textShadow: "0 1px 10px rgba(0,0,0,.28)" }}>
+        <div style={{ fontFamily: sans, fontWeight: 600, fontSize: 22, letterSpacing: "0.26em" }}>LUCK</div>
+        <div style={{ fontFamily: num, fontWeight: 400, fontSize: 124, lineHeight: 1.0, marginTop: 6, transform: `scale(${0.9 + 0.1 * ent})`, transformOrigin: "0 100%", opacity: 0.3 + 0.7 * ent, fontFeatureSettings: '"lnum" 1' }}>{h.luck}</div>
+        {h.tier ? <div style={{ fontFamily: sans, fontWeight: 700, fontSize: 25, letterSpacing: "0.17em", marginTop: 14 }}>{h.tier}</div> : <div style={{ height: 14 }} />}
+        <div style={{ fontFamily: sans, fontWeight: 600, fontSize: 22, letterSpacing: "0.17em", marginTop: 6 }}>MINUTE {h.minute}</div>
+        <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
+          <div style={{ background: "#e0183f", borderRadius: 5, padding: "8px 15px", fontFamily: sans, fontWeight: 800, fontSize: 21, letterSpacing: "0.1em", textShadow: "none" }}>×2 EVERY MINUTE</div>
+          <div style={{ background: "#f7b82e", color: "#17171b", borderRadius: 5, padding: "8px 15px", fontFamily: sans, fontWeight: 800, fontSize: 21, letterSpacing: "0.1em", textShadow: "none" }}>{h.pill}</div>
         </div>
       </div>
-      <div style={{ position: "absolute", left: 60, right: 60, top: 560, color: "#fff", fontFamily: serif, fontStyle: "italic", fontSize: 58, lineHeight: 1.2, textShadow: "0 2px 14px rgba(10,14,30,.7)", opacity: capIn, transform: `translateY(${(1 - capIn) * 18}px)` }}>{sc.cap}</div>
-      {shout ? <div style={{ position: "absolute", left: 0, right: 0, top: 1290, textAlign: "center", fontFamily: "'Lilita One', Impact, sans-serif", fontSize: 108, color: "#fff", letterSpacing: 2, textShadow: "0 6px 0 rgba(0,0,0,.55), 0 0 22px rgba(0,0,0,.5)", transform: `scale(${0.6 + 0.5 * pop + (pop >= 1 ? 0 : 0)}) rotate(${(1 - pop) * -3}deg)`, opacity: pop }}>WHAT THE <span style={{ color: "#ffc21a" }}>TOAST</span>?!</div> : null}
+      {h.cap ? <div style={{ position: "absolute", left: 58, width: 860, top: 560, fontFamily: lora, fontStyle: "italic", fontSize: 54, lineHeight: 1.12, textShadow: "0 1px 12px rgba(0,0,0,.45)", opacity: capIn, transform: `translateY(${(1 - capIn) * 14}px)` }}>{h.cap}</div> : null}
     </AbsoluteFill>
   );
 };
+const Shout: React.FC<{ words: [string, boolean][]; s: number; t0: number; t1: number }> = ({ words, s, t0, t1 }) => {
+  if (s < t0 || s > t1) return null; const k = ease((s - t0) / 0.08);
+  return <AbsoluteFill style={{ justifyContent: "flex-start", alignItems: "center", paddingTop: 1210, pointerEvents: "none" }}><div style={{ fontFamily: sans, fontWeight: 900, fontSize: 88, letterSpacing: "0.01em", color: "#fff", WebkitTextStroke: "0px", textShadow: "0 3px 0 rgba(0,0,0,.65), 0 0 14px rgba(0,0,0,.55), 3px 0 0 rgba(0,0,0,.5), -3px 0 0 rgba(0,0,0,.5)", transform: `scale(${0.8 + 0.2 * k})`, opacity: k }}>{words.map(([w, gold], i) => <span key={i} style={{ color: gold ? "#ffd21f" : "#fff" }}>{w}{i < words.length - 1 ? " " : ""}</span>)}</div></AbsoluteFill>;
+};
+const Title: React.FC<{ s: number }> = ({ s }) => { const k = ease(s / 0.25) * (1 - ease((s - 2.05) / 0.25)); return <AbsoluteFill style={{ alignItems: "center", paddingTop: 200, pointerEvents: "none", opacity: k, transform: `translateY(${(1 - k) * 12}px)` }}><div style={{ fontFamily: lora, fontWeight: 400, fontSize: 80, lineHeight: 1.12, textAlign: "center", color: "#fff", textShadow: "0 2px 4px rgba(60,30,0,.55), 0 4px 22px rgba(0,0,0,.5)", width: 760 }}>What if your <span style={{ color: "#f2c14e" }}>luck</span> doubled every minute?</div></AbsoluteFill>; };
 
 export const Style3Sample: React.FC<{ audio?: boolean }> = ({ audio = true }) => {
   const [ok, setOk] = React.useState(false);
   const { delayRender, continueRender } = useDelayRender();
-  React.useEffect(() => { const h = delayRender("fonts"); loadFonts().then(() => { setOk(true); continueRender(h); }); }, [delayRender, continueRender]);
-  const frame = useCurrentFrame(); const { fps, width, height } = useVideoConfig(); const t = frame / fps;
-  if (!ok) return <AbsoluteFill style={{ background: "#a9dcf5" }} />;
-  const idx = Math.min(3, Math.floor(t / SD)); const s = t - idx * SD;
-  const cam = CAMS[idx](s); const Sc = SCENES[idx];
-  const flash = idx > 0 ? Math.max(0, 1 - s / 0.13) * 0.55 : 0;
-  const punch = idx > 0 ? Math.max(0, 1 - s / 0.3) * 0.05 : 0;
-  const focus = new THREE.Vector3(...cam.p).distanceTo(new THREE.Vector3(...cam.l));
+  React.useEffect(() => { const h = delayRender("fonts"); loadFonts3().then(() => { setOk(true); continueRender(h); }); }, [delayRender, continueRender]);
+  const frame = useCurrentFrame(); const { width, height } = useVideoConfig(); const t = frame / FPS;
+  if (!ok) return <AbsoluteFill style={{ background: "#e8dcc8" }} />;
+  const idx = t >= SEG[3].t0 ? 3 : t >= SEG[2].t0 ? 2 : t >= SEG[1].t0 ? 1 : 0; const s = t - SEG[idx].t0;
+  const cam = CAMS[idx](s, t); const Sc = SCENES[idx];
+  const subject: V3 = idx === 3 ? (s < 1.7 ? [-1, 1.2, 6] : [0, 1.7, 0]) : [0, 1.2, 0];
+  const focus = new THREE.Vector3(...cam.p).distanceTo(new THREE.Vector3(...subject));
+  const flash = idx > 0 ? Math.max(0, 1 - s / 0.12) * 0.5 : 0; const punch = idx > 0 ? Math.max(0, 1 - s / 0.25) * 0.04 : 0;
+  const hud = HUD[idx];
   return (
     <AbsoluteFill style={{ background: "#000" }}>
       <AbsoluteFill style={{ transform: `scale(${1 + punch})` }}>
-        <ThreeCanvas width={width} height={height} flat shadows camera={{ fov: cam.fov, near: 0.05, far: 400, position: cam.p }} gl={{ antialias: true }}>
+        <ThreeCanvas width={width} height={height} flat shadows camera={{ fov: cam.fov, near: 0.05, far: 500, position: cam.p }} gl={{ antialias: true }}>
           <Rig p={cam.p} l={cam.l} fov={cam.fov} roll={cam.roll} />
-          <Lights i={idx} />
-          <Street />
+          <Lights i={idx} focus={idx === 3 && s < 1.7 ? [-2, 0, 5.5] : [0, 0, -0.3]} />
+          <City />
           <Sc key={idx} s={s} t={t} />
-          <PostFX focus={focus} range={14} bokeh={2} frame={frame} grain={0.2} />
+          <PostFX focus={focus} range={idx === 3 && s < 1.7 ? 7 : 2.6} bokeh={idx === 3 ? 3.4 : 3.0} frame={frame} grain={0.18} />
         </ThreeCanvas>
       </AbsoluteFill>
-      {flash > 0 ? <AbsoluteFill style={{ background: "#ffffff", opacity: flash }} /> : null}
-      <Hud sc={SCS[idx]} s={s} />
+      {flash > 0 ? <AbsoluteFill style={{ background: "#fff", opacity: flash }} /> : null}
+      {idx === 0 ? <Title s={s} /> : null}
+      {hud ? <Hud h={hud} s={s} /> : null}
+      {idx === 3 ? <><Shout words={[["BOOM.", true]]} s={s} t0={0.62} t1={1.25} /><Shout words={[["DON'T", false], ["LOOK", true], ["BACK.", false]]} s={s} t0={1.95} t1={3.0} /></> : null}
       {audio ? <Audio src={staticFile("style3_luck_mix.wav")} /> : null}
     </AbsoluteFill>
   );

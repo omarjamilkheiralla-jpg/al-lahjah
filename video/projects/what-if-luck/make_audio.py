@@ -51,22 +51,27 @@ while t < TOTAL:
     if b % 2 == 1: put(drums, clap(), t, 0.45)
     t += BEAT; b += 1
 grow = 0.45 + 0.55 * (T / TOTAL) ** 0.9           # gets louder all the way
-for i in range(4):
-    t0 = i * SD
+SEG = [0.0, 2.3, 4.6, 7.0]
+for i, t0 in enumerate(SEG):
     if i: put(fx, whoosh(0.35, True), t0 - 0.3, 0.55); put(fx, kick(), t0, 1.0); put(fx, bell(72 + i * 4, 0.9), t0, 0.35)
-def at(i, s): return i * SD + s
-# scenario 1: coin
-put(fx, bell(88, 0.8), at(0, 1.05), 0.5); put(fx, bell(95, 0.8), at(0, 1.55), 0.35); put(fx, splat(), at(0, 1.5), 0.6)
-# scenario 2: three green pings going up, red buzzer on Gary
-for k, s in enumerate([0.47, 1.29, 2.1]): put(fx, bell(76 + k * 4, 0.7), at(1, s), 0.5)
-put(fx, buzz(), at(1, 1.55), 0.35)
-# scenario 3: cup thunk in the hand, splash
-put(fx, whoosh(0.5, False), at(2, 0.55), 0.4); put(fx, splat(), at(2, 1.02), 0.5); put(fx, splat(), at(2, 1.5), 0.6)
-# scenario 4: bird flap, whoosh of the swerving blob, splat on Gary, rain
-put(fx, hp(rng.uniform(-1, 1, int(SR * 0.3)), 2500) * env(int(SR * 0.3), 0.01, 0.1), at(3, 0.45), 0.4); put(fx, whoosh(0.8, True), at(3, 0.5), 0.5); put(fx, splat(), at(3, 1.37), 0.8)
-rain = lp(rng.uniform(-1, 1, N), 4000) * np.clip((T - (3 * SD + 1.5)) / 0.4, 0, 1) * 0.12
-# the catchphrase pop + boing
-for i, s in enumerate([1.55, 1.7, 1.7, 1.7]): put(fx, pop(), at(i, s), 0.8); put(fx, boing(60 + i * 2), at(i, s + 0.05), 0.45)
+put(fx, whoosh(1.9, True), 0.0, 0.25)
+# scenario 1 (coin): coin ting on pick-up and on the toss; ice cream splat
+put(fx, bell(88, 0.8), 2.3 + 1.25, 0.5); put(fx, bell(95, 0.8), 2.3 + 1.95, 0.4); put(fx, splat(), 2.3 + 1.5, 0.55)
+# scenario 2 (tray): five cups landing, then a cool whoosh when he catches
+for k, s0 in enumerate([0.8, 1.2, 1.6, 2.0, 2.4]):
+    if 4.6 + s0 < 7.0: put(fx, tone(60 + k, 0.12), 4.6 + s0, 0.5); put(fx, clap(), 4.6 + s0, 0.18)
+put(fx, bell(84, 0.7), 4.6 + 1.95, 0.35)
+# scenario 3 (explosion at 0.5 s): big boom, debris rattle, fire crackle, silence-then-glasses click
+def boom():
+    n = int(SR * 2.6); t = np.arange(n) / SR
+    sub = np.sin(2 * np.pi * np.cumsum(70 * np.exp(-t * 2.2) + 28) / SR) * np.exp(-t / 0.8)
+    nz = lp(rng.uniform(-1, 1, n), 2500) * np.exp(-t / 0.5)
+    return sub * 1.3 + nz * 0.9
+put(fx, boom(), 7.0 + 0.5, 1.3); put(fx, whoosh(0.5, False), 7.0 + 0.5, 0.4)
+for k in range(14): put(fx, hp(rng.uniform(-1, 1, 1500), 3000) * env(1500, 0.001, 0.02), 7.0 + 0.7 + k * 0.11 + rng.random() * 0.05, 0.25)
+put(fx, (hp(rng.uniform(-1, 1, int(SR * 2.0)), 900) * env(int(SR * 2.0), 0.3, 0.9)), 7.0 + 0.9, 0.12)
+put(fx, bell(96, 0.5), 7.0 + 2.0, 0.3)
+rain = np.zeros(N)
 x = (bed * 0.5 + drums * 0.6) * grow + fx * 0.9 + rain
 x /= max(1e-6, np.abs(x).max()) / 0.9
 x *= np.minimum(1, T / 0.02) * np.minimum(1, (N - np.arange(N)) / (SR * 0.15))
