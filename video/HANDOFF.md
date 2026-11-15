@@ -29,3 +29,4 @@ If Chrome runs out of memory use `--concurrency=1`. Always `git pull` first.
 ## Added skills (in repo, `.claude/skills/`)
 - `stop-slop` (writing style) and `video-lens` (YouTube transcript -> HTML summary; needs `pip install youtube-transcript-api yt-dlp`; the cloud network may block YouTube, so it may only work on the user's PC).
 - `content-strategy`, `social`, `copywriting` (from coreyhaines31/marketingskills, markdown only, vetted): use for video topic planning, titles/descriptions, Shorts/post copy. The rest of that repo was NOT added on purpose (too many skills slow every session).
+- Official Remotion skills from remotion-dev/skills (v4.0.543): `remotion-best-practices` (router), `remotion-markup`, `remotion-render`, `remotion-captions`. Not added on purpose: maps, saas, license, upgrade, studio, interactivity, multimedia, create, docs.
