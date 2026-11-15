@@ -466,3 +466,15 @@ export const T26Line: React.FC<SceneProps> = ({ t, cam }) => {
     </Town>
   );
 };
+
+/** thumbnail scene: a huge shocked baker, a giant loaf and a $100 tag, money raining down */
+export const TThumb: React.FC<SceneProps> = ({ t, cam }) => (
+  <Room w={22} d={14} h={9} wall="#e8a070" t={t} warm={1.0}>
+    <pointLight position={[-6, 4, 3]} intensity={30} color="#ff3a2a" distance={22} /><pointLight position={[7, 5, 2]} intensity={26} color="#ffd24a" distance={22} />
+    <Counter p={[3.4, 0, -2.4]} w={7} />
+    <Loaf p={[3.4, 2.6, -2.4]} s={3.4} rot={0.25} />
+    <PriceTag p={[3.4, 5.4, -2.6]} price="$100" s={3.2} rot={-0.12} />
+    <P look="baker" p={[-1.7, 0.1, -0.6]} cam={[0, 3, 4]} t={t} s={3.1} expr="shock" pose="cheer" seed={2} emph={1} yaw={0.2} />
+    <Bills t={t + 1.5} born={0} n={90} area={[16, 9, 6]} center={[0, 0, 0.5]} fall={1.6} />
+  </Room>
+);
