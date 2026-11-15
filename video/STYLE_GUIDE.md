@@ -269,29 +269,45 @@ Use this whenever the user says "style 2". Reference file: 720x1280, 30 fps, 100
 
 **How to build it with our pipeline**: Remotion + three; HUD as an HTML overlay (numbers from a data table, one step per row: n, value, comparison, energy, caption, camera key, effect); same camera key system with monotone warp; 9:16 1080x1920; 30 or 60 fps; deterministic particles driven by the frame number; QA one frame per step. Facts table must be verified before building and the energy/dB/TNT arithmetic double-checked.
 
-## STYLE 3: "Doubling aura / power-scale meme counter" (learned from the user's reference reel "Are we DOOMed?" by @verpaxen, Instagram, posted 2026-11-13)
-Use this whenever the user says "style 3".
+## STYLE 3: "Doubling aura" mini-movie (learned by studying the user's reference video "Are we DOOMed?" by @verpaxen, 44.8 s, 720x1280, 30 fps, 1341 frames)
+Use this whenever the user says "style 3". Studied from the real file: one frame per second (all 45 viewed), cut times, HUD crops at full size, and loudness over time. NOT heard: I cannot hear speech or music, so voice/music details are marked *(not heard)*.
 
-**HONESTY NOTE: what this is based on.** Cloud could not download the video. Verified from the page: caption "Are we DOOMed?", about 140K likes and 891 comments in 2 days, audio "Original audio", and ONE thumbnail frame (seen). Everything marked *(inferred)* comes from that frame, the comments and the format's logic, NOT from watching or hearing the reel. Replace the inferred parts when the user supplies the file or screenshots.
+**Idea / format**
+- Premise on screen as the title in the first 3 s: "What if your aura doubled every minute?" (italic serif, white, "aura" in gold).
+- It is a STORY with a counter, not a list of characters. A normal street cafe scene: a punk with sunglasses and a red mohawk sits at a table; a guy (the hero) walks by with a coffee, gets coffee on his shirt, and everything keeps going wrong for the punk and right for the hero. Every minute the hero's aura doubles and the world reacts more:
+  1. Minute 1: 100 aura. Coffee spilled on his shirt. Hero calm. (caption "Coffee on his shirt.")
+  2. Minute 2: 200 then 400. "The wind only blows on him." Dog on a leash looks up. The punk loses his entire aura ("-400 AURA", label "SIDE CHARACTER") and asks "Who... that guy?" The hero is tagged "MAIN CHARACTER" at 629.
+  3. Minute 3: 800, "AN ACTION HERO". Waiter drops a tray of cups, he catches them without looking. ("Minute 3: 800 aura. He didn't even look.")
+  4. Minute 4: 1,600, "A MOVIE POSTER". A car explodes behind him, he walks away without looking back.
+  5. Minute 5: 3,200, "VISIBLE FROM SPACE". News studio parody ("BREAKING NEWS: Local man's aura visible from space", LIVE badge, ticker), then top-down night city with a beam of light.
+  6. Minute 6: 6,400 then 10,068, "TOO MUCH FOR ONE MAN". Night street, cracks in the road, ground lights up. ("His shadow isn't his.")
+  7. Minute 7: 12,800, "A VILLAIN ORIGIN STORY". Hero is stuck, face lit gold with green cracks, "I CAN'T MOVE...". Progress bar "MINUTE 8 IS LOADING".
+  8. Cut to black, then an inverted/thermal "SWITCH!" flash, then the villain Doctor Doom appears (green). Counter glitches (25,600 then "???") because the counter cannot hold him. The punk comes back with a STOP sign and tries to hit Doom, "...BOMBOCLAT." (Doom stops him with a hand).
+  9. Minute 8: HUD becomes an infinity symbol, "DOCTOR DOOM", green "DOOM" tag. Then a hard title card: huge red serif "HELL" (then "HELL ANSWERS" small caps under it), and slow push-ins to Doom's mask. Ends on his face, no outro, no ta-ding, loop-friendly.
+- Pattern: ONE stat doubles, the same hero escalates through film genres (coffee gag, action hero, movie poster, news report, villain origin), each with a visual gag and a punchline caption; the last step is a twist character that breaks the counter (infinity). A recurring side gag character (the punk) and a meme word ("BOMBOCLAT") returns 4 times as a bold shouted caption.
+- Last step is a twist: the thing that finally beats the hero is a bigger power, not a moral.
 
-**What the one frame shows (seen)**
-- Vertical 9:16, near-black frame with a dark green glow (green light strip at the top and bottom edge, green rim light).
-- Subject = a realistic-looking 3D Doctor Doom (dark hood, metal mask, glowing eyes), big in the frame, centred, face in the middle third. Not cartoon or flat: cinematic, moody, one-colour palette.
-- HUD text block top-left, small and clean: tiny spaced-caps label "AURA", then a big white infinity symbol, then "DOCTOR DOOM", then "MINUTE 8", then two pills: red "x2 EVERY MINUTE" (the rule, always visible) and green "DOOM" (the character/tier tag, colour matches the scene glow).
-- So it is the Style 2 HUD pattern (label, big number, name, rule pill) applied to a power-scaling meme: a value doubles each step and the character on screen changes. At minute 8 the number is already infinity (Doom's aura beats the counter).
+**On-screen text**
+- Title (first 3 s): serif italic, centred top, 3 lines, white, one gold word.
+- HUD top-left (same family as Style 2): "AURA" tiny spaced caps; big light serif number (counts up between steps, digits tick; "12,800", "25,600"); small caps tier name ("AN ACTION HERO", "A MOVIE POSTER", "VISIBLE FROM SPACE", "TOO MUCH FOR ONE MAN", "A VILLAIN ORIGIN STORY"); "MINUTE n"; red pill "x2 EVERY MINUTE"; white/yellow/orange/green pill that names the role ("SIDE CHARACTER" white, "MAIN CHARACTER" and "FINAL BOSS" amber, "DOOM" green, "???" grey). Bottom of HUD: a thin loading bar "MINUTE 8 IS LOADING".
+- Glitch/chromatic split on the HUD at the twist (RGB offset, scrambled letters).
+- Captions: a short serif italic sentence lower-left ("Coffee on his shirt.") for narration jokes; and big bold sans caps, centred, 1-3 words, white with one gold word ("WHO THAT GUY?", "LOOK BACK.", "BOMBOCLAT!", "SWITCH!", "I CAN'T MOVE...") for shouted dialogue. Never boxed.
 
-**Idea / format (inferred)**
-- A power-scaling "what if" counter: "What if your aura doubled every minute?" The video steps through minutes (or levels); each step swaps in a stronger fictional character, each with a name tag and a number. The number overflows into infinity for the top-tier character, which is the joke/payoff.
-- Content = pop-culture characters (games, anime, Marvel, JoJo; comments mention Doom and Jotaro), compared on one fake stat ("aura"). No facts to verify, but the ranking must feel fair and funny so comments argue about it (comments are the engine: "poly doom before gta 6", "Jotaro was moving", meme words like "bomboclat").
-- Caption is one short question to the viewer ("Are we DOOMed?"). Hook = a question plus the first character on screen at frame 0.
-- Probably no narration, short (about 20 to 40 s) and loop-friendly *(inferred)*. Audio is "Original audio": likely a trending or hype track with hits per step *(inferred, not heard)*.
+**Animation / camera (seen)**
+- Cuts about every 0.7 to 2 s (about 60 cut points in 45 s; the finale cuts faster, 0.1 to 0.5 s). Every shot has a new camera: low hero angle looking up at the character (very common), over-the-dog close-up, top-down city, behind-the-character walk-away, extreme close-up of face, feet/boots close-up, wide with explosions, slow push-in on the final mask.
+- Characters are fully 3D modelled low-poly people (faceted planes, soft toon-ish skin shading, big expressive faces with eyebrows, mouths and cheeks), with light-gold rim outline on the hero. They ACT: sip, spill, catch, wobble, point, shake with strain, glow. Dog is a rounded 3D corgi.
+- Style = low-poly stylised 3D, warm saturated daytime (orange awnings, pink brick, green trees, blue sky) that gets darker with each minute: day, explosion orange, blue news set, night, black, then green monochrome for Doom. Colour change = escalation.
+- Effects: flying debris, sparks, sun flares, cracks glowing on the ground, shockwave ring, volumetric light beam, fire, fog, green aura rings and lightning, glitch/RGB split, a white/inverted flash on the swap, black frames between big steps.
+- Doom is a higher-detail realistic render (dark metal mask, hood fabric with folds, armour plates, chain, glowing eyes), lit from below in green, deliberately less cartoon than the rest.
 
-**Look rules to follow**
-- One strong colour per character (the scene glow, HUD tag pill and rim light all match). Dark background, high contrast, centred bust or full figure, slow push-in or orbit, never a still frame.
-- Characters should look like real 3D renders (lit, textured), not flat paper cut-outs. In our pipeline: toon is NOT enough for this style; use PBR-ish materials, strong rim light, volumetric glow, bloom, grain, DOF.
-- HUD copied from Style 2 (same block, new tags); only the step number, name and tier tag change.
+**Audio**
+- Measured: loudness rises steadily from about -25 dB RMS at 0 s to about -16 dB at the end (no silence, always climbing). Stereo AAC.
+- Voice, spoken lines and the exact music: *(not heard)*. The shouted captions suggest voiced reactions; ask the user how it sounds before copying it.
 
-**Copyright note.** Doctor Doom, Jotaro and similar are other people's characters. Original characters or clearly parody designs are safer for monetisation. Say so to the user before building and let him decide.
+**How to replicate with our pipeline**
+- Remotion + three at 1080x1920, 60 fps (or 30). Story script first (8 to 9 minute-steps, each with: number, tier name, role tag, the gag, one serif caption, one shouted caption, camera, effect, palette). Doubling math must be consistent (100, 200, 400, 800, 1,600, 3,200, 6,400, 12,800, then the twist).
+- Characters: our flat painted `Person2` will NOT match. This style needs real low-poly 3D humans (rigged boxes/planes with faces). Build a new `src/style3/` character kit: faceted body, head with eyes/brows/mouth morphs, simple walk, catch, stumble, strain poses. Honest warning: this is the biggest build so far; tell the user the cost and offer a simpler first sample (3 steps) before the full video.
+- Keep: monotone camera time warp, HUD as HTML overlay from a data table, deterministic particles, cut flash/punch zoom.
+- Rights: Doctor Doom is Marvel's. Original villain or a parody design is safer for monetisation; ask the user.
 
-**Open questions to ask the user before scripting a Style 3 video**
-1. Which characters / what ladder (original or famous)? 2. What is the stat (aura, power, cool, danger)? 3. Length (20 s, 40 s, 60 s)? 4. Music: trending track, or our own synth score?
+**Ask before scripting**: which stat and hero (aura again or new), which twist character at the end (original or famous), length (about 45 s), recurring side gag character, whether to use the "bomboclat" meme word or a new one, music/voice choice.
