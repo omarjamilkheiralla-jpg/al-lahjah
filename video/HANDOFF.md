@@ -25,3 +25,6 @@ If Chrome runs out of memory use `--concurrency=1`. Always `git pull` first.
 - Voice text rules: write numbers/abbreviations as words ("Monday morning", not "8 a.m."), merge tiny fragments, verify by transcription; I cannot hear audio, say so honestly.
 - User preferences: no wisdom/moral talk, little yapping, no foreshadowing hooks, real city (not isolated buildings), varied characters, thumbnails clean and clear, descriptions without sources but with the disclaimer + synthetic-voice lines, be honest about what was not checked.
 - Stop hook: commit and push all changes before ending a turn.
+
+## Added skills (in repo, `.claude/skills/`)
+- `stop-slop` (writing style) and `video-lens` (YouTube transcript -> HTML summary; needs `pip install youtube-transcript-api yt-dlp`; the cloud network may block YouTube, so it may only work on the user's PC).
