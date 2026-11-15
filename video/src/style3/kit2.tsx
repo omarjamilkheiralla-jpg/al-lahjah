@@ -42,7 +42,7 @@ const shoeGeo = () => memo("shoe", () => { const g = new THREE.BoxGeometry(0.115
 
 /* ---------- looks ---------- */
 export type Look2 = { skin: string; skinShade: string; hair: string; top: string; topDark: string; pants: string; shoe: string; sole: string; kind: "ben" | "gary" | "mia" | "grey"; sleeveless?: boolean; shades?: boolean; vest?: string };
-export const BEN2: Look2 = { skin: "#d49b6e", skinShade: "#a8714a", hair: "#3a2316", top: "#8c8680", topDark: "#6e6862", pants: "#2c2a30", shoe: "#d8402e", sole: "#f2eee4", kind: "ben" };
+export const BEN2: Look2 = { skin: "#e0ad86", skinShade: "#b0805a", hair: "#3a2316", top: "#8c8680", topDark: "#6e6862", pants: "#2c2a30", shoe: "#d8402e", sole: "#f2eee4", kind: "ben" };
 export const GARY2: Look2 = { skin: "#efc9a4", skinShade: "#c89a78", hair: "#cf3a36", top: "#eceae6", topDark: "#c4c0b8", pants: "#2c3446", shoe: "#2a2a30", sole: "#d8d4cc", kind: "gary", sleeveless: true, shades: true, vest: "#27272e" };
 export const MIA2: Look2 = { skin: "#f0cba8", skinShade: "#c9987a", hair: "#c8a068", top: "#b8bcc6", topDark: "#9298a4", pants: "#b4562c", shoe: "#8a4a2a", sole: "#e8e0d0", kind: "mia" };
 export const GREY2 = (i: number): Look2 => ({ skin: ["#e0b088", "#b87c50", "#f0cfae", "#8a5a3a", "#d8a074"][i % 5], skinShade: "#a07050", hair: ["#2a1a12", "#6a4020", "#bfa25a", "#161616", "#8a8a8a"][i % 5], top: ["#c0545a", "#4f7ac2", "#e0903a", "#8a63b8", "#4aa8a0"][i % 5], topDark: "#00000040", pants: ["#3b3f52", "#5a4a3a", "#2f4a58"][i % 3], shoe: "#2c2c32", sole: "#ddd", kind: "grey" });

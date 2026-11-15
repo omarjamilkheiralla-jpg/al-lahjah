@@ -13,6 +13,8 @@ import { Style2Sample, STYLE2_TOTAL, FPS as S2_FPS } from "./style2/Style2Sample
 
 import { Style3Sample, S3_TOTAL, FPS as S3_FPS } from "./style3/Style3Sample";
 
+import { CharTest } from "./style3/CharTest";
+
 export const FPS = 30;
 
 export const Root: React.FC = () => {
@@ -35,6 +37,7 @@ export const Root: React.FC = () => {
       <Composition id="ThumbRatsH" component={Thumb} durationInFrames={1} fps={30} width={1280} height={720} defaultProps={{ w: 1280, h: 720 }} />
       <Composition id="Style2Sample" component={Style2Sample} durationInFrames={Math.ceil(STYLE2_TOTAL * S2_FPS)} fps={S2_FPS} width={1080} height={1920} defaultProps={{ audio: true }} />
       <Composition id="Style3Sample" component={Style3Sample} durationInFrames={Math.ceil(S3_TOTAL * S3_FPS)} fps={S3_FPS} width={1080} height={1920} defaultProps={{ audio: true }} />
+      <Composition id="CharTest" component={CharTest} durationInFrames={2} fps={30} width={1080} height={1920} defaultProps={{ mode: "all" }} />
       <Composition id="TownThumb2" component={TownThumb2} durationInFrames={2} fps={30} width={1920} height={1080} />
       <Composition id="TownThumb" component={TownThumb} durationInFrames={2} fps={30} width={1920} height={1080} />
       <Composition id="Town" component={TownFull} durationInFrames={Math.ceil(TOWN_TOTAL * TOWN_FPS)} fps={TOWN_FPS} width={1920} height={1080} defaultProps={{ captions: true, audio: true }} />

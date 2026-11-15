@@ -55,22 +55,22 @@ SEG = [0.0, 2.3, 4.6, 7.0]
 for i, t0 in enumerate(SEG):
     if i: put(fx, whoosh(0.35, True), t0 - 0.3, 0.55); put(fx, kick(), t0, 1.0); put(fx, bell(72 + i * 4, 0.9), t0, 0.35)
 put(fx, whoosh(1.9, True), 0.0, 0.25)
-# scenario 1 (coin): coin ting on pick-up and on the toss; ice cream splat
-put(fx, bell(88, 0.8), 2.3 + 1.25, 0.5); put(fx, bell(95, 0.8), 2.3 + 1.95, 0.4); put(fx, splat(), 2.3 + 1.5, 0.55)
-# scenario 2 (tray): five cups landing, then a cool whoosh when he catches
-for k, s0 in enumerate([0.8, 1.2, 1.6, 2.0, 2.4]):
-    if 4.6 + s0 < 7.0: put(fx, tone(60 + k, 0.12), 4.6 + s0, 0.5); put(fx, clap(), 4.6 + s0, 0.18)
-put(fx, bell(84, 0.7), 4.6 + 1.95, 0.35)
-# scenario 3 (explosion at 0.5 s): big boom, debris rattle, fire crackle, silence-then-glasses click
-def boom():
-    n = int(SR * 2.6); t = np.arange(n) / SR
-    sub = np.sin(2 * np.pi * np.cumsum(70 * np.exp(-t * 2.2) + 28) / SR) * np.exp(-t / 0.8)
-    nz = lp(rng.uniform(-1, 1, n), 2500) * np.exp(-t / 0.5)
-    return sub * 1.3 + nz * 0.9
-put(fx, boom(), 7.0 + 0.5, 1.3); put(fx, whoosh(0.5, False), 7.0 + 0.5, 0.4)
-for k in range(14): put(fx, hp(rng.uniform(-1, 1, 1500), 3000) * env(1500, 0.001, 0.02), 7.0 + 0.7 + k * 0.11 + rng.random() * 0.05, 0.25)
-put(fx, (hp(rng.uniform(-1, 1, int(SR * 2.0)), 900) * env(int(SR * 2.0), 0.3, 0.9)), 7.0 + 0.9, 0.12)
-put(fx, bell(96, 0.5), 7.0 + 2.0, 0.3)
+# scenario B (coffee on shirt, 2.3 s): cup tilt, splash, sad little descending notes
+put(fx, whoosh(0.3, False), 2.3 + 0.78, 0.25); put(fx, splat(), 2.3 + 0.95, 0.55); put(fx, splat(), 2.3 + 1.0, 0.4)
+for k, m in enumerate([67, 64, 60]): put(fx, tone(m, 0.28), 2.3 + 1.25 + k * 0.17, 0.35)
+# scenario C (car crash misses him, 4.6 s): engine rising, tyre screech, metal crash at 1.6 s, a relieved chime
+eng = lp(rng.uniform(-1, 1, int(SR * 1.7)), 600) * np.linspace(0.05, 0.9, int(SR * 1.7)) ** 2; put(fx, eng, 4.6 + 0.0, 0.5)
+put(fx, hp(rng.uniform(-1, 1, int(SR * 0.7)), 2500) * np.sin(np.pi * np.linspace(0, 1, int(SR * 0.7))) * 0.5, 4.6 + 0.85, 0.5)
+def crash():
+    n = int(SR * 1.6); t = np.arange(n) / SR; sub = np.sin(2 * np.pi * np.cumsum(90 * np.exp(-t * 3) + 40) / SR) * np.exp(-t / 0.4); nz = hp(rng.uniform(-1, 1, n), 800) * np.exp(-t / 0.25) * 0.9
+    ring = sum(np.sin(2 * np.pi * f * t) * np.exp(-t / 0.5) * 0.15 for f in (410, 640, 1130)); return sub + nz + ring
+put(fx, crash(), 4.6 + 1.6, 1.0)
+for k in range(10): put(fx, hp(rng.uniform(-1, 1, 1200), 4000) * env(1200, 0.001, 0.02), 4.6 + 1.7 + k * 0.07 + rng.random() * 0.04, 0.3)
+put(fx, bell(88, 0.9), 4.6 + 2.0, 0.3)
+# scenario D (coffee lands perfectly in his hand, 3.0 s): fall whistle, soft thump, sparkle chime
+n = int(SR * 1.1); t = np.arange(n) / SR; put(fx, np.sin(2 * np.pi * np.cumsum(1800 - 900 * (t / 1.1)) / SR) * 0.08 * np.linspace(0.2, 1, n), 7.0 + 0.35, 1.0)
+put(fx, splat(), 7.0 + 1.45, 0.5); put(fx, kick(), 7.0 + 1.45, 0.7)
+for k, m in enumerate([84, 88, 91, 96]): put(fx, bell(m, 1.0), 7.0 + 1.6 + k * 0.09, 0.32)
 rain = np.zeros(N)
 x = (bed * 0.5 + drums * 0.6) * grow + fx * 0.9 + rain
 x /= max(1e-6, np.abs(x).max()) / 0.9

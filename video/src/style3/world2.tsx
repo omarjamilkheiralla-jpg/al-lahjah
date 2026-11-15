@@ -131,22 +131,22 @@ export const City: React.FC = React.memo(() => {
 });
 
 /* ---------------------------------------------------- effects */
-export const Explosion: React.FC<{ p: V3; t: number }> = ({ p, t }) => {
+export const Explosion: React.FC<{ p: V3; t: number; k?: number; fire?: boolean }> = ({ p, t, k = 1, fire = true }) => {
   if (t < 0) return null;
   const R = seeded(5);
   const grow = 1 - Math.exp(-t * 4.5); const fade = clamp((t - 1.2) / 1.2);
   const puffs = [[0, 1.2, 0, 1.15], [1.1, 1.0, 0.4, 0.9], [-1.0, 1.1, -0.3, 0.95], [0.3, 2.3, 0.2, 1.0], [-0.7, 2.1, 0.5, 0.75], [0.8, 2.0, -0.4, 0.8], [0, 3.1, 0, 0.7]];
   const hot = t < 0.35 ? "#fff4d0" : t < 0.7 ? "#ffd070" : t < 1.1 ? "#ff9a30" : "#d8581c";
   return (
-    <group position={p}>
-      {t < 0.22 ? <mesh geometry={ico(1, 2)} material={BM("#ffffff")} position={[0, 1.2, 0]} scale={0.5 + t * 14} /> : null}
-      {puffs.map((q, i) => <mesh key={i} geometry={ico(1, 2)} material={M(i % 3 === 0 ? hot : i % 3 === 1 ? "#ff9a30" : "#e8681c", { rough: 1, emissive: t < 1.3 ? "#ff7a1a" : "#3a1408", ei: t < 1.3 ? 1.2 - t * 0.5 : 0.3 })} position={[q[0] * grow * 1.3, q[1] + t * 0.6 * (i % 2 ? 1 : 0.5), q[2] * grow]} scale={Math.max(0.001, q[3] * grow * (1 - fade * 0.5)) * 1.1} />)}
+    <group position={p} scale={k}>
+      {fire && t < 0.22 ? <mesh geometry={ico(1, 2)} material={BM("#ffffff")} position={[0, 1.2, 0]} scale={0.5 + t * 14} /> : null}
+      {fire ? puffs.map((q, i) => <mesh key={i} geometry={ico(1, 2)} material={M(i % 3 === 0 ? hot : i % 3 === 1 ? "#ff9a30" : "#e8681c", { rough: 1, emissive: t < 1.3 ? "#ff7a1a" : "#3a1408", ei: t < 1.3 ? 1.2 - t * 0.5 : 0.3 })} position={[q[0] * grow * 1.3, q[1] + t * 0.6 * (i % 2 ? 1 : 0.5), q[2] * grow]} scale={Math.max(0.001, q[3] * grow * (1 - fade * 0.5)) * 1.1} />) : null}
       {Array.from({ length: 9 }, (_, i) => { const k = clamp((t - 0.25 - i * 0.05) / 1.8); const a = (i / 9) * 6.28; return k > 0 ? <mesh key={`s${i}`} geometry={ico(1, 1)} material={M("#3a3430", { rough: 1 })} position={[Math.cos(a) * (0.8 + k * 1.2), 2 + k * 4.5 + (i % 3) * 0.5, Math.sin(a) * (0.8 + k * 1.2)]} scale={0.6 + k * 1.6} /> : null; })}
       {Array.from({ length: 16 }, (_, i) => { const a = R() * 6.28, sp = 5 + R() * 9, up = 5 + R() * 9, sz = 0.14 + R() * 0.3; const x = Math.cos(a) * sp * t, z = Math.sin(a) * sp * t * 0.7, y = 0.8 + up * t - 9.0 * t * t; if (y < 0.05) return null; return <mesh key={`d${i}`} geometry={box(sz * 1.5, sz * 0.5, sz)} material={M(i % 3 ? "#c8302a" : "#1c1a1c")} position={[x, y, z]} rotation={[t * (3 + i), t * (2 + i * 0.3), t * 4]} castShadow />; })}
       <mesh geometry={cyl(0.42, 0.42, 0.3, 10)} material={M("#1a1a20")} position={[-2 * t * 6, Math.max(0.4, 1 + 11 * t - 9.0 * t * t), 1.5 * t * 5]} rotation={[t * 8, 0, t * 5]} castShadow />
       {Array.from({ length: 46 }, (_, i) => { const a = R() * 6.28, el = R() * 1.4, sp = 10 + R() * 22; const L = clamp(t / (0.5 + R() * 0.9)); if (L >= 1) return null; const x = Math.cos(a) * Math.cos(el) * sp * t, z = Math.sin(a) * Math.cos(el) * sp * t, y = 1 + Math.sin(el) * sp * t - 6 * t * t; if (y < 0.03) return null; return <mesh key={`k${i}`} geometry={box(0.035, 0.035, 0.34)} material={BM("#ffd68a")} position={[x, y, z]} rotation={[0, -a, el]} />; })}
       <mesh geometry={memo("ring", () => new THREE.RingGeometry(1, 1.25, 28))} material={BM("#ffd8a0", { opacity: 0.5 * (1 - clamp(t / 1.0)), add: true })} position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={0.5 + t * 14} />
-      <pointLight color="#ff8a2a" intensity={Math.max(0, 260 * (1 - t / 2.4))} distance={26} position={[0, 2.2, 1.5]} />
+      <pointLight color="#ff8a2a" intensity={Math.max(0, 260 * k * k * (1 - t / 2.4))} distance={26} position={[0, 2.2, 1.5]} />
     </group>
   );
 };
