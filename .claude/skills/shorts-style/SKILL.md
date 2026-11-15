@@ -74,3 +74,30 @@ Use this whenever the user says "style 2". Reference file: 720x1280, 30 fps, 100
 - Audio: no voice. Ambient bed that gets louder every step, a hit per step, a bass swell, silence for the final joke.
 
 **How to build it with our pipeline**: Remotion + three; HUD as an HTML overlay (numbers from a data table, one step per row: n, value, comparison, energy, caption, camera key, effect); same camera key system with monotone warp; 9:16 1080x1920; 30 or 60 fps; deterministic particles driven by the frame number; QA one frame per step. Facts table must be verified before building and the energy/dB/TNT arithmetic double-checked.
+
+## STYLE 3: "Doubling aura / power-scale meme counter" (learned from the user's reference reel "Are we DOOMed?" by @verpaxen, Instagram, posted 2026-11-13)
+Use this whenever the user says "style 3".
+
+**HONESTY NOTE: what this is based on.** Cloud could not download the video. Verified from the page: caption "Are we DOOMed?", about 140K likes and 891 comments in 2 days, audio "Original audio", and ONE thumbnail frame (seen). Everything marked *(inferred)* comes from that frame, the comments and the format's logic, NOT from watching or hearing the reel. Replace the inferred parts when the user supplies the file or screenshots.
+
+**What the one frame shows (seen)**
+- Vertical 9:16, near-black frame with a dark green glow (green light strip at the top and bottom edge, green rim light).
+- Subject = a realistic-looking 3D Doctor Doom (dark hood, metal mask, glowing eyes), big in the frame, centred, face in the middle third. Not cartoon or flat: cinematic, moody, one-colour palette.
+- HUD text block top-left, small and clean: tiny spaced-caps label "AURA", then a big white infinity symbol, then "DOCTOR DOOM", then "MINUTE 8", then two pills: red "x2 EVERY MINUTE" (the rule, always visible) and green "DOOM" (the character/tier tag, colour matches the scene glow).
+- So it is the Style 2 HUD pattern (label, big number, name, rule pill) applied to a power-scaling meme: a value doubles each step and the character on screen changes. At minute 8 the number is already infinity (Doom's aura beats the counter).
+
+**Idea / format (inferred)**
+- A power-scaling "what if" counter: "What if your aura doubled every minute?" The video steps through minutes (or levels); each step swaps in a stronger fictional character, each with a name tag and a number. The number overflows into infinity for the top-tier character, which is the joke/payoff.
+- Content = pop-culture characters (games, anime, Marvel, JoJo; comments mention Doom and Jotaro), compared on one fake stat ("aura"). No facts to verify, but the ranking must feel fair and funny so comments argue about it (comments are the engine: "poly doom before gta 6", "Jotaro was moving", meme words like "bomboclat").
+- Caption is one short question to the viewer ("Are we DOOMed?"). Hook = a question plus the first character on screen at frame 0.
+- Probably no narration, short (about 20 to 40 s) and loop-friendly *(inferred)*. Audio is "Original audio": likely a trending or hype track with hits per step *(inferred, not heard)*.
+
+**Look rules to follow**
+- One strong colour per character (the scene glow, HUD tag pill and rim light all match). Dark background, high contrast, centred bust or full figure, slow push-in or orbit, never a still frame.
+- Characters should look like real 3D renders (lit, textured), not flat paper cut-outs. In our pipeline: toon is NOT enough for this style; use PBR-ish materials, strong rim light, volumetric glow, bloom, grain, DOF.
+- HUD copied from Style 2 (same block, new tags); only the step number, name and tier tag change.
+
+**Copyright note.** Doctor Doom, Jotaro and similar are other people's characters. Original characters or clearly parody designs are safer for monetisation. Say so to the user before building and let him decide.
+
+**Open questions to ask the user before scripting a Style 3 video**
+1. Which characters / what ladder (original or famous)? 2. What is the stat (aura, power, cool, danger)? 3. Length (20 s, 40 s, 60 s)? 4. Music: trending track, or our own synth score?
