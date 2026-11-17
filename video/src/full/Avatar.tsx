@@ -66,16 +66,16 @@ const drawScrew = (g: CanvasRenderingContext2D, S: number) => {
 };
 
 /** Clean redraw of the character: smooth bezier shapes, round joins, uniform ink line. Designed in a 1000-unit space. */
-const drawHeadClean = (g: CanvasRenderingContext2D, S: number) => {
+const drawHeadClean = (g: CanvasRenderingContext2D, S: number, night = false) => {
   const k = S / 1000;
   g.save(); g.scale(k, k);
   const INK = "#2a1a1e";
   const outline = (w: number) => { g.lineWidth = w; g.strokeStyle = INK; g.lineJoin = "round"; g.lineCap = "round"; g.stroke(); };
   // background
   const bg = g.createRadialGradient(500, 430, 80, 500, 500, 760);
-  bg.addColorStop(0, "#fde7ae"); bg.addColorStop(0.55, "#f4b95a"); bg.addColorStop(1, "#d98430");
+  if (night) { bg.addColorStop(0, "#2a3a6c"); bg.addColorStop(0.55, "#151f40"); bg.addColorStop(1, "#080c1c"); } else { bg.addColorStop(0, "#fde7ae"); bg.addColorStop(0.55, "#f4b95a"); bg.addColorStop(1, "#d98430"); }
   g.fillStyle = bg; g.fillRect(0, 0, 1000, 1000);
-  g.save(); g.filter = "blur(1.5px)"; g.translate(500, 520); g.fillStyle = "rgba(255,247,220,0.2)";
+  g.save(); g.filter = "blur(1.5px)"; g.translate(500, 520); g.fillStyle = night ? "rgba(120,150,255,0.07)" : "rgba(255,247,220,0.2)";
   for (let i = 0; i < 24; i++) { g.rotate((Math.PI * 2) / 24); g.beginPath(); g.moveTo(0, 0); g.lineTo(1100, -52); g.lineTo(1100, 52); g.closePath(); g.fill(); }
   g.restore();
   const vg = g.createRadialGradient(500, 500, 420, 500, 500, 760); vg.addColorStop(0, "rgba(120,50,10,0)"); vg.addColorStop(1, "rgba(120,50,10,0.28)");
@@ -124,17 +124,30 @@ const drawHeadClean = (g: CanvasRenderingContext2D, S: number) => {
 
   // face
   const eye = (cx: number) => {
+    if (night) {
+      g.fillStyle = "#fffdf8"; g.beginPath(); g.ellipse(cx, 492, 66, 62, 0, 0, 7); g.fill(); outline(15);
+      g.fillStyle = INK; g.beginPath(); g.ellipse(cx + 24, 500, 36, 42, 0, 0, 7); g.fill();
+      g.fillStyle = "#fff"; g.beginPath(); g.arc(cx + 14, 486, 11, 0, 7); g.fill(); g.beginPath(); g.arc(cx + 36, 512, 5, 0, 7); g.fill();
+    } else {
     g.fillStyle = INK; g.beginPath(); g.ellipse(cx, 500, 36, 42, 0, 0, 7); g.fill();
     g.fillStyle = "#fff"; g.beginPath(); g.arc(cx - 11, 488, 10, 0, 7); g.fill();
     // heavy lid
     g.fillStyle = "#f9efe6"; g.beginPath(); g.moveTo(cx - 62, 440); g.lineTo(cx + 62, 440); g.lineTo(cx + 62, 497); g.bezierCurveTo(cx + 30, 484, cx - 30, 484, cx - 62, 497); g.closePath(); g.fill();
     g.beginPath(); g.moveTo(cx - 62, 497); g.bezierCurveTo(cx - 30, 484, cx + 30, 484, cx + 62, 497); outline(15);
+    }
   };
   eye(375); eye(625);
   g.lineCap = "round"; g.strokeStyle = INK;
+  if (night) {
+    g.lineWidth = 18; g.beginPath(); g.moveTo(316, 420); g.bezierCurveTo(350, 384, 400, 366, 446, 372); g.stroke();                // brow, worried
+    g.lineWidth = 18; g.beginPath(); g.moveTo(556, 372); g.bezierCurveTo(604, 366, 654, 384, 688, 420); g.stroke();
+    g.lineWidth = 15; g.beginPath(); g.moveTo(440, 664); g.bezierCurveTo(480, 650, 530, 654, 566, 636); g.stroke();                // small nervous half smile
+    g.fillStyle = "rgba(120,190,255,0.85)"; g.beginPath(); g.moveTo(236, 380); g.bezierCurveTo(222, 410, 214, 428, 236, 436); g.bezierCurveTo(258, 428, 250, 410, 236, 380); g.fill(); outline(8); // sweat drop
+  } else {
   g.lineWidth = 18; g.beginPath(); g.moveTo(312, 418); g.bezierCurveTo(350, 392, 400, 392, 440, 408); g.stroke();                 // brow, calm
   g.lineWidth = 18; g.beginPath(); g.moveTo(560, 396); g.bezierCurveTo(600, 372, 650, 372, 690, 392); g.stroke();                  // brow, raised
   g.lineWidth = 16; g.beginPath(); g.moveTo(430, 650); g.bezierCurveTo(480, 666, 540, 664, 590, 628); g.stroke();                   // smirk
+  }
 
   // cap: smooth dome + rounded visor + button
   g.save(); g.beginPath(); g.moveTo(130, 340); g.bezierCurveTo(115, 170, 290, 70, 500, 72); g.bezierCurveTo(710, 74, 870, 180, 870, 345);
@@ -153,15 +166,32 @@ const drawHeadClean = (g: CanvasRenderingContext2D, S: number) => {
   g.fillStyle = "#2b5fa8"; g.beginPath(); g.arc(500, 68, 17, 0, 7); g.fill();
   g.restore();
   g.restore();
+  if (night) {
+    g.save(); g.scale(S / 1000, S / 1000);
+    // warm light from a flashlight low on the right, cool dark on the left
+    const wl = g.createRadialGradient(930, 980, 20, 800, 760, 760); wl.addColorStop(0, "rgba(255,196,110,0.62)"); wl.addColorStop(0.45, "rgba(255,160,70,0.22)"); wl.addColorStop(1, "rgba(255,140,60,0)");
+    g.save(); g.globalCompositeOperation = "soft-light"; g.fillStyle = wl; g.fillRect(0, 0, 1000, 1000); g.restore();
+    const wl2 = g.createRadialGradient(930, 980, 20, 800, 760, 700); wl2.addColorStop(0, "rgba(255,190,100,0.35)"); wl2.addColorStop(1, "rgba(255,150,60,0)"); g.fillStyle = wl2; g.fillRect(0, 0, 1000, 1000);
+    const dk = g.createLinearGradient(0, 0, 700, 0); dk.addColorStop(0, "rgba(4,8,24,0.55)"); dk.addColorStop(1, "rgba(4,8,24,0)"); g.fillStyle = dk; g.fillRect(0, 0, 700, 1000);
+    // flashlight body (bottom right corner)
+    g.save(); g.translate(715, 905); g.rotate(-0.7);
+    const fg = g.createLinearGradient(-40, 0, 40, 0); fg.addColorStop(0, "#5b6578"); fg.addColorStop(0.5, "#aab4c6"); fg.addColorStop(1, "#4a5366");
+    g.fillStyle = fg; g.beginPath(); g.roundRect(-34, -20, 68, 190, 14); g.fill(); outline(12);
+    g.fillStyle = "#2a3040"; g.beginPath(); g.roundRect(-52, -70, 104, 66, 14); g.fill(); outline(12);
+    g.fillStyle = "#fff3c4"; g.beginPath(); g.ellipse(0, -70, 44, 14, 0, 0, 7); g.fill();
+    g.restore();
+    const vg3 = g.createRadialGradient(500, 500, 380, 500, 500, 740); vg3.addColorStop(0, "rgba(0,0,10,0)"); vg3.addColorStop(1, "rgba(0,0,10,0.45)"); g.fillStyle = vg3; g.fillRect(0, 0, 1000, 1000);
+    g.restore();
+  }
 };
 
-export const Avatar: React.FC<{ variant?: "head" | "screw" | "clean"; size?: number }> = ({ variant = "head", size = 800 }) => {
+export const Avatar: React.FC<{ variant?: "head" | "screw" | "clean" | "night"; size?: number }> = ({ variant = "head", size = 800 }) => {
   const ref = useRef<HTMLCanvasElement>(null);
   useLayoutEffect(() => {
     const c = ref.current!; const g = c.getContext("2d")!;
     const S = size; c.width = S; c.height = S;
     g.clearRect(0, 0, S, S);
-    if (variant === "clean") drawHeadClean(g, S); else if (variant === "head") drawHead(g, S); else drawScrew(g, S);
+    if (variant === "night") drawHeadClean(g, S, true); else if (variant === "clean") drawHeadClean(g, S); else if (variant === "head") drawHead(g, S); else drawScrew(g, S);
   });
   return <AbsoluteFill style={{ backgroundColor: "#222" }}><canvas ref={ref} style={{ width: size, height: size }} /></AbsoluteFill>;
 };
