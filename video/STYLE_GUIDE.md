@@ -315,3 +315,23 @@ Use this whenever the user says "style 3". Studied from the real file: one frame
 **Build notes for Style 3 (learned the hard way):** people must have realistic proportions (head about 1/7.5 of height), a sculpted faceted head with eye sockets, brow ridge, nose and thin lips, small half-lidded eyes (wide round eyes look silly), scalp-fitted hair made of overlapping plates (never a ball or cone wig), real sneakers lofted from cross-sections (not boxes), tapered torso with deltoids, per-triangle colour variance for the faceted look, a thin gold rim outline on the hero, front-facing 3/4 camera angles, strong depth of field, warm light that darkens toward the explosion. Fonts: Lora (title, caption, italic), Inter 600 to 900 (HUD, pills, shouts), Playfair for the big number. HUD sits close to the top-left corner. Code: `video/src/style3/`.
 
 **Style 3 character pipeline (current):** `rig.ts` builds bodies from signed-distance fields with surface nets, skins them to a skeleton (so joints bend smoothly and clothes fit as separate offset shells), paints per-triangle colour, and adds flat decal eyes and lips on the real head surface, a sculpted hair shell and lofted sneakers. Use symmetric grids (grid lines through x=0), laplacian smoothing of 1 to 2 passes, double-sided cloth, no outline hull on the head (it makes rings in the eye sockets). Faces: narrow head, small half-lidded eyes, brows, nose, thin lips; never big round bulging eyes. Captions describe the gag in plain words ("Coffee on his shirt."), the HUD number rolls up at every cut, and the character gets a luck nickname (UNLUCKY, LUCKY, VERY LUCKY), never unrelated labels like MAIN CHARACTER.
+
+## STYLE 4: "Two choices" first-person phone-horror story (learned from two reference reels, 720x1280, 30 fps, 68 s and 122 s)
+Use this whenever the user says "style 4". References: "A cop knocked at midnight... but 911 never sent anyone" and a school-lockdown story, both from the "Two Choices | Animated Stories" kind of channel. Studied by sampling a frame every 2 s (all viewed). Voices/music NOT heard.
+
+**Format**
+- Interactive cliffhanger story told in FIRST PERSON: we see through the hero's eyes (their hands holding a phone at the bottom of the frame) and cut to close-ups of the hero's face reacting. One new shot about every 2 s, 30 to 60 shots per video.
+- Opens on a timestamp HUD top-left ("TUESDAY · 12:04 AM", small yellow second line "Home alone" / "Room 214 · Biology final"), then straight into an ordinary moment that goes wrong.
+- App screens are the storytelling device: doorbell camera (red LIVE dot, "Front Door", clock, corner brackets, TALK and LOCK buttons, rain, night-vision green mode), a 911 call screen with a live sound wave, a chat app with message bubbles, a "Back Door: Motion detected" banner, a "Call failed" screen.
+- Dialogue by several characters, short lines. Captions: bold white sans (Inter 800 to 900) with a dark outline, centred at about 70 percent of the frame height, 1 to 5 words; the hero's lines in yellow, other speakers in white (or another colour per speaker).
+- Ending: the story stops on the scariest beat, darkens, and asks the viewer: "WHAT WOULD YOU DO?" then two pill buttons (for example blue OPEN THE FRONT DOOR, red RUN AND HIDE, or green OPEN THE DOOR and red KEEP IT LOCKED), "OR" between them, and "Comment for Part 2". The comments decide Part 2. No ta-ding.
+- Lighting tells the story: warm lamp and blue TV at home, cold blue night outside, blue-green night vision, near black at the end.
+
+**Look**
+- Simple cartoon people: big round head, big white eyes with black pupils and a highlight, tiny nose, small mouth, simple hair, plain clothes (red hoodie, police uniform, yellow cardigan). Smooth soft shading, not faceted. Detail comes from texture and lighting: wood floor, wallpaper, knit fabric, rain on windows, glowing screens, depth of field, bloom, vignette.
+- Hands are chunky cartoon hands with simple fingers, sleeves in the hero's clothes colour.
+- Camera is almost always moving slowly (push in, slow sway); POV shots have a gentle handheld sway.
+
+**Voices (user decision):** the one-narrator rule does NOT apply to this style. Use a different Kokoro voice for each character. The voice model files are not in the repo (kokoro-v1.0.onnx and voices-v1.0.bin); on the cloud the voice model host may be blocked, so the user's PC may need to generate the voices.
+
+**Risk note:** school-lockdown or violence-adjacent stories can be demonetised or age-restricted; prefer home-invasion, strange-visitor and mystery premises.
