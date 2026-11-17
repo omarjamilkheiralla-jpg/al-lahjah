@@ -66,7 +66,7 @@ const drawScrew = (g: CanvasRenderingContext2D, S: number) => {
 };
 
 /** Clean redraw of the character: smooth bezier shapes, round joins, uniform ink line. Designed in a 1000-unit space. */
-const drawHeadClean = (g: CanvasRenderingContext2D, S: number, night = false) => {
+export const drawHeadClean = (g: CanvasRenderingContext2D, S: number, night = false) => {
   const k = S / 1000;
   g.save(); g.scale(k, k);
   const INK = "#2a1a1e";
