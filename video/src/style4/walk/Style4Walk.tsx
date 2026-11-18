@@ -3,9 +3,9 @@ import React, { useLayoutEffect } from "react";
 import { AbsoluteFill, Audio, staticFile, useCurrentFrame, useVideoConfig, useDelayRender } from "remotion";
 import { ThreeCanvas } from "@remotion/three";
 import { useThree, createPortal } from "@react-three/fiber";
-import { PostFX } from "../../hotel/PostFX";
+import { PostQ } from "./PostQ";
 import { ease, clamp, mix, type V3 } from "../kit5";
-import { Hud, Skin, Banner, EndCard } from "../full/Style4Full";
+import { Skin, Banner, EndCard } from "../full/Style4Full";
 import { HouseW, CourierW, HandsW, herm, walked, speedAt, flashAt, flickerAt, DOORBELL, PEEP } from "./W";
 import CAPS from "./captions.json";
 import TL from "./timeline.json";
@@ -14,7 +14,9 @@ import TL from "./timeline.json";
 export const FPS = 30;
 export const S4W_TOTAL = 68;
 const sans = "Inter, Arial, Helvetica, sans-serif";
-const FONTS: [string, string, string][] = [["Inter", "fonts/inter-latin-600-normal.woff2", "600"], ["Inter", "fonts/inter-latin-700-normal.woff2", "700"], ["Inter", "fonts/inter-latin-800-normal.woff2", "800"], ["Inter", "fonts/inter-latin-900-normal.woff2", "900"]];
+const rnd = "'Lilita One', Inter, Arial, sans-serif";
+const OUT: React.CSSProperties = { WebkitTextStroke: "9px #000", paintOrder: "stroke fill" as any, textShadow: "0 5px 10px rgba(0,0,0,.5)" };
+const FONTS: [string, string, string][] = [["Lilita One", "fonts/LilitaOne-Regular.ttf", "400"], ["Inter", "fonts/inter-latin-600-normal.woff2", "600"], ["Inter", "fonts/inter-latin-700-normal.woff2", "700"], ["Inter", "fonts/inter-latin-800-normal.woff2", "800"], ["Inter", "fonts/inter-latin-900-normal.woff2", "900"]];
 let fp: Promise<void> | null = null;
 const loadFonts = () => (fp ??= Promise.all(FONTS.map(async ([fam, path, w]) => { try { const f = new FontFace(fam, `url(${staticFile(path)})`, { weight: w }); await f.load(); (document as any).fonts.add(f); } catch { /* ignore */ } })).then(() => undefined));
 const COL: Record<string, string> = { y: "#ffd21f", w: "#ffffff", b: "#5cc8ff", p: "#ff9aa8" };
@@ -29,22 +31,23 @@ const Rig: React.FC<{ p: V3; l: V3; fov: number; roll: number; pov: boolean; chi
 };
 const talking = (t: number) => (COURIER_TALK.some(([a, b]) => t >= a && t <= b) ? (Math.sin(t * 15) > -0.2 ? 0.55 + 0.3 * Math.sin(t * 9) : 0.12) : 0);
 const Feed: React.FC<{ w: number; h: number; cam: { p: V3; l: V3 }; fov: number; t: number; frame: number }> = ({ w, h, cam, fov, t }) => (
-  <ThreeCanvas width={w} height={h} flat camera={{ fov, near: 0.03, far: 200, position: cam.p }} gl={{ antialias: true }}>
+  <ThreeCanvas width={w} height={h} flat shadows camera={{ fov, near: 0.03, far: 200, position: cam.p }} gl={{ antialias: true }}>
     <color attach="background" args={["#172a55"]} />
     <Rig p={cam.p} l={cam.l} fov={fov} roll={0} pov={false} />
     <HouseW t={t} /><CourierW t={t} mouth={talking(t)} />
   </ThreeCanvas>
 );
+const HudW: React.FC<{ t: number }> = ({ t }) => { const k = ease((t - 0.1) / 0.3) * (1 - ease((t - 4.7) / 0.5)); return <div style={{ position: "absolute", left: 40, top: 60, fontFamily: rnd, color: "#fff", opacity: k }}><div style={{ fontSize: 66, letterSpacing: 1, ...OUT }}>TUESDAY &middot; 12:04 AM</div><div style={{ fontSize: 40, color: "#ffd21f", marginTop: -4, ...OUT, WebkitTextStroke: "7px #000" }}>Home alone</div></div>; };
 const Cap: React.FC<{ t: number }> = ({ t }) => {
   const c = (CAPS as any[]).find((x) => t >= x.t0 && t < x.t1); if (!c) return null; const k = ease((t - c.t0) / 0.07);
-  return <div style={{ position: "absolute", left: 0, right: 0, top: 1300, textAlign: "center", fontFamily: sans, fontWeight: 900, fontSize: 72, lineHeight: 1.05, color: COL[c.col], padding: "0 60px", textShadow: "0 0 2px #000, 3px 3px 0 #000, -3px 3px 0 #000, 3px -3px 0 #000, -3px -3px 0 #000, 0 6px 14px rgba(0,0,0,.6)", transform: `scale(${0.94 + 0.06 * k})`, opacity: k }}>{c.text}</div>;
+  return <div style={{ position: "absolute", left: 0, right: 0, top: 1300, textAlign: "center", fontFamily: rnd, fontSize: 84, lineHeight: 1.05, color: COL[c.col], padding: "0 50px", ...OUT, transform: `scale(${0.94 + 0.06 * k})`, opacity: k }}>{c.text}</div>;
 };
 const PhoneW: React.FC<{ mode: "cam" | "camnv" | "call" | "failed"; u: number; t: number; frame: number }> = ({ mode, u, t, frame }) => {
   const sec = Math.max(0, Math.floor(t - 17.25)); const tm = `00:${String(Math.min(59, sec)).padStart(2, "0")}`; const calling = t < 17.25;
   const speaking = SPEAK.some(([a, b]) => t > a && t < b);
   const bars = Array.from({ length: 34 }, (_, i) => { const a = speaking ? 0.25 + 0.75 * Math.abs(Math.sin(i * 1.7 + t * 11) * Math.sin(i * 0.6 + t * 5)) : 0.05; return <div key={i} style={{ width: 9, height: 100 * a + 8, borderRadius: 5, background: "#3cd28c" }} />; });
   const tilt = `perspective(1700px) rotateY(${-7 + Math.sin(t * 0.8) * 1.5}deg) rotateX(${2 + Math.sin(t * 1.1)}deg) rotateZ(${1.5 + Math.sin(t * 0.7) + (1 - u) * 8}deg)`;
-  const ring = (t * 0.9) % 1; const cam = mode === "cam" || mode === "camnv"; const clock = `2:13:${String(Math.min(59, 5 + Math.floor(t - 5))).padStart(2, "0")} AM`;
+  const ring = (t * 0.9) % 1; const cam = mode === "cam" || mode === "camnv"; const clock = `12:04:${String(Math.min(59, 20 + Math.floor(t - 5))).padStart(2, "0")} AM`;
   return (
     <AbsoluteFill style={{ pointerEvents: "none" }}>
       <div style={{ position: "absolute", left: 150, top: 150 + (1 - u) * 1800, width: 790, height: 1620, transform: tilt, transformOrigin: "50% 50%" }}>
@@ -63,7 +66,7 @@ const PhoneW: React.FC<{ mode: "cam" | "camnv" | "call" | "failed"; u: number; t
           <div style={{ position: "absolute", left: 58, top: 62, color: "#fff", fontFamily: sans, fontWeight: 700, fontSize: 24, opacity: 0.75 }}>12:05</div>
           <div style={{ position: "absolute", right: 58, top: 62, color: "#fff", fontFamily: sans, fontWeight: 700, fontSize: 24, opacity: 0.75 }}>{mode === "failed" ? "No service" : "LTE"}</div>
           <div style={{ position: "absolute", left: 0, right: 0, top: 210, textAlign: "center", color: "#ff4a5e", fontFamily: sans, fontWeight: 800, fontSize: 31, letterSpacing: 1 }}>EMERGENCY CALL</div>
-          <div style={{ position: "absolute", left: 0, right: 0, top: 250, textAlign: "center", color: "#fff", fontFamily: sans, fontWeight: 900, fontSize: 250, letterSpacing: -6 }}>911</div>
+          <div style={{ position: "absolute", left: 0, right: 0, top: 250, textAlign: "center", color: "#fff", fontFamily: rnd, fontSize: 270, letterSpacing: -2, textShadow: "8px 8px 0 rgba(255,255,255,.12)" }}>911</div>
           {mode === "failed" ? <>
             <div style={{ position: "absolute", left: 0, right: 0, top: 560, textAlign: "center", color: "#ff7a8a", fontFamily: sans, fontWeight: 800, fontSize: 44 }}>Call failed</div>
             <div style={{ position: "absolute", left: 0, right: 0, top: 625, textAlign: "center", color: "#8aa0d8", fontFamily: sans, fontWeight: 600, fontSize: 30 }}>Connection lost</div>
@@ -105,13 +108,13 @@ export const Style4Walk: React.FC<{ audio?: boolean }> = ({ audio = true }) => {
   return (
     <AbsoluteFill style={{ background: "#000" }}>
       <AbsoluteFill style={{ filter: u > 0.01 ? `blur(${u * 7}px) brightness(${1 - u * 0.4})` : "none" }}>
-        <ThreeCanvas width={width} height={height} flat camera={{ fov: 66, near: 0.03, far: 200, position: P }} gl={{ antialias: true }}>
+        <ThreeCanvas width={width} height={height} flat shadows camera={{ fov: 66, near: 0.03, far: 200, position: P }} gl={{ antialias: true }}>
           <color attach="background" args={["#14183a"]} />
           <Rig p={P} l={Lk} fov={t > 46 ? 58 : 64} roll={roll} pov>
             {u < 0.7 ? <HandsW t={t} dark={dark} /> : null}
           </Rig>
           <HouseW t={t} /><CourierW t={t} mouth={talking(t)} />
-          <PostFX focus={Math.min(8, dist)} range={4} bokeh={2.4} frame={frame} grain={0.18} />
+          <PostQ focus={Math.min(8, dist)} range={4} bokeh={2.6} frame={frame} grain={0.2} bloom={0.9 + fl * 0.6} />
         </ThreeCanvas>
       </AbsoluteFill>
       {irisR > 2 ? <>
@@ -119,7 +122,7 @@ export const Style4Walk: React.FC<{ audio?: boolean }> = ({ audio = true }) => {
         <AbsoluteFill style={{ background: `radial-gradient(circle at 50% 960px, rgba(0,0,0,0) ${irisR * 0.8}px, rgba(0,0,0,.65) ${irisR - 2}px, #a88a3a ${irisR}px, #4a3a14 ${irisR + 14}px, rgba(0,0,0,0) ${irisR + 15}px)` }} />
       </> : null}
       {u > 0.01 ? <PhoneW mode={mode} u={u} t={t} frame={frame} /> : null}
-      {t < 5.4 ? <Hud t={t} /> : null}
+      {t < 5.4 ? <HudW t={t} /> : null}
       {t >= 50.3 && t < 52.5 ? <Banner s={t - 50.3} /> : null}
       <AbsoluteFill style={{ background: "radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,.45) 100%)", pointerEvents: "none" }} />
       <Cap t={t} />

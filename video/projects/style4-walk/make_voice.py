@@ -10,7 +10,7 @@ TL = json.load(open(os.path.join(VIDEO, "src", "style4", "walk", "timeline.json"
 SR = 44100; TOTAL = 68.0; N = int(SR * TOTAL); T = np.arange(N) / SR; rng = np.random.default_rng(7)
 # (who, spoken, caption, start, colour, effect, speed, tremor, breath)
 LINES = [
-    ("nora", "Who rings the bell at two a.m.?", "Who rings the bell at 2 a.m.?", 2.8, "y", None, 1.0, 0.0, False),
+    ("nora", "Who rings the bell at two a.m.?", "Who rings the bell at 2 a.m.?", 1.3, "y", None, 1.0, 0.0, False),
     ("courier", "Delivery. We have a package for Nora Hale. I need you to open the door.", "Delivery. We have a package for Nora Hale. I need you to open the door.", 6.7, "w", "cam", 1.0, 0.0, False),
     ("nora", "I didn't order anything.", "I didn't order anything.", 11.4, "y", None, 0.9, 0.03, False),
     ("courier", "It says it's from you. Open up. It's raining.", "It says it's from you. Open up. It's raining.", 13.4, "w", "cam", 0.88, 0.0, False),
@@ -88,7 +88,7 @@ rain = hp(lp(rng.uniform(-1, 1, N), 7000), 1200) * 0.16; mix += rain * 0.8
 mix += (np.sin(2 * np.pi * 120 * T) * 0.012 + lp(rng.uniform(-1, 1, N), 300) * 0.035) * seg(0, 5.4)
 d = (np.sin(2 * np.pi * 55 * T) + 0.6 * np.sin(2 * np.pi * 55.7 * T) + 0.35 * np.sin(2 * np.pi * 82.5 * T)) * (0.03 + 0.14 * (T / TOTAL) ** 1.8); mix += d
 def bell(m, dd=0.9): n = int(SR * dd); tt = np.arange(n) / SR; f = 440 * 2 ** ((m - 69) / 12); return (np.sin(2 * np.pi * f * tt) + 0.4 * np.sin(2 * np.pi * f * 2.76 * tt) * np.exp(-tt / 0.25)) * env(n, 0.002, dd / 3)
-put(mix, bell(84, 1.0), 2.45, 0.2); put(mix, bell(79, 1.2), 2.62, 0.2)
+put(mix, bell(84, 1.0), 0.55, 0.3); put(mix, bell(79, 1.2), 0.72, 0.3)
 put(mix, lp(rng.uniform(-1, 1, 9000), 300) * env(9000, 0.05, 0.12), 4.3, 0.5)   # standing up from the sofa
 for t0 in (16.5, 17.0): n = int(SR * 0.35); tt = np.arange(n) / SR; put(mix, (np.sin(2 * np.pi * 440 * tt) + np.sin(2 * np.pi * 480 * tt)) * np.sin(np.pi * tt / 0.35) * 0.1, t0, 1.0)
 for t0 in (5.1, 42.3): n = int(SR * 0.1); tt = np.arange(n) / SR; put(mix, np.sin(2 * np.pi * 1200 * tt) * np.exp(-tt / 0.04), t0, 0.2)
@@ -101,6 +101,21 @@ for f in TL["flashes"]:
 for a_, b_ in TL["flicker"]:
     t = a_
     while t < b_: n = int(SR * (0.03 + 0.05 * rng.random())); tt = np.arange(n) / SR; put(mix, (np.sin(2 * np.pi * 100 * tt) + 0.5 * np.sin(2 * np.pi * 300 * tt)) * 0.05 * np.sin(np.pi * tt / (n / SR)), t, 1.0); t += 0.1 + 0.4 * rng.random()
+
+# ----------------------------- cinematic score (A minor pads that swell, risers into each flash, sub hits)
+def pad(freqs, t0, dur, gain):
+    n = int(SR * dur); tt = np.arange(n) / SR; sig = np.zeros(n)
+    for f in freqs:
+        for dtn, w in ((0.997, 0.5), (1.0, 1.0), (1.003, 0.5)):
+            sig += w * (np.sin(2 * np.pi * f * dtn * tt) + 0.35 * np.sin(2 * np.pi * 2 * f * dtn * tt) + 0.15 * np.sin(2 * np.pi * 3 * f * dtn * tt))
+    sig = lp(sig / max(1e-6, np.abs(sig).max()), 1100) * np.sin(np.pi * tt / dur) ** 0.8
+    put(mix, sig, t0, gain)
+CH = [(110, 130.8, 164.8), (87.3, 110, 130.8), (73.4, 87.3, 110), (82.4, 103.8, 123.5)]
+for i in range(16):
+    t0 = i * 4.25; pad(CH[i % 4], t0, 5.2, 0.16 + 0.5 * (t0 / TOTAL) ** 1.3)
+for f in TL["flashes"]:
+    n = int(SR * 2.0); tt = np.arange(n) / SR; ris = bp(rng.standard_normal(n), 400, 5000) * (tt / 2.0) ** 2.2; put(mix, ris / max(1e-6, np.abs(ris).max()), max(0, f - 2.0), 0.28)
+    n = int(SR * 1.6); tt = np.arange(n) / SR; put(mix, np.sin(2 * np.pi * 46 * tt * (1 - 0.15 * tt)) * np.exp(-tt / 0.5), f, 0.9)
 # door rattle (someone tries the handle)
 for k_, t0 in enumerate(np.linspace(TL["jiggle"][0], TL["jiggle"][1], 6)): n = int(SR * 0.09); put(mix, bp(rng.uniform(-1, 1, n), 900, 3800) * env(n, 0.001, 0.03), t0, 0.5)
 # pulse (quickening) from 36 s
