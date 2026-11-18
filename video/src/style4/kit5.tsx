@@ -64,7 +64,7 @@ export const Person5: React.FC<{ look: Look5; p: V3; yaw?: number; pose?: Pose5;
       <group rotation={[lean, 0, 0]} position={[0, breathe * 0.004, 0]}>
         <Mesh g={G.cap(0.15, 0.3)} m={topM} p={[0, 0.5, 0]} s={[1.05, 1, 0.78]} />
         <Mesh g={G.torus(0.1, 0.045, Math.PI * 1.6)} m={topM} p={[0, 0.74, -0.03]} r={[Math.PI / 2 - 0.5, 0, 0]} />
-        {!waist ? <><Mesh g={G.cap(0.075, 0.5)} m={MS(look.pants, { map: "knit", rx: 2, ry: 4, rough: 0.9 })} p={[-0.07, 0.0, 0]} /><Mesh g={G.cap(0.075, 0.5)} m={MS(look.pants, { map: "knit", rx: 2, ry: 4, rough: 0.9 })} p={[0.07, 0.0, 0]} /></> : null}
+        {!waist ? <><Mesh g={G.sph(1, 14, 10)} m={MS("#15161a", { rough: 0.6 })} p={[-0.07, -0.325, 0.03]} s={[0.085, 0.05, 0.13]} /><Mesh g={G.sph(1, 14, 10)} m={MS("#15161a", { rough: 0.6 })} p={[0.07, -0.325, 0.03]} s={[0.085, 0.05, 0.13]} /><Mesh g={G.cap(0.075, 0.5)} m={MS(look.pants, { map: "knit", rx: 2, ry: 4, rough: 0.9 })} p={[-0.07, 0.0, 0]} /><Mesh g={G.cap(0.075, 0.5)} m={MS(look.pants, { map: "knit", rx: 2, ry: 4, rough: 0.9 })} p={[0.07, 0.0, 0]} /></> : null}
         {[-1, 1].map((k) => { const a = k < 0 ? armL : armR; const el = k < 0 ? elbowL : elbowR; return (
           <group key={k} position={[k * 0.17, 0.66, 0]} rotation={[a[0], 0, a[1] * k]}>
             <Mesh g={G.cap(0.052, 0.2)} m={topM} p={[0, -0.12, 0]} />
@@ -84,7 +84,7 @@ export const Person5: React.FC<{ look: Look5; p: V3; yaw?: number; pose?: Pose5;
           <group position={[0, -0.075, 0.128]}>
             {mouth > 0.05 ? <Mesh g={G.sph(1, 16, 12)} m={MS("#3a0e12", { rough: 0.5 })} s={[0.026, 0.008 + 0.022 * mouth, 0.01]} cast={false} /> : <Mesh g={G.torus(0.02, 0.0025, Math.PI)} m={MB("#5a2020")} r={[0, 0, smile >= 0 ? Math.PI : 0]} s={[1, 0.3 + Math.abs(smile) * 0.6, 1]} cast={false} />}
           </group>
-          {look.hairKind === "short" ? <group><Mesh g={G.sph(1, 36, 24)} m={hairM} p={[0, 0.03, -0.012]} s={[0.147, 0.145, 0.15]} /><Mesh g={G.sph(1, 20, 14)} m={hairM} p={[0.03, 0.12, 0.1]} s={[0.1, 0.05, 0.05]} r={[0.3, 0, -0.2]} /><Mesh g={G.sph(1, 20, 14)} m={hairM} p={[-0.05, 0.115, 0.1]} s={[0.08, 0.04, 0.05]} r={[0.3, 0, 0.3]} /></group> : null}
+          {look.hairKind === "short" ? <group><Mesh g={G.sph(1, 36, 24)} m={hairM} p={[0, 0.1, -0.03]} s={[0.147, 0.125, 0.15]} /><Mesh g={G.sph(1, 20, 14)} m={hairM} p={[0.03, 0.17, 0.03]} s={[0.1, 0.05, 0.06]} r={[-0.9, 0, -0.2]} /><Mesh g={G.sph(1, 20, 14)} m={hairM} p={[-0.05, 0.165, 0.03]} s={[0.08, 0.045, 0.06]} r={[-0.9, 0, 0.3]} /></group> : null}
           {look.hatKind === "cap" ? <group><Mesh g={G.sph(1, 36, 24)} m={MS(look.hat!, { map: "knit", rx: 3, ry: 3, rough: 0.8 })} p={[0, 0.045, -0.005]} s={[0.15, 0.125, 0.155]} /><Mesh g={G.cyl(0.13, 0.13, 0.012, 32)} m={MS(look.hat!, { rough: 0.7 })} p={[0, 0.088, 0.1]} s={[1, 1, 0.8]} r={[0.12, 0, 0]} /></group> : null}
         </group>
       </group>
@@ -95,24 +95,27 @@ export const Person5: React.FC<{ look: Look5; p: V3; yaw?: number; pose?: Pose5;
 /* ---------------------------------------------------------------- first-person hands + phone */
 export const phoneTex = (variant: "lock" | "alert") => memo("ph" + variant, () => cv(256, 512, (g, w, h) => {
   const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, "#1d2a4a"); gr.addColorStop(1, "#0a0d18"); g.fillStyle = gr; g.fillRect(0, 0, w, h);
-  g.fillStyle = "#ffffff"; g.textAlign = "center"; g.font = "600 24px Inter"; g.fillText("Tuesday, November 18", w / 2, 96); g.font = "300 118px Inter"; g.fillText("2:13", w / 2, 206);
+  g.fillStyle = "#ffffff"; g.textAlign = "center"; g.font = "600 19px Inter"; g.fillText("Tuesday, November 18", w / 2, 96); g.font = "300 118px Inter"; g.fillText("2:13", w / 2, 206);
   g.fillStyle = "rgba(255,255,255,.35)"; g.font = "500 18px Inter"; g.fillText("Home alone", w / 2, 250);
   if (variant === "alert") { g.fillStyle = "rgba(255,255,255,.95)"; g.beginPath(); g.roundRect(18, 300, w - 36, 92, 18); g.fill(); g.fillStyle = "#e2283f"; g.beginPath(); g.arc(46, 330, 8, 0, 7); g.fill(); g.fillStyle = "#101018"; g.textAlign = "left"; g.font = "700 22px Inter"; g.fillText("Front Door", 64, 337); g.font = "600 20px Inter"; g.fillStyle = "#c8202f"; g.fillText("Motion detected", 34, 372); }
   g.fillStyle = "rgba(255,255,255,.5)"; g.beginPath(); g.roundRect(w / 2 - 50, h - 22, 100, 6, 3); g.fill();
 }));
-export const PovHands: React.FC<{ variant: "lock" | "alert"; buzz: number; glow: number }> = ({ variant, buzz, glow }) => {
+export const PovHands: React.FC<{ variant: "lock" | "alert"; buzz: number; glow: number; drop?: number }> = ({ variant, buzz, glow, drop = 0 }) => {
   const sleeve = MS("#d23a30", { map: "knit", rx: 2, ry: 3, rough: 0.9 }); const sk = MS("#f0b890", { rough: 0.5, emissive: "#3a1408", ei: 0.5 });
   const sh = Math.sin(buzz * 90) * 0.003 * (buzz > 0 ? 1 : 0);
   return (
-    <group position={[sh, -0.13 + sh, -0.42]} rotation={[0.34, 0, 0]}>
+    <group position={[sh, -0.13 + sh - drop * 0.1, -0.42 + drop * 0.05]} rotation={[0.34 + drop * 0.5, 0, 0]}>
       <Mesh g={G.rbox(0.078, 0.164, 0.008, 0.011)} m={MS("#15171d", { rough: 0.3, metal: 0.4 })} cast={false} />
       <mesh position={[0, 0, 0.0047]}><planeGeometry args={[0.071, 0.157]} /><meshStandardMaterial map={phoneTex(variant)} emissive="#ffffff" emissiveMap={phoneTex(variant)} emissiveIntensity={0.5 + glow * 0.3} roughness={0.2} /></mesh>
       {[-1, 1].map((k) => (
-        <group key={k} position={[k * 0.05, -0.03, 0.002]} rotation={[0, 0, k * 0.16]}>
-          <Mesh g={G.sph(1, 28, 18)} m={sk} s={[0.026, 0.038, 0.02]} p={[k * 0.006, -0.004, -0.008]} cast={false} />
-          <group position={[k * -0.026, 0.026, 0.006]} rotation={[0.25, 0, k * 1.0]}><Mesh g={G.cap(0.0095, 0.03)} m={sk} p={[0, 0.018, 0]} cast={false} /><group position={[0, 0.036, 0]} rotation={[0, 0, k * 0.4]}><Mesh g={G.cap(0.0088, 0.018)} m={sk} p={[0, 0.01, 0]} cast={false} /></group></group>
-          {[0, 1, 2, 3].map((i) => <group key={i} position={[k * 0.0, 0.026 - i * 0.017, -0.004]} rotation={[0, 0, k * (Math.PI / 2 - 0.15)]}><Mesh g={G.cap(0.0078, 0.026)} m={sk} p={[0, -0.016, 0]} cast={false} /></group>)}
-          <Mesh g={G.cap(0.04, 0.2)} m={sleeve} p={[k * 0.014, -0.17, -0.016]} r={[0.14, 0, k * 0.08]} cast={false} />
+        <group key={k} position={[k * 0.043, -0.035, -0.012]}>
+          {/* palm behind the phone edge */}
+          <Mesh g={G.sph(1, 28, 18)} m={sk} s={[0.02, 0.05, 0.022]} p={[k * 0.012, -0.012, -0.004]} cast={false} />
+          {/* four fingers curl round the outer edge, tips just visible on the screen border */}
+          {[0, 1, 2, 3].map((i) => <group key={i} position={[k * 0.0, 0.034 - i * 0.021, 0.002]} rotation={[0, 0, k * 0.05]}><Mesh g={G.cap(0.0088, 0.014)} m={sk} p={[k * -0.003, 0, 0]} r={[0, 0, Math.PI / 2]} cast={false} /><Mesh g={G.sph(1, 10, 8)} m={sk} p={[k * -0.0075, 0, 0.0006]} s={[0.0085, 0.0088, 0.0072]} cast={false} /></group>)}
+          {/* thumb lies on the lower front corner, pointing up and in */}
+          <group position={[k * -0.004, 0.035 - 0.092, 0.011]} rotation={[0.1, 0, k * 0.35]}><Mesh g={G.cap(0.0105, 0.02)} m={sk} p={[0, 0.014, 0]} cast={false} /><Mesh g={G.sph(1, 10, 8)} m={MS("#f6d0b4", { rough: 0.4 })} p={[0, 0.0345, 0.0065]} s={[0.0062, 0.0085, 0.0028]} cast={false} /></group>
+          <Mesh g={G.cap(0.04, 0.2)} m={sleeve} p={[k * 0.02, -0.17, -0.02]} r={[0.14, 0, k * 0.1]} cast={false} />
         </group>))}
     </group>
   );

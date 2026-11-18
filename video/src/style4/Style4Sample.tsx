@@ -45,7 +45,7 @@ const Scene2: React.FC<{ s: number; t: number }> = ({ s, t }) => {
   return (
     <>
       <Porch t={t} />
-      <Person5 look={COURIER} p={[0.05, 0.0, 2.6]} yaw={Math.PI} s={1.6} waist pose={{ headX: 0.05 + lean * 0.5, headY: Math.sin(t * 0.8) * 0.05, headZ: wave * 0.4, blink: blink(t, 0.4), brow: 0.15, mouth: s > 1.4 && s < 2.4 ? (Math.sin(t * 15) > 0 ? 0.5 : 0.12) : 0, smile: 0.4, armR: [-1.0, 0.1], armL: [-1.0, 0.1], elbowR: 1.1, elbowL: 1.1, lean: -lean, breathe: Math.sin(t * 2) }} />
+      <Person5 look={COURIER} p={[0.05, 0.37 * 1.6, 2.6]} yaw={Math.PI} s={1.6} pose={{ headX: 0.05 + lean * 0.5, headY: Math.sin(t * 0.8) * 0.05, headZ: wave * 0.4, blink: blink(t, 0.4), brow: 0.15, mouth: s > 1.4 && s < 2.4 ? (Math.sin(t * 15) > 0 ? 0.5 : 0.12) : 0, smile: 0.4, armR: [-1.0, 0.1], armL: [-1.0, 0.1], elbowR: 1.1, elbowL: 1.1, lean: -lean, breathe: Math.sin(t * 2) }} />
       <group position={[0.05, 0.78, 2.15]} rotation={[0.2, 0, 0]} scale={1.15}><Mesh g={G.rbox(0.42, 0.3, 0.32, 0.02)} m={MS("#ffffff", { map: "cardboard", rough: 0.8 })} /><Mesh g={G.box(0.05, 0.302, 0.322)} m={MS("#d8c8a8", { rough: 0.6 })} p={[0, 0, 0]} /><mesh position={[0, 0.02, 0.162]}><planeGeometry args={[0.18, 0.12]} /><meshStandardMaterial map={labelTex()} /></mesh></group>
     </>
   );
@@ -112,7 +112,7 @@ export const Style4Sample: React.FC<{ audio?: boolean }> = ({ audio = true }) =>
     <AbsoluteFill style={{ background: "#000" }}>
       <AbsoluteFill style={{ filter: grade }}>
         <ThreeCanvas width={width} height={height} flat shadows camera={{ fov: cam.fov, near: 0.03, far: 200, position: cam.p }} gl={{ antialias: true }}>
-          <color attach="background" args={[idx === 1 ? "#0a1222" : "#0a0e1a"]} /><fog attach="fog" args={[idx === 1 ? "#0a1222" : "#0a0e1a", idx === 1 ? 14 : 8, idx === 1 ? 34 : 22]} />
+          <color attach="background" args={[idx === 1 ? "#16264a" : "#0a0e1a"]} /><fog attach="fog" args={[idx === 1 ? "#16264a" : "#0a0e1a", idx === 1 ? 14 : 8, idx === 1 ? 34 : 22]} />
           <Rig p={cam.p} l={cam.l} fov={cam.fov} roll={cam.roll} pov={pov}>
             {idx === 0 ? <><PovHands variant={alert ? "alert" : "lock"} buzz={buzz} glow={glow} /><pointLight position={[0, -0.08, -0.15]} color="#ffe4cc" intensity={0.18 + glow * 0.16} distance={1.0} /></> : null}
             {idx === 3 ? <pointLight position={[0.1, 0.05, -0.2]} color="#ffc890" intensity={0.8} distance={1.4} /> : null}
@@ -120,7 +120,7 @@ export const Style4Sample: React.FC<{ audio?: boolean }> = ({ audio = true }) =>
           </Rig>
           <ambientLight intensity={0.08} />
           <Sc s={s} t={t} />
-          {idx === 1 ? <pointLight position={[0.2, 1.7, 0.9]} color="#a8c0ff" intensity={2.6} distance={7} /> : null}
+          {idx === 1 ? <pointLight position={[0.2, 1.7, 0.9]} color="#b8ccff" intensity={9} distance={9} /> : null}
           {idx === 2 ? <><pointLight position={[0.15, 0.9, -0.3]} color="#7fb0ff" intensity={2.4} distance={3} /><pointLight position={[-0.7, 1.5, -0.6]} color="#ffc890" intensity={2.2} distance={4} /></> : null}
           <PostFX focus={focus} range={idx === 2 ? 1.2 : 3.2} bokeh={idx === 2 ? 4.5 : 3.0} frame={frame} grain={0.22} />
         </ThreeCanvas>
@@ -131,7 +131,7 @@ export const Style4Sample: React.FC<{ audio?: boolean }> = ({ audio = true }) =>
       {idx === 0 ? <Cap text="Two a.m.?" color="#ffd21f" s={s} t0={0.35} t1={1.6} top={1090} /> : null}
       {idx === 1 ? <Cap text="Package for you, Nora." color="#ffffff" s={s} t0={0.5} t1={2.5} top={1380} /> : null}
       {idx === 2 ? <Cap text="I didn't order anything." color="#ffd21f" s={s} t0={0.4} t1={2.3} /> : null}
-      {idx === 3 ? <Cap text="It's from you." color="#ffffff" s={s} t0={0.2} t1={1.4} /> : null}
+      {idx === 3 ? <Cap text="It's from you." color="#ffffff" s={s} t0={0.3} t1={1.5} /> : null}
       {idx === 3 ? <EndCard s={s} /> : null}
       {idx === 3 ? <AbsoluteFill style={{ background: `rgba(0,0,0,${fadeOut * 0.0})` }} /> : null}
       {flash > 0 ? <AbsoluteFill style={{ background: "#fff", opacity: flash }} /> : null}
