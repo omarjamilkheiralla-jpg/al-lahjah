@@ -55,3 +55,8 @@ Branch with all work: `claude/magical-cannon-9igec5` (about 90 commits, all push
 2. Build a full Style 2 video (pick idea, e.g. the doubling-step one at ~60-90 s) or a new Style 1 idea; write the script first and WAIT for his approval before building.
 3. Offer 60 fps if motion feels laggy; offer to re-check unchecked shots.
 4. Keep this file and `STYLE_GUIDE.md` up to date when anything changes.
+
+## 8. Style4Full (added latest)
+`Style4Full` (68 s, 1080x1920, 30 fps): full Style 4 video built to match the user's reference reel "A cop knocked at midnight..." (file `reference/style4_ref.mp4`). The user wants it ALMOST IDENTICAL in look and structure; story and lines are original (courier at the door, 911 call, call fails, figure at the back window). Source `src/style4/full/{F,Style4Full}.tsx` (flat Lambert cartoon look, `SHOTS` table of 27 shots, phone UI as HTML overlay), `projects/style4-full/{make_voice.py,SCRIPT.md}` (Kokoro voices: Nora af_nicole, courier am_onyx, dispatcher bf_emma; also builds ambience, the mix `public/style4full_mix.wav` and `captions.json`), render `render_style4full.bat`.
+- Kokoro model files are in `C:\Users\jamil\kokoro_models` on the user's PC (outside the repo). Run Python with `-I`; set `HF_HUB_DISABLE_XET=1` for model downloads. ffmpeg: `video/node_modules/@remotion/compositor-win32-x64-msvc/ffmpeg.exe`.
+- User rule: he does NOT want permission prompts or questions mid-task. Just do the work.

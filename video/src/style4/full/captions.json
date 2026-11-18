@@ -1,0 +1,254 @@
+[
+ {
+  "t0": 2.8,
+  "t1": 4.069,
+  "text": "Who rings the",
+  "col": "y"
+ },
+ {
+  "t0": 3.949,
+  "t1": 4.89,
+  "text": "bell at 2",
+  "col": "y"
+ },
+ {
+  "t0": 4.77,
+  "t1": 5.382,
+  "text": "a.m.?",
+  "col": "y"
+ },
+ {
+  "t0": 5.7,
+  "t1": 6.356,
+  "text": "Delivery.",
+  "col": "w"
+ },
+ {
+  "t0": 6.236,
+  "t1": 6.893,
+  "text": "We have a",
+  "col": "w"
+ },
+ {
+  "t0": 6.773,
+  "t1": 7.805,
+  "text": "package for Nora",
+  "col": "w"
+ },
+ {
+  "t0": 7.685,
+  "t1": 8.127,
+  "text": "Hale.",
+  "col": "w"
+ },
+ {
+  "t0": 8.007,
+  "t1": 8.717,
+  "text": "I need you",
+  "col": "w"
+ },
+ {
+  "t0": 8.597,
+  "t1": 9.36,
+  "text": "to open the",
+  "col": "w"
+ },
+ {
+  "t0": 9.24,
+  "t1": 9.682,
+  "text": "door.",
+  "col": "w"
+ },
+ {
+  "t0": 11.0,
+  "t1": 12.275,
+  "text": "I didn't order",
+  "col": "y"
+ },
+ {
+  "t0": 12.155,
+  "t1": 13.045,
+  "text": "anything.",
+  "col": "y"
+ },
+ {
+  "t0": 13.1,
+  "t1": 13.993,
+  "text": "It says it's",
+  "col": "w"
+ },
+ {
+  "t0": 13.873,
+  "t1": 14.588,
+  "text": "from you.",
+  "col": "w"
+ },
+ {
+  "t0": 14.468,
+  "t1": 15.124,
+  "text": "Open up.",
+  "col": "w"
+ },
+ {
+  "t0": 15.004,
+  "t1": 15.957,
+  "text": "It's raining.",
+  "col": "w"
+ },
+ {
+  "t0": 17.3,
+  "t1": 17.783,
+  "text": "911.",
+  "col": "b"
+ },
+ {
+  "t0": 17.663,
+  "t1": 19.454,
+  "text": "What's your emergency?",
+  "col": "b"
+ },
+ {
+  "t0": 20.2,
+  "t1": 21.236,
+  "text": "A man is",
+  "col": "y"
+ },
+ {
+  "t0": 21.116,
+  "t1": 22.458,
+  "text": "at my door.",
+  "col": "y"
+ },
+ {
+  "t0": 22.338,
+  "t1": 23.781,
+  "text": "Did you send",
+  "col": "y"
+ },
+ {
+  "t0": 23.661,
+  "t1": 24.29,
+  "text": "him?",
+  "col": "y"
+ },
+ {
+  "t0": 24.5,
+  "t1": 25.392,
+  "text": "Ma'am, we sent",
+  "col": "b"
+ },
+ {
+  "t0": 25.272,
+  "t1": 25.907,
+  "text": "no one to",
+  "col": "b"
+ },
+ {
+  "t0": 25.787,
+  "t1": 26.628,
+  "text": "your address.",
+  "col": "b"
+ },
+ {
+  "t0": 28.3,
+  "t1": 29.104,
+  "text": "I can hear",
+  "col": "w"
+ },
+ {
+  "t0": 28.984,
+  "t1": 29.789,
+  "text": "you on the",
+  "col": "w"
+ },
+ {
+  "t0": 29.669,
+  "t1": 30.598,
+  "text": "phone, Nora.",
+  "col": "w"
+ },
+ {
+  "t0": 31.6,
+  "t1": 32.55,
+  "text": "How does he",
+  "col": "y"
+ },
+ {
+  "t0": 32.43,
+  "t1": 33.794,
+  "text": "know I'm calling?",
+  "col": "y"
+ },
+ {
+  "t0": 34.0,
+  "t1": 34.851,
+  "text": "Do not open",
+  "col": "b"
+ },
+ {
+  "t0": 34.731,
+  "t1": 35.52,
+  "text": "that door.",
+  "col": "b"
+ },
+ {
+  "t0": 35.4,
+  "t1": 36.616,
+  "text": "Officers are four",
+  "col": "b"
+ },
+ {
+  "t0": 36.496,
+  "t1": 37.407,
+  "text": "minutes out.",
+  "col": "b"
+ },
+ {
+  "t0": 42.4,
+  "t1": 43.194,
+  "text": "Ma'am, is he",
+  "col": "b"
+ },
+ {
+  "t0": 43.074,
+  "t1": 43.868,
+  "text": "still at the",
+  "col": "b"
+ },
+ {
+  "t0": 43.748,
+  "t1": 44.18,
+  "text": "door?",
+  "col": "b"
+ },
+ {
+  "t0": 45.3,
+  "t1": 45.777,
+  "text": "No.",
+  "col": "y"
+ },
+ {
+  "t0": 45.657,
+  "t1": 46.76,
+  "text": "He's gone.",
+  "col": "y"
+ },
+ {
+  "t0": 53.4,
+  "t1": 54.539,
+  "text": "Package for you,",
+  "col": "p"
+ },
+ {
+  "t0": 54.419,
+  "t1": 54.899,
+  "text": "Nora.",
+  "col": "p"
+ },
+ {
+  "t0": 54.779,
+  "t1": 55.798,
+  "text": "Open the door.",
+  "col": "p"
+ }
+]

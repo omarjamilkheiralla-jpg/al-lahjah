@@ -17,6 +17,8 @@ import { CharTest } from "./style3/CharTest";
 
 import { Style4Sample, S4_TOTAL, FPS as S4_FPS } from "./style4/Style4Sample";
 
+import { Style4Full, S4F_TOTAL, FPS as S4F_FPS } from "./style4/full/Style4Full";
+
 import { Banner } from "./full/Banner";
 
 export const FPS = 30;
@@ -42,6 +44,7 @@ export const Root: React.FC = () => {
       <Composition id="Style2Sample" component={Style2Sample} durationInFrames={Math.ceil(STYLE2_TOTAL * S2_FPS)} fps={S2_FPS} width={1080} height={1920} defaultProps={{ audio: true }} />
       <Composition id="Style3Sample" component={Style3Sample} durationInFrames={Math.ceil(S3_TOTAL * S3_FPS)} fps={S3_FPS} width={1080} height={1920} defaultProps={{ audio: true }} />
       <Composition id="CharTest" component={CharTest} durationInFrames={2} fps={30} width={1080} height={1920} defaultProps={{ mode: "all" }} />
+      <Composition id="Style4Full" component={Style4Full} durationInFrames={Math.ceil(S4F_TOTAL * S4F_FPS)} fps={S4F_FPS} width={1080} height={1920} defaultProps={{ audio: true }} />
       <Composition id="Style4Sample" component={Style4Sample} durationInFrames={Math.ceil(S4_TOTAL * S4_FPS)} fps={S4_FPS} width={1080} height={1920} defaultProps={{ audio: true }} />
       <Composition id="Banner" component={Banner} durationInFrames={1} fps={30} width={2048} height={1152} />
       <Composition id="TownThumb2" component={TownThumb2} durationInFrames={2} fps={30} width={1920} height={1080} />
