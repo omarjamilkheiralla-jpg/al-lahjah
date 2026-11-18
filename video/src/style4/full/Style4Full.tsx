@@ -75,7 +75,7 @@ const Hero3D: React.FC<{ t: number; talk: boolean; blue: boolean }> = ({ t, talk
   </group>
 );
 
-const Hud: React.FC<{ t: number }> = ({ t }) => { const k = ease((t - 0.1) / 0.3) * (1 - ease((t - 4.7) / 0.5)); return <div style={{ position: "absolute", left: 50, top: 70, fontFamily: sans, color: "#fff", opacity: k, textShadow: "0 0 3px #000, 0 2px 8px rgba(0,0,0,.7)" }}><div style={{ fontWeight: 800, fontSize: 46, letterSpacing: 1 }}>TUESDAY &middot; 2:13 AM</div><div style={{ fontWeight: 800, fontSize: 30, color: "#ffd21f" }}>Home alone</div></div>; };
+export const Hud: React.FC<{ t: number }> = ({ t }) => { const k = ease((t - 0.1) / 0.3) * (1 - ease((t - 4.7) / 0.5)); return <div style={{ position: "absolute", left: 50, top: 70, fontFamily: sans, color: "#fff", opacity: k, textShadow: "0 0 3px #000, 0 2px 8px rgba(0,0,0,.7)" }}><div style={{ fontWeight: 800, fontSize: 46, letterSpacing: 1 }}>TUESDAY &middot; 2:13 AM</div><div style={{ fontWeight: 800, fontSize: 30, color: "#ffd21f" }}>Home alone</div></div>; };
 const CamUI: React.FC<{ t: number; nv: boolean }> = ({ t, nv }) => {
   const sec = Math.floor(t); const clock = `2:13:${String(Math.min(59, 3 + (sec % 60))).padStart(2, "0")} AM`; const rec = Math.sin(t * 5) > -0.3;
   const br = (x: number, y: number, sx: number, sy: number, i: number) => <div key={i} style={{ position: "absolute", left: x - (sx < 0 ? 56 : 0), top: y - (sy < 0 ? 56 : 0), width: 56, height: 56, borderTop: sy > 0 ? "3px solid rgba(255,255,255,.85)" : "none", borderBottom: sy < 0 ? "3px solid rgba(255,255,255,.85)" : "none", borderLeft: sx > 0 ? "3px solid rgba(255,255,255,.85)" : "none", borderRight: sx < 0 ? "3px solid rgba(255,255,255,.85)" : "none" }} />;
@@ -91,7 +91,7 @@ const CamUI: React.FC<{ t: number; nv: boolean }> = ({ t, nv }) => {
     </AbsoluteFill>
   );
 };
-const Skin: React.FC<{ style: React.CSSProperties }> = ({ style }) => <div style={{ position: "absolute", background: "linear-gradient(160deg,#f6c9a4,#e8a47c)", boxShadow: "inset -10px -14px 28px rgba(150,70,40,.35), 0 10px 30px rgba(0,0,0,.4)", ...style }} />;
+export const Skin: React.FC<{ style: React.CSSProperties }> = ({ style }) => <div style={{ position: "absolute", background: "linear-gradient(160deg,#f6c9a4,#e8a47c)", boxShadow: "inset -10px -14px 28px rgba(150,70,40,.35), 0 10px 30px rgba(0,0,0,.4)", ...style }} />;
 const PhoneUI: React.FC<{ ph: NonNullable<Shot["ph"]>; s: number; t: number; dark?: boolean }> = ({ ph, s, t, dark }) => {
   const connected = ph.mode !== "calling" || t > 17.25; const sec = ph.mode === "calling" ? (t > 17.25 ? Math.floor(t - 17.25) : 0) : ph.sec + Math.floor(s); const tm = `00:${String(Math.min(59, sec)).padStart(2, "0")}`;
   const speaking = (t > 17.3 && t < 19.3) || (t > 24.5 && t < 26.5) || (t > 34 && t < 37.3) || (t > 42.4 && t < 44.1) || (t > 45.4 && t < 46.4);
@@ -130,8 +130,8 @@ const Cap: React.FC<{ t: number }> = ({ t }) => {
   const c = (CAPS as any[]).find((x) => t >= x.t0 && t < x.t1); if (!c) return null; const k = ease((t - c.t0) / 0.07);
   return <div style={{ position: "absolute", left: 0, right: 0, top: 1300, textAlign: "center", fontFamily: sans, fontWeight: 900, fontSize: 72, lineHeight: 1.05, color: COL[c.col], padding: "0 60px", textShadow: "0 0 2px #000, 3px 3px 0 #000, -3px 3px 0 #000, 3px -3px 0 #000, -3px -3px 0 #000, 0 6px 14px rgba(0,0,0,.6)", transform: `scale(${0.94 + 0.06 * k})`, opacity: k }}>{c.text}</div>;
 };
-const Banner: React.FC<{ s: number }> = ({ s }) => { const k = ease(s / 0.25) * (1 - ease((s - 1.8) / 0.25)); return <div style={{ position: "absolute", left: 60, right: 60, top: 70 - (1 - k) * 160, height: 118, borderRadius: 26, background: "#f4f4f6", display: "flex", alignItems: "center", gap: 22, padding: "0 28px", fontFamily: sans, boxShadow: "0 8px 24px rgba(0,0,0,.4)" }}><div style={{ width: 62, height: 62, borderRadius: 16, background: "#2f78e8", color: "#fff", fontWeight: 900, fontSize: 40, display: "flex", alignItems: "center", justifyContent: "center" }}>!</div><div><div style={{ fontWeight: 800, fontSize: 32, color: "#111" }}>Back Door</div><div style={{ fontWeight: 700, fontSize: 28, color: "#d8283c" }}>Motion detected</div></div></div>; };
-const EndCard: React.FC<{ s: number }> = ({ s }) => {
+export const Banner: React.FC<{ s: number }> = ({ s }) => { const k = ease(s / 0.25) * (1 - ease((s - 1.8) / 0.25)); return <div style={{ position: "absolute", left: 60, right: 60, top: 70 - (1 - k) * 160, height: 118, borderRadius: 26, background: "#f4f4f6", display: "flex", alignItems: "center", gap: 22, padding: "0 28px", fontFamily: sans, boxShadow: "0 8px 24px rgba(0,0,0,.4)" }}><div style={{ width: 62, height: 62, borderRadius: 16, background: "#2f78e8", color: "#fff", fontWeight: 900, fontSize: 40, display: "flex", alignItems: "center", justifyContent: "center" }}>!</div><div><div style={{ fontWeight: 800, fontSize: 32, color: "#111" }}>Back Door</div><div style={{ fontWeight: 700, fontSize: 28, color: "#d8283c" }}>Motion detected</div></div></div>; };
+export const EndCard: React.FC<{ s: number }> = ({ s }) => {
   const k = ease((s - 0.2) / 0.5), b = ease((s - 0.7) / 0.4); if (k <= 0) return null;
   const btn = (bg: string, a: string, c: string) => <div style={{ background: bg, borderRadius: 16, padding: "24px 34px", fontWeight: 800, fontSize: 36, textAlign: "center", lineHeight: 1.05 }}>{a}<br />{c}</div>;
   return (
