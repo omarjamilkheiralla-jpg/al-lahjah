@@ -119,67 +119,70 @@ def empty(loc=(0, 0, 0), parent=None, name="e"):
     return e
 
 def limb(parent, top, l1, l2, r, m, mj=None, name="limb"):
-    """two-segment stick limb hanging down (-Z) from `top`; returns (joint1, joint2)"""
-    j1 = empty(top, parent, name + "_j1"); prim("cyl", (r, r, l1), (0, 0, -l1 / 2), m=m, parent=j1, seg=12, ol=0.012)
-    j2 = empty((0, 0, -l1), j1, name + "_j2"); prim("cyl", (r, r, l2), (0, 0, -l2 / 2), m=m, parent=j2, seg=12, ol=0.012)
+    """two-segment limb hanging down (-Z) from `top` with round joints; returns (joint1, joint2)"""
+    j1 = empty(top, parent, name + "_j1"); prim("cyl", (r, r, l1), (0, 0, -l1 / 2), m=m, parent=j1, seg=28, ol=0.012); prim("sphere", (r * 1.4, r * 1.4, r * 1.4), (0, 0, 0), m=m, parent=j1, seg=24, ol=0.012)
+    j2 = empty((0, 0, -l1), j1, name + "_j2"); prim("cyl", (r * 0.92, r * 0.92, l2), (0, 0, -l2 / 2), m=m, parent=j2, seg=28, ol=0.012); prim("sphere", (r * 1.28, r * 1.28, r * 1.28), (0, 0, 0), m=m, parent=j2, seg=24, ol=0.012)
     return j1, j2
 
 # ------------------------------------------------------------------ characters
 CREAM = (0.96, 0.93, 0.84, 1)
-def head_mat():
-    if os.environ.get("PLAIN"): return mat("plainhead", CREAM, 0.8)
-    return soft("head", CREAM, 0.8, scale=9, var=0.06, bump=0.05)
+def head_mat(col=None):
+    return soft("head" + str(col), col if col else CREAM, 0.8)
+
+def _tx(name, col, tex, sc=5.0, rough=0.8):
+    return mat(name, col, rough, tex=tex, scale=sc, tint=col, normal=0.35)
 
 class Stick:
-    """Big egg head, pill body, long thin stick legs/arms, thick ink outline."""
-    def __init__(self, name="c", top=(0.7, 0.1, 0.1, 1), pants=(0.13, 0.1, 0.18, 1), hat="cowboy", hatc=(0.85, 0.75, 0.55, 1), stache=True, tall=1.0, fabric="brown_leather", mood="calm", star=False, body_scale=1.0):
-        self.root = empty(name=name + "_root"); R = self.root; self.tall = tall
-        self.hip = empty((0, 0, 1.18 * tall), R, name + "_hip")                       # pelvis pivot
+    """Big egg head, pill body, rounded limbs with joints, thick ink outline, textured clothes."""
+    def __init__(self, name="c", top=(0.7, 0.1, 0.1, 1), pants=(0.13, 0.1, 0.18, 1), hat="cowboy", hatc=(0.85, 0.75, 0.55, 1), stache=True, tall=1.0, fabric="fabric_pattern_07", mood="calm", star=False, body_scale=1.0, skin_color=None):
+        self.root = empty(name=name + "_root"); R = self.root; self.tall = tall; bs = body_scale
+        self.hip = empty((0, 0, 1.18 * tall), R, name + "_hip")
         self.torso = empty((0, 0, 0), self.hip, name + "_torso")
-        jm = soft(name + "_top", top, 0.8, scale=22, var=0.2, bump=0.25)
-        pm = soft(name + "_pants", pants, 0.85, scale=30, var=0.15); skin = head_mat()
-        prim("sphere", (0.27 * body_scale, 0.2 * body_scale, 0.4), (0, 0, 0.42), m=jm, parent=self.torso, seg=96, ol=0.03)   # pill torso
-        prim("torus", (0.285 * body_scale, 0.215 * body_scale, 0.3), (0, 0, 0.15), m=mat("belt", (0.12, 0.08, 0.05, 1), 0.6), parent=self.torso, seg=40, ol=0.01)
-        prim("cyl", (0.06, 0.012, 0.045), (0, -0.215 * body_scale, 0.15), rot=(math.pi / 2, 0, 0), m=mat("gold", (0.9, 0.7, 0.2, 1), 0.3, metallic=0.9), parent=self.torso, seg=24, ol=0.008)  # buckle
-        for z in (0.5, 0.68, 0.86): prim("sphere", (0.022, 0.022, 0.022), (0.0, -0.2 * body_scale, z), m=mat("button", (0.9, 0.75, 0.3, 1), 0.3, metallic=0.8), parent=self.torso, seg=12)
-        if star: prim("cone", (0.07, 0.07, 0.012), (0.12, -0.19 * body_scale, 0.78), rot=(math.pi / 2, 0, 0), m=mat("star", (1.0, 0.8, 0.2, 1), 0.3, metallic=0.9), parent=self.torso, seg=5, ol=0.006)
-        # holster
-        prim("cube", (0.1, 0.05, 0.26), (0.24 * body_scale, -0.05, 0.03), m=soft("holster", (0.3, 0.17, 0.08, 1), 0.7, scale=18), parent=self.torso, ol=0.012)
-        prim("cube", (0.045, 0.03, 0.12), (0.24 * body_scale, -0.07, 0.2), m=mat("grip", (0.95, 0.95, 0.9, 1), 0.4), parent=self.torso, ol=0.008)
-        # neck + head
-        self.neck = empty((0, 0, 0.82), self.torso, name + "_neck"); prim("cyl", (0.07, 0.07, 0.3), (0, 0, 0.12), m=skin, parent=self.neck, seg=24, ol=0.01); self.head = empty((0, 0, 0.2), self.neck, name + "_head")
+        jm = _tx(name + "_top", top, fabric, 5.0); skin = head_mat(skin_color)
+        lea = _tx("leather", (0.32, 0.18, 0.09, 1), "brown_leather", 4.0, 0.6)
+        def surf(x, z): return -0.2 * bs * math.sqrt(max(0.05, 1 - (x / (0.27 * bs)) ** 2 - ((z - 0.42) / 0.4) ** 2))
+        prim("sphere", (0.27 * bs, 0.2 * bs, 0.4), (0, 0, 0.42), m=jm, parent=self.torso, seg=96, ol=0.03)
+        prim("torus", (0.218 * bs, 0.163 * bs, 0.55), (0, 0, 0.15), m=lea, parent=self.torso, seg=48, ol=0.01)                     # belt hugging the body
+        prim("cyl", (0.055, 0.012, 0.045), (0, surf(0, 0.15) - 0.012, 0.15), rot=(math.pi / 2, 0, 0), m=mat("gold", (1.0, 0.78, 0.25, 1), 0.3, emission=(0.4, 0.28, 0.05, 1), em_strength=0.8), parent=self.torso, seg=24, ol=0.008)
+        for z in (0.3, 0.46, 0.62): prim("sphere", (0.02, 0.02, 0.02), (0.0, surf(0, z) - 0.006, z), m=mat("button", (1.0, 0.8, 0.3, 1), 0.3, emission=(0.35, 0.25, 0.05, 1), em_strength=0.7), parent=self.torso, seg=12, ol=0.004)
+        if star: prim("cone", (0.065, 0.065, 0.012), (0.11 * bs, surf(0.11 * bs, 0.62) - 0.008, 0.62), rot=(math.pi / 2, 0, 0), m=mat("star", (1.0, 0.82, 0.25, 1), 0.3, emission=(0.45, 0.32, 0.05, 1), em_strength=0.9), parent=self.torso, seg=5, ol=0.006)
+        prim("cube", (0.09, 0.06, 0.24), (0.19 * bs, surf(0.19 * bs, 0.05) - 0.01, 0.04), m=lea, parent=self.torso, ol=0.012)                  # holster on the belt
+        prim("cube", (0.04, 0.03, 0.1), (0.19 * bs, surf(0.19 * bs, 0.05) - 0.03, 0.2), m=mat("grip", (0.95, 0.95, 0.9, 1), 0.4), parent=self.torso, ol=0.008)
+        self.neck = empty((0, 0, 0.8), self.torso, name + "_neck"); prim("cyl", (0.085, 0.085, 0.3), (0, 0, 0.1), m=skin, parent=self.neck, seg=28, ol=0.01)
+        prim("torus", (0.1, 0.1, 0.5), (0, 0, 0.02), m=mat("kerchief", (0.75, 0.15, 0.12, 1), 0.8), parent=self.neck, seg=32, ol=0.008)       # neckerchief
+        self.head = empty((0, 0, 0.2), self.neck, name + "_head")
         prim("sphere", (0.34, 0.31, 0.37), (0, 0, 0.3), m=skin, parent=self.head, seg=int(os.environ.get("HEADSEG", "128")), ol=0.028, smooth=os.environ.get("FLAT") is None)
-        # eyes (white disc + black ring + pupil)
         self.eyes = []
         for sx in (-1, 1):
             e = empty((0.115 * sx, -0.27, 0.36), self.head, name + "_eye"); self.eyes.append(e)
             prim("sphere", (0.095, 0.03, 0.105), (0, 0, 0), m=mat("eyew", (1, 1, 1, 1), 0.4), parent=e, seg=24, ol=0.012)
             prim("sphere", (0.045, 0.02, 0.05), (0, -0.02, 0), m=mat("pupil", (0.02, 0.02, 0.03, 1), 0.3), parent=e, seg=16)
-        # brows + moustache + mouth
+            prim("sphere", (0.014, 0.008, 0.014), (0.016 * sx * -1, -0.034, 0.02), m=mat("glint", (1, 1, 1, 1), 0.2, emission=(1, 1, 1, 1), em_strength=2.0), parent=e, seg=10)
+            prim("sphere", (0.05, 0.012, 0.03), (0.17 * sx, -0.255, 0.21), m=mat("blush", (1.0, 0.62, 0.62, 1), 0.9), parent=self.head, seg=16)
+        prim("sphere", (0.035, 0.03, 0.035), (0, -0.305, 0.27), m=head_mat(tuple(c * 0.93 for c in (skin_color if skin_color else CREAM)[:3]) + (1,)), parent=self.head, seg=20, ol=0.006)    # nose
         self.brows = []
         for sx in (-1, 1):
             b = empty((0.115 * sx, -0.29, 0.5), self.head, name + "_brow"); self.brows.append(b)
-            prim("cyl", (0.012, 0.012, 0.07), (0, 0, 0), rot=(0, math.pi / 2, 0), m=mat("brow", (0.05, 0.04, 0.05, 1), 0.5), parent=b, seg=10)
+            prim("cyl", (0.014, 0.014, 0.075), (0, 0, 0), rot=(0, math.pi / 2, 0), m=mat("brow", (0.05, 0.04, 0.05, 1), 0.5), parent=b, seg=10)
         if stache:
             for sx in (-1, 1): prim("sphere", (0.09, 0.025, 0.04), (0.075 * sx, -0.3, 0.2), rot=(0, 0.4 * sx, 0.0), m=mat("stache", (0.06, 0.04, 0.04, 1), 0.6), parent=self.head, seg=16, ol=0.006)
         self.mouth = prim("sphere", (0.05, 0.02, 0.012), (0, -0.295, 0.12), m=mat("mouth", (0.18, 0.02, 0.04, 1), 0.5), parent=self.head, seg=16)
         self.hatobj = None
         if hat:
-            hm = soft(name + "_hat", hatc, 0.7, scale=16, var=0.18, bump=0.2)
+            hm = _tx(name + "_hat", hatc, "brown_leather", 3.0, 0.7)
             if hat == "cowboy":
-                prim("cyl", (0.5, 0.5, 0.018), (0, -0.02, 0.58), m=hm, parent=self.head, seg=40, ol=0.015); prim("cyl", (0.28, 0.27, 0.13), (0, 0, 0.66), m=hm, parent=self.head, seg=36, ol=0.015)
-                prim("cyl", (0.285, 0.275, 0.025), (0, 0, 0.58), m=mat("band", (0.2, 0.1, 0.05, 1), 0.6), parent=self.head, seg=36)
+                prim("cyl", (0.5, 0.5, 0.018), (0, -0.02, 0.58), m=hm, parent=self.head, seg=48, ol=0.015); prim("cyl", (0.28, 0.27, 0.13), (0, 0, 0.66), m=hm, parent=self.head, seg=40, ol=0.015)
+                prim("cyl", (0.285, 0.275, 0.025), (0, 0, 0.58), m=mat("band", (0.2, 0.1, 0.05, 1), 0.6), parent=self.head, seg=40)
             elif hat == "top":
-                prim("cyl", (0.4, 0.4, 0.015), (0, 0, 0.6), m=hm, parent=self.head, seg=40, ol=0.012); prim("cyl", (0.27, 0.27, 0.2), (0, 0, 0.74), m=hm, parent=self.head, seg=36, ol=0.012)
-                prim("cyl", (0.275, 0.275, 0.03), (0, 0, 0.62), m=mat("band", (0.7, 0.1, 0.1, 1), 0.6), parent=self.head, seg=36)
-        # arms (shoulder pivots) and legs (hip pivots)
+                prim("cyl", (0.4, 0.4, 0.015), (0, 0, 0.6), m=hm, parent=self.head, seg=48, ol=0.012); prim("cyl", (0.27, 0.27, 0.2), (0, 0, 0.74), m=hm, parent=self.head, seg=40, ol=0.012)
+                prim("cyl", (0.275, 0.275, 0.03), (0, 0, 0.62), m=mat("band", (0.7, 0.1, 0.1, 1), 0.6), parent=self.head, seg=40)
         self.arm = []; self.leg = []
-        sm = soft(name + "_sleeve", top, 0.8, scale=22, var=0.2, bump=0.25); lm = soft(name + "_leg", pants, 0.85, scale=30, var=0.15)
+        sm_ = _tx(name + "_sleeve", top, fabric, 5.0); lm = _tx(name + "_leg", pants, "denmin_fabric_02", 5.0)
         for sx in (-1, 1):
-            j1, j2 = limb(self.torso, (0.3 * sx * body_scale, 0, 0.72), 0.34, 0.34, 0.032, sm, name=name + "_arm"); self.arm.append((j1, j2))
-            prim("sphere", (0.07, 0.06, 0.07), (0, 0, -0.38), m=skin, parent=j2, seg=20, ol=0.012)
-            h1, h2 = limb(self.hip, (0.1 * sx, 0, 0.0), 0.55 * tall, 0.55 * tall, 0.035, lm, name=name + "_leg"); self.leg.append((h1, h2))
-            prim("sphere", (0.09, 0.15, 0.07), (0, -0.05, -0.56 * tall), m=soft("boot", (0.12, 0.07, 0.04, 1), 0.6, scale=20), parent=h2, seg=20, ol=0.012)
+            j1, j2 = limb(self.torso, (0.2 * sx * bs, 0, 0.66), 0.34, 0.34, 0.047, sm_, name=name + "_arm"); self.arm.append((j1, j2))
+            prim("sphere", (0.085, 0.075, 0.085), (0, 0, -0.37), m=skin, parent=j2, seg=28, ol=0.014)
+            h1, h2 = limb(self.hip, (0.1 * sx, 0, 0.02), 0.55 * tall, 0.55 * tall, 0.058, lm, name=name + "_leg"); self.leg.append((h1, h2))
+            prim("sphere", (0.105, 0.17, 0.085), (0, -0.06, -0.56 * tall), m=_tx("boot", (0.16, 0.09, 0.05, 1), "brown_leather", 4.0, 0.6), parent=h2, seg=28, ol=0.014)
         self.expr("calm")
     def expr(self, mood, talk=0.0):
         b = {"calm": (0.0, 0.0), "angry": (-0.45, -0.02), "shock": (0.25, 0.04), "smug": (-0.15, 0.0)}.get(mood, (0, 0))

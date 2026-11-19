@@ -8,8 +8,8 @@ SCALE = 0.66
 def _head_sphere(st):
     return max([o for o in bpy.data.objects if o.parent is st.head and o.type == "MESH" and o.name.startswith("sphere")], key=lambda o: len(o.data.vertices))
 
-def make_stick(name, top, pants=(0.13, 0.1, 0.18, 1), hat="cowboy", hatc=(0.85, 0.72, 0.5, 1), stache=True, star=False, tall=1.0, body_scale=1.0, head_col=None, glasses=False):
-    st = Stick(name, top=top, pants=pants, hat=hat, hatc=hatc, stache=stache, star=star, tall=tall, body_scale=body_scale)
+def make_stick(name, top, pants=(0.13, 0.1, 0.18, 1), hat="cowboy", hatc=(0.85, 0.72, 0.5, 1), stache=True, star=False, tall=1.0, body_scale=1.0, head_col=None, glasses=False, skin_color=None):
+    st = Stick(name, top=top, pants=pants, hat=hat, hatc=hatc, stache=stache, star=star, tall=tall, body_scale=body_scale, skin_color=skin_color)
     st.pupils = [o for o in bpy.data.objects if o.parent in st.eyes and o.name.startswith("sphere") and o.data.materials and o.data.materials[0].name.startswith("pupil")]
     if head_col is not None:
         h = _head_sphere(st); h.data.materials.clear(); h.data.materials.append(soft(name + "_headc", head_col, 0.8))
@@ -23,7 +23,7 @@ def make_stick(name, top, pants=(0.13, 0.1, 0.18, 1), hat="cowboy", hatc=(0.85, 
 
 def gorilla_suit(name="gorilla", tall=1.0):
     fur = (0.16, 0.13, 0.12, 1)
-    g = make_stick(name, top=fur, pants=fur, hat=None, stache=False, tall=tall, body_scale=1.25, head_col=(0.2, 0.17, 0.16, 1))
+    g = make_stick(name, top=fur, pants=fur, hat=None, stache=False, tall=tall, body_scale=1.25, head_col=(0.2, 0.17, 0.16, 1), skin_color=(0.22, 0.19, 0.18, 1))
     fm = soft(name + "_face", (0.55, 0.42, 0.34, 1), 0.8)
     prim("sphere", (0.2, 0.08, 0.17), (0, -0.27, 0.17), m=fm, parent=g.head, seg=32, ol=0.012)            # muzzle
     prim("sphere", (0.035, 0.02, 0.02), (0, -0.345, 0.24), m=soft("nostril", (0.05, 0.04, 0.04, 1), 0.8), parent=g.head, seg=12)
@@ -99,7 +99,7 @@ class Bear:
         self.mouth = prim("sphere", (0.09, 0.02, 0.015), (0, -0.54, 0.03), m=dark, parent=self.head, seg=16)
         self.arm = []; self.leg = []
         for sx in (-1, 1):
-            j1, j2 = limb(self.torso, (0.6 * sx, 0, 1.0), 0.55, 0.5, 0.13, fur, name=name + "_arm"); self.arm.append((j1, j2))
+            j1, j2 = limb(self.torso, (0.5 * sx, 0, 1.0), 0.55, 0.5, 0.14, fur, name=name + "_arm"); self.arm.append((j1, j2))
             prim("sphere", (0.17, 0.15, 0.17), (0, 0, -0.52), m=fur, parent=j2, seg=32, ol=0.025)
             for c in (-1, 0, 1): prim("cone", (0.025, 0.025, 0.07), (0.06 * c, -0.1, -0.6), rot=(math.pi, 0, 0), m=mat("claw", (0.9, 0.88, 0.8, 1)), parent=j2, seg=8)
             h1, h2 = limb(self.hip, (0.28 * sx, 0, -0.05), 0.55, 0.5, 0.17, fur, name=name + "_leg"); self.leg.append((h1, h2))

@@ -4,7 +4,8 @@ from mathutils import Vector
 import bl_common as B, sets as S
 from chars2 import *
 
-TIM = json.load(open(r"C:\Users\jamil\al-lahjah\video\projects\bear-saloon\timing.json"))
+import sys; sys.path.insert(0, "C:/Users/jamil/al-lahjah/video/projects/bear-saloon"); from tmap import M, Minv
+TIM = json.load(open("C:/Users/jamil/al-lahjah/video/projects/bear-saloon/timing_old.json"))
 SEN = TIM["sentences"]
 def st(i): return SEN[i]["start"]
 def en(i): return SEN[i]["end"]
@@ -42,7 +43,7 @@ class Director:
         self.g1 = make_stick("g1", top=(0.5, 0.15, 0.1, 1), hat="cowboy", hatc=(0.4, 0.28, 0.18, 1)); self.g2 = make_stick("g2", top=(0.2, 0.4, 0.3, 1), hat="cowboy", hatc=(0.75, 0.6, 0.4, 1), stache=False)
         self.bart = make_stick("bart", top=(0.9, 0.88, 0.82, 1), hat=None, stache=True); self.pat = [make_stick(f"pat{i}", top=cols[i], hat="cowboy", hatc=(0.5, 0.35, 0.2, 1), stache=i % 2 == 1) for i in range(4)]
         self.bear = Bear(); self.bear.hold_mug()
-        self.brain_s = brain_head(make_stick("brainS", top=(0.2, 0.35, 0.65, 1), hat=None, stache=False))
+        self.brain_s = brain_head(make_stick("brainS", top=(0.2, 0.35, 0.65, 1), hat=None, stache=False, skin_color=(0.96, 0.62, 0.68, 1)))
         # kinetoscope on the sheriff's table
         wd = S.wood_dark(); self.kin = empty((OX + 3.78, -1.8, 0.85), None, "kin")
         S.bx((0, 0, 0.3), (0.55, 0.45, 0.6), wd, parent=self.kin, ol=0.02); S.bx((0, -0.1, 0.62), (0.5, 0.3, 0.06), S.wood_warm(), parent=self.kin, ol=0.015)
@@ -60,7 +61,7 @@ class Director:
         # ---------------- eye / cabin
         self.you = make_stick("you", top=(0.3, 0.6, 0.35, 1), hat="cowboy", hatc=(0.8, 0.65, 0.4, 1), stache=False)
         self.srch = make_stick("srch", top=(0.7, 0.35, 0.15, 1), hat=None, stache=True)
-        self.brain_c = brain_head(make_stick("brainC", top=(0.2, 0.35, 0.65, 1), hat=None, stache=False))
+        self.brain_c = brain_head(make_stick("brainC", top=(0.2, 0.35, 0.65, 1), hat=None, stache=False, skin_color=(0.96, 0.62, 0.68, 1)))
         self.keys = S.__dict__.get("keys") or None
         self.keyobj = keys((CX + 0.1, -0.05, 0.835)); self.keyobj.scale = (1.5, 1.5, 1.5)
         self.news = S.bx((CX, 1.0, 1.2), (0.55, 0.02, 0.4), mat("news", (0.93, 0.9, 0.8, 1), 0.9), ol=0.008)
@@ -69,7 +70,7 @@ class Director:
         self.clip2 = S.bx((0, 0, 0), (0.3, 0.02, 0.4), mat("clipb2", (0.55, 0.38, 0.2, 1), 0.8), ol=0.008, parent=self.brain_s.arm[1][1])
         S.text("JOB", (0, -0.015, 0.02), 0.12, mat("jobt", (0.1, 0.1, 0.1, 1), 0.9), rot=(math.pi / 2, 0, 0)).parent = self.clip2
         # ---------------- camera
-        self.camo = B.camera((0, -5, 1.6), (0, 0, 1.5), fov=50, fstop=4.0); self.camo.data.clip_start = 0.05
+        self.camo = B.camera((0, -5, 1.6), (0, 0, 1.5), fov=50, fstop=3.6); self.camo.data.clip_start = 0.05
         for a in (self.crowd + self.vols + [self.gor1, self.gor2, self.sheriff, self.dealer, self.g1, self.g2, self.bart, self.res, self.you, self.srch, self.brain_s, self.brain_c] + self.pat): self.park(a)
         self.bear.root.location = (OX, -30, 0)
         def grp(*acts):
@@ -99,7 +100,8 @@ class Director:
         for a, objs in self.areas.items():
             for o in objs: o.hide_render = (a != area)
         self.cur = area
-    def update(self, t):
+    def update(self, t_new):
+        t = Minv(t_new)
         self.show("street" if t < 4.74 else "eye" if 28.42 <= t < 30.3 else "lab" if 30.3 <= t < 36.59 else "cabin" if 36.59 <= t < 45.5 else "saloon")
         for k in (0, 1): self.doors[k].rotation_euler = (0, 0, 0)
         self.cards_hide()
@@ -123,9 +125,9 @@ class Director:
     # ------------------------------------------------------------ bear (one timeline reused for replay)
     def bear_state(self, tau):
         """tau seconds since the bear arrives: returns pos(x,y), yaw, walk phase, speed, wave amount"""
-        if tau < 1.8: u = tau / 1.8; return (OX + 0.2 * u, -7.4 + 4.4 * sm(u) * 1.0, math.pi, tau * 6.0, 0.8 if u < 0.98 else 0.0, 0.0)
+        if tau < 1.8: u = tau / 1.8; return (OX + 0.2 * u, -10.4 + 7.4 * sm(u), math.pi, tau * 6.0, 0.8 if u < 0.98 else 0.0, 0.0)
         if tau < 3.9: return (OX + 0.2, -3.0, math.pi, 0, 0.0, sm((tau - 1.8) / 0.4))
-        u = (tau - 3.9) / 1.7; return (OX + 0.2 - 0.2 * u, -3.0 - 5.0 * sm(u), 0.0 if u < 1 else 0.0, tau * 6.0, 0.8, 0.0)
+        u = (tau - 3.9) / 1.7; return (OX + 0.2 - 0.2 * u, -3.0 - 7.4 * sm(u), 0.0, tau * 6.0, 0.8, 0.0)
     def bearpos(self, t):
         b = self.bear
         if 13.74 <= t < 19.64: tau = t - 13.9
@@ -137,8 +139,8 @@ class Director:
         if tau < 3.2 and tau > 0.4 and False: pass
         # batwing doors swing aside as the bear passes
         sw = 0.0
-        if tau < 2.2: sw = math.sin(max(0, min(1, (tau - 0.3) / 1.2)) * math.pi) * 1.3
-        elif tau > 3.9 and tau < 5.8: sw = math.sin(max(0, min(1, (tau - 4.9) / 1.2)) * math.pi) * 1.3
+        if tau < 2.2: sw = math.sin(max(0, min(1, (tau - 0.55) / 0.9)) * math.pi) * 1.3
+        elif tau > 3.9 and tau < 6.2: sw = math.sin(max(0, min(1, (tau - 4.8) / 1.0)) * math.pi) * 1.3
         self.doors[0].rotation_euler = (0, 0, sw); self.doors[1].rotation_euler = (0, 0, -sw)
 
     # ------------------------------------------------------------ seats

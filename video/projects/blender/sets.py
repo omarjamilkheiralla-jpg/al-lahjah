@@ -56,6 +56,13 @@ def street():
     for sx in (-1, 1): cy((sx * 4.6, 0.5, 0.7), 0.06, 1.4, wood_warm(), ol=0.01)
     bx((4.6, 0.5, 1.3), (0.12, 3.4, 0.12), wood_warm(), ol=0.01)
     cy((-5.3, 3, 3.0), 0.12, 6.0, wood_warm(), ol=0.02); bx((-5.3, 3, 5.6), (0.14, 1.8, 0.14), wood_warm(), ol=0.012)
+    wg = empty((-3.2, -8.0, 0), None, "wagon")
+    bx((0, 0, 0.95), (1.4, 2.6, 0.6), wood_warm(), parent=wg, ol=0.03)
+    for (wx, wy) in ((-0.8, -0.9), (0.8, -0.9), (-0.8, 0.9), (0.8, 0.9)): prim("torus", (0.55, 0.55, 0.55), (wx, wy, 0.55), rot=(0, math.pi / 2, 0), m=wood_dark(), parent=wg, seg=32, ol=0.02)
+    for k_ in range(3): bx((-0.3 + k_ * 0.4, 0.4 - k_ * 0.5, 1.45), (0.5, 0.5, 0.45), wood_warm(), parent=wg, ol=0.02)
+    for (hx, hy) in ((5.3, -14), (-5.4, 8)): cy((hx, hy, 0.45), 0.5, 0.9, mat("hay", (0.9, 0.75, 0.3, 1), 0.9, tex="rough_wood", scale=1.0, tint=(0.95, 0.8, 0.35, 1)), rot=(0, math.pi / 2, 0), ol=0.02)
+    for (cx_, cy_) in ((-5.6, -3.0), (5.8, 11.0), (-5.8, 17.0)):
+        cy((cx_, cy_, 0.8), 0.22, 1.6, mat("cact", (0.25, 0.5, 0.25, 1), 0.8), ol=0.015); cy((cx_ + 0.35, cy_, 1.0), 0.14, 0.6, mat("cact", (0.25, 0.5, 0.25, 1), 0.8), rot=(0, 0, math.pi / 2), ol=0.012); cy((cx_ + 0.6, cy_, 1.3), 0.13, 0.7, mat("cact", (0.25, 0.5, 0.25, 1), 0.8), ol=0.012)
     # mesas / mountains
     rock = W("rock", (0.8, 0.4, 0.25, 1), "aerial_ground_rock", 0.06, (0.95, 0.62, 0.45, 1))
     for (x, y, r, h) in ((-90, 190, 22, 22), (-30, 230, 28, 30), (40, 210, 20, 16), (110, 190, 24, 24), (-150, 170, 18, 14)):
@@ -71,7 +78,14 @@ def saloon():
     prim("plane", (18, 16, 1), (ox, 0, 0), m=fl, smooth=False, name="floor")
     bx((ox, 7.1, 2.5), (16.4, 0.3, 5), red, ol=0.0)                  # back wall (red wallpaper)
     for sx in (-1, 1): bx((ox + sx * 8.1, 0, 2.5), (0.3, 14.4, 5), wl)
-    bx((ox, -7.1, 2.5), (16.4, 0.3, 5), wl)                          # front wall (with doorway)
+    bx((ox - 4.7, -7.1, 2.5), (7.0, 0.3, 5), wl); bx((ox + 4.7, -7.1, 2.5), (7.0, 0.3, 5), wl); bx((ox, -7.1, 3.85), (2.4, 0.3, 2.3), wl)       # front wall with a doorway
+    for sx in (-1, 1): bx((ox + sx * 1.22, -7.05, 1.3), (0.2, 0.4, 2.6), dk, ol=0.015)
+    bx((ox, -7.05, 2.62), (2.64, 0.4, 0.2), dk, ol=0.015)
+    prim("plane", (60, 90, 1), (ox, -50, -0.02), m=sand(), smooth=False, name="outsand")
+    bx((ox, -8.6, 0.12), (7.0, 2.8, 0.24), wl, ol=0.02)
+    for sx in (-1, 1): cy((ox + sx * 3.2, -9.6, 1.6), 0.12, 3.2, wl, ol=0.015)
+    rock_ = W("rockd", (0.8, 0.4, 0.25, 1), "aerial_ground_rock", 0.06, (0.95, 0.66, 0.5, 1))
+    for (mx, my, mr, mh) in ((-40, -170, 24, 20), (30, -190, 30, 28), (95, -160, 22, 16)): cy((ox + mx, my, mh / 2), mr, mh, rock_, seg=20); cy((ox + mx, my, mh + 0.4), mr * 0.82, 0.8, rock_, seg=20)
     bx((ox, 0, 5.1), (16.4, 14.4, 0.3), dk)
     for xx in (-6, -2, 2, 6): bx((ox + xx, 0, 4.75), (0.35, 14.4, 0.4), dk, ol=0.012)          # ceiling beams
     bx((ox, 7.0, 0.55), (16, 0.5, 1.1), wl)                           # wainscot
@@ -124,6 +138,23 @@ def saloon():
     bx((ox + 7.0, 0, 3.1), (2.0, 13, 0.18), wl, ol=0.02)
     for yy in range(-6, 7, 1): cy((ox + 6.1, yy, 3.7), 0.04, 1.0, dk)
     bx((ox + 6.1, 0, 4.2), (0.1, 13, 0.1), dk, ol=0.012)
+    rug = mat("rugs", (0.7, 0.15, 0.12, 1), 0.9, tex="fabric_pattern_05", scale=0.7, tint=(0.9, 0.22, 0.16, 1))
+    bx((ox - 0.6, -2.0, 0.03), (6.8, 5.6, 0.06), rug, ol=0.01); bx((ox - 0.6, -2.0, 0.035), (6.2, 5.0, 0.06), mat("rugin", (0.85, 0.65, 0.3, 1), 0.9, tex="fabric_pattern_07", scale=0.8, tint=(0.95, 0.75, 0.4, 1)))
+    for i in range(8): bx((ox + 6.7, -4.6 + i * 0.72, 0.19 + i * 0.37), (1.5, 0.74, 0.38 + i * 0.37), wl, ol=0.012)                         # stairs to the balcony
+    bx((ox + 5.9, -1.8, 1.6), (0.1, 6.0, 0.12), dk, rot=(0.47, 0, 0), ol=0.01)
+    pi = empty((ox + 3.4, 6.1, 0), None, "piano")                                                                                 # piano + stool
+    bx((0, 0, 0.62), (1.9, 0.8, 1.1), dk, parent=pi, ol=0.025); bx((0, -0.35, 0.86), (1.7, 0.4, 0.08), mat("keysw", (0.96, 0.94, 0.88, 1), 0.6), parent=pi, ol=0.008)
+    for k_ in range(9): bx((-0.7 + k_ * 0.17, -0.42, 0.91), (0.06, 0.22, 0.05), mat("keysb", (0.05, 0.05, 0.06, 1), 0.5), parent=pi)
+    bx((0, 0.15, 1.35), (1.9, 0.12, 0.7), dk, parent=pi, ol=0.02); cy((0, -1.0, 0.25), 0.28, 0.5, wl, ol=0.015); cy((0, -1.0, 0.52), 0.34, 0.08, mat("stool", (0.6, 0.15, 0.12, 1), 0.9), ol=0.01)
+    ch = empty((ox, -0.3, 3.9), None, "chandelier"); prim("torus", (0.95, 0.95, 0.95), (0, 0, 0), m=mat("brass2", (0.9, 0.7, 0.3, 1), 0.3, emission=(0.3, 0.22, 0.05, 1), em_strength=0.6), parent=ch, seg=48, ol=0.012)
+    for k_ in range(8):
+        a_ = k_ * math.pi / 4; cy((0.95 * math.cos(a_), 0.95 * math.sin(a_), 0.12), 0.035, 0.2, mat("candle", (0.97, 0.93, 0.8, 1), 0.7), parent=ch, ol=0.004)
+        prim("sphere", (0.04, 0.04, 0.07), (0.95 * math.cos(a_), 0.95 * math.sin(a_), 0.28), m=mat("flame", (1, 0.8, 0.3, 1), 0.2, emission=(1.0, 0.65, 0.15, 1), em_strength=6.0), parent=ch, seg=12)
+    for k_, (px, pz, c) in enumerate(((-6.0, 3.2, (0.3, 0.5, 0.7, 1)), (-1.2, 3.4, (0.8, 0.6, 0.3, 1)), (2.0, 3.3, (0.45, 0.65, 0.4, 1)))):
+        bx((ox + px, 6.93, pz), (1.1, 0.06, 0.8), dk, ol=0.012); bx((ox + px, 6.9, pz), (0.9, 0.04, 0.62), mat("canvas" + str(k_), c, 0.9, tex="painted_plaster_wall", scale=1.0, tint=c))
+    for (bx_, by_) in ((7.3, -6.2), (7.3, -5.2), (-7.3, 5.6), (-7.3, 4.5)): cy((ox + bx_, by_, 0.5), 0.42, 1.0, wl, ol=0.02); cy((ox + bx_, by_, 0.55), 0.435, 0.08, mat("hoop2", (0.2, 0.2, 0.22, 1), 0.5)); cy((ox + bx_, by_, 0.9), 0.435, 0.08, mat("hoop3", (0.2, 0.2, 0.22, 1), 0.5))
+    for sx in (-1, 1):
+        for yy in (-3.5, 2.5): bx((ox + sx * 7.7, yy - 1.2, 2.3), (0.2, 0.5, 2.6), mat("curt", (0.55, 0.1, 0.1, 1), 0.9, tex="fabric_pattern_05", scale=1.0, tint=(0.8, 0.15, 0.14, 1)), ol=0.012); bx((ox + sx * 7.7, yy + 1.2, 2.3), (0.2, 0.5, 2.6), mat("curt", (0.55, 0.1, 0.1, 1), 0.9, tex="fabric_pattern_05", scale=1.0, tint=(0.8, 0.15, 0.14, 1)), ol=0.012)
     return self_doors
 
 # ======================================================================= LAB (Harvard 1999)
