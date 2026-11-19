@@ -63,6 +63,8 @@ load_model("Television_01", (0.4, -2.75, 0.0), 180, 1.0); load_model("CoffeeTabl
 load_model("Sofa_01", (0, 2.5, 0), 180, 1.0); load_model("ArmChair_01", (-1.9, 0.2, 0), -60, 1.0)
 for o in bpy.data.objects:
     if o.type == "MESH" and o.name.startswith("Television"): pass
+rug = mat_pbr("rug", "fabric_pattern_05", (2, 2)); box("rug", (3.2, 2.4, 0.02), (0, -0.4, 0.01), rug)
+load_model("Lantern_01", (0.1, -0.55, 0.52), 0, 0.5)
 # ---- world: the night HDRI (seen through the left window), dim and blue
 w = bpy.data.worlds.new("w"); sc.world = w; w.use_nodes = True; nt = w.node_tree
 env = nt.nodes.new("ShaderNodeTexEnvironment"); env.image = bpy.data.images.load(os.path.join(ROOT, "hdri", "dikhololo_night_2k.hdr"))
@@ -77,8 +79,8 @@ light("AREA", (0.4, -2.55, 1.0), 180, (0.45, 0.65, 1.0), 1.2, (math.radians(90),
 light("SUN", (0, 0, 5), 0.6, (0.5, 0.65, 1.0), 0.05, (math.radians(55), 0, math.radians(-100)))   # moon through the window
 # ---- camera on the sofa side, slightly low, with a shallow depth of field
 bpy.ops.object.camera_add(location=(0.1, 2.35, 1.2)); cam = bpy.context.object; sc.camera = cam
-d = Vector((0.3, -2.7, 0.95)) - cam.location; cam.rotation_euler = d.to_track_quat("-Z", "Y").to_euler()
-cam.data.lens = 30; cam.data.dof.use_dof = True; cam.data.dof.focus_distance = 4.5; cam.data.dof.aperture_fstop = 2.4
+d = Vector((0.3, -2.7, 0.55)) - cam.location; cam.rotation_euler = d.to_track_quat("-Z", "Y").to_euler()
+cam.data.lens = 28; cam.data.dof.use_dof = True; cam.data.dof.focus_distance = 4.5; cam.data.dof.aperture_fstop = 2.4
 # light haze for volumetric shafts
 try:
     vol = bpy.data.materials.new("haze"); vol.use_nodes = True; nt2 = vol.node_tree; nt2.nodes.clear()
