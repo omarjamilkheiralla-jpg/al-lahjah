@@ -23,6 +23,8 @@ import { Style4Walk, S4W_TOTAL, FPS as S4W_FPS } from "./style4/walk/Style4Walk"
 
 import { Centralia, CENT_TOTAL, FPS as CENT_FPS } from "./mg/Centralia";
 
+import { BearSaloon, BEAR_TOTAL, FPS as BEAR_FPS } from "./mg/BearSaloon";
+
 import { Banner } from "./full/Banner";
 
 export const FPS = 30;
@@ -49,6 +51,7 @@ export const Root: React.FC = () => {
       <Composition id="Style3Sample" component={Style3Sample} durationInFrames={Math.ceil(S3_TOTAL * S3_FPS)} fps={S3_FPS} width={1080} height={1920} defaultProps={{ audio: true }} />
       <Composition id="CharTest" component={CharTest} durationInFrames={2} fps={30} width={1080} height={1920} defaultProps={{ mode: "all" }} />
       <Composition id="Centralia" component={Centralia} durationInFrames={Math.ceil(CENT_TOTAL * CENT_FPS)} fps={CENT_FPS} width={1080} height={1920} defaultProps={{ audio: true }} />
+      <Composition id="BearSaloon" component={BearSaloon} durationInFrames={Math.ceil(BEAR_TOTAL * BEAR_FPS)} fps={BEAR_FPS} width={1080} height={1920} defaultProps={{ audio: true }} />
       <Composition id="Style4Walk" component={Style4Walk} durationInFrames={Math.ceil(S4W_TOTAL * S4W_FPS)} fps={S4W_FPS} width={1080} height={1920} defaultProps={{ audio: true }} />
       <Composition id="Style4Full" component={Style4Full} durationInFrames={Math.ceil(S4F_TOTAL * S4F_FPS)} fps={S4F_FPS} width={1080} height={1920} defaultProps={{ audio: true }} />
       <Composition id="Style4Sample" component={Style4Sample} durationInFrames={Math.ceil(S4_TOTAL * S4_FPS)} fps={S4_FPS} width={1080} height={1920} defaultProps={{ audio: true }} />

@@ -18,7 +18,7 @@ def setup_render(w=1080, h=1920, samples=48):
     for k, v in (("taa_render_samples", samples), ("use_raytracing", os.environ.get("NORT") is None), ("use_shadows", os.environ.get("NOSH") is None), ("use_fast_gi", os.environ.get("NOGI") is None), ("use_volumetric_shadows", True), ("shadow_ray_count", 2), ("shadow_step_count", 8)):
         try: setattr(sc.eevee, k, v)
         except Exception: pass
-    for k, v in (("view_transform", "AgX"), ("look", "AgX - Medium High Contrast")):
+    for k, v in (("view_transform", "Standard"), ("look", "None"), ("exposure", -0.55)):
         try: setattr(sc.view_settings, k, v)
         except Exception: pass
     sc.render.image_settings.file_format = "PNG"; sc.render.image_settings.color_mode = "RGB"
@@ -62,8 +62,10 @@ def mat(name, color=(0.8, 0.8, 0.8, 1), rough=0.7, tex=None, scale=1.0, tint=Non
     if tex:
         dn = _tex_nodes(nt, b, tex, scale, coord, normal)
         if tint is not None and dn:
+            bw = nt.nodes.new("ShaderNodeRGBToBW"); nt.links.new(dn.outputs["Color"], bw.inputs["Color"])
+            cr = nt.nodes.new("ShaderNodeValToRGB"); cr.color_ramp.elements[0].color = (0.1, 0.1, 0.1, 1); cr.color_ramp.elements[1].color = (1.35, 1.35, 1.35, 1); nt.links.new(bw.outputs["Val"], cr.inputs["Fac"])
             mx = nt.nodes.new("ShaderNodeMix"); mx.data_type = "RGBA"; mx.blend_type = "MULTIPLY"; mx.inputs["Factor"].default_value = 1.0; mx.inputs["B"].default_value = tint
-            nt.links.new(dn.outputs["Color"], mx.inputs["A"]); nt.links.new(mx.outputs["Result"], b.inputs["Color"])
+            nt.links.new(cr.outputs["Color"], mx.inputs["A"]); nt.links.new(mx.outputs["Result"], b.inputs["Color"])
     _mats[key] = m; return m
 
 def soft(name, color, rough=0.8, scale=14.0, var=0.10, bump=0.12, emission=None, em_strength=1.0):
@@ -87,7 +89,7 @@ def outline(obj, t=0.02):
     """inverted-hull ink outline as a separate child shell that casts no shadow (needs scale applied)"""
     sh = bpy.data.objects.new(obj.name + "_ink", obj.data.copy()); bpy.context.collection.objects.link(sh)
     sh.data.materials.clear(); sh.data.materials.append(ink_mat())
-    md = sh.modifiers.new("ink", "SOLIDIFY"); md.thickness = t; md.offset = 1.0; md.use_flip_normals = True; md.use_rim = False
+    md = sh.modifiers.new("ink", "SOLIDIFY"); md.thickness = t * 1.6; md.offset = 1.0; md.use_flip_normals = True; md.use_rim = False
     sh.parent = obj
     try: sh.visible_shadow = False
     except Exception: pass
@@ -160,7 +162,7 @@ class Stick:
             prim("cyl", (0.012, 0.012, 0.07), (0, 0, 0), rot=(0, math.pi / 2, 0), m=mat("brow", (0.05, 0.04, 0.05, 1), 0.5), parent=b, seg=10)
         if stache:
             for sx in (-1, 1): prim("sphere", (0.09, 0.025, 0.04), (0.075 * sx, -0.3, 0.2), rot=(0, 0.4 * sx, 0.0), m=mat("stache", (0.06, 0.04, 0.04, 1), 0.6), parent=self.head, seg=16, ol=0.006)
-        self.mouth = prim("sphere", (0.05, 0.02, 0.012), (0, -0.295, 0.12), m=mat("mouth", (0.35, 0.08, 0.1, 1), 0.5), parent=self.head, seg=16)
+        self.mouth = prim("sphere", (0.05, 0.02, 0.012), (0, -0.295, 0.12), m=mat("mouth", (0.18, 0.02, 0.04, 1), 0.5), parent=self.head, seg=16)
         self.hatobj = None
         if hat:
             hm = soft(name + "_hat", hatc, 0.7, scale=16, var=0.18, bump=0.2)
