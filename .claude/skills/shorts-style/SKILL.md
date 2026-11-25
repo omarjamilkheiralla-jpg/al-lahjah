@@ -3,21 +3,223 @@ name: shorts-style
 description: Rule book for making the user's "explain-it-with-a-story" 3D-animated vertical Shorts (cartoon stick-figure characters, word-by-word captions, hook-first narration, ends on a payoff/explosion). Use whenever the user asks to write, script, storyboard, build, or replicate one of these Shorts or analyse a hook.
 ---
 
-Read `video/STYLE_GUIDE.md` in full before doing any work on these videos, and follow it:
-hook formulas (§2), 7-beat story structure (§3), narration rules (§4), visual and camera rules (§5),
-caption style (§6), audio targets (§7), spec (§8), checklist (§9), don'ts (§10).
+# Rule book: "Explain-it-with-a-story" 3D animated Shorts
 
-Reference transcripts and measurements: `video/reference/transcripts.md`.
-Build with the Remotion + Three.js project in `video/` (see `video/README.md`).
+Learned from 5 reference shorts (all 720x1280, 30fps, 31-65s):
+Why Perfect Railroads Don't Work · This Shape Saved Roller Coasters · Why the Second Draw Always Wins ·
+The Science Behind Slot Machines · The Burglar Who Only Moved Furniture.
 
-IMPORTANT: also follow the section "APPROVED HOUSE STYLE v2: Painted 3D world" at the end of `video/STYLE_GUIDE.md`.
-It is the look the user approved ("very nice, remember this style"): long receding streets with shopfronts on both sides,
-foreground/midground/background depth, painted characters with soft shadows, a travelling camera in every shot,
-a steady `am_eric` narrator (no pitch shifting), and a full-video frame QA before reporting.
-Reference build: `video/src/rats/`. Reuse `StreetCanyon`, `MarketStall`, `Bunting`, `Scatter`, `SkyDome`, `Horizon`, `Person2`, `Rat`.
+Numbers below are measured (transcripts, loudness, frame sampling) unless marked *(estimate)*.
 
-## STYLE 1: "What if" day-by-day story (saved by the user; reference build = "What if a town won the lottery")
-Use this whenever the user says "style 1". It is a fictional/theoretical story told as scenes, not a facts lecture.
+## 1. The format in one sentence
+A tiny cartoon story (stick-limbed, round-headed characters in a lush 3D-rendered world) that
+secretly teaches one real science/psychology/engineering fact. The viewer thinks they're watching
+a story; the **payoff is the explanation**, and it lands in the last 10-15 seconds.
+
+## 2. The hook (first 0-4 seconds). Most important section.
+All five open with a **single sentence that is a strange, specific, concrete event, with no intro, no greeting, no "today we'll learn"**.
+Frame 0 already shows the action (nobody fades in).
+
+| Video | First line | Why it works |
+|---|---|---|
+| Railroads | "He sawed gaps into a railroad every 39 feet." | Sounds like sabotage. Exact number (39). Viewer thinks: why would anyone do that? |
+| Coasters | "He bent the rollercoaster's loop out of shape." | Destroying something on purpose. Conflict in 7 words. |
+| Second Draw | "The fastest gun in the west had one rule. Never draw first." | Paradox: the fastest gun refuses to draw. |
+| Slots | "You just watched two jackpot symbols land, and the third one stopped one click short." | Second person, a feeling everyone knows (almost won). |
+| Burglar | "A man snuck into a family's house every night and moved every single thing one inch to the left." | Absurd crime. Tiny precise detail (one inch, left). |
+
+### Hook formulas (pick one)
+1. **Weird deliberate act**: "He [did something that looks wrong/destructive] [exact number or detail]."
+2. **Paradox**: "[The best X] had one rule: [do the opposite of what you'd expect]."
+3. **You-moment**: "You just [felt something familiar], and [the near-miss]."
+4. **Absurd crime/prank**: "A man [did a harmless-but-creepy thing] every night."
+
+### Hook rules
+- Max ~15 words, ideally 7-12. Spoken in about 2.5-5 s.
+- Make the viewer ask "why?" in the first sentence. Never answer it in the first third.
+- Use one exact number or tiny detail (39 feet, one inch, one click). Specifics feel true.
+- The title is the same hook in a "Why X..." / "This Shape..." form (curiosity + claim).
+- Visual hook = the **action of the line is on screen at frame 0** (character already sawing the rail, bullet already flying, burglar already climbing in). The very first image is dynamic, with a character mid-action and a hazard/prize behind them (train coming, spinning reels).
+- The camera is already moving in the first second (push-in, whip, orbit). Never a static title card.
+- Keep the first 4 s dense: in Second Draw, hook visuals change every ~0.5-1 s (character → muzzle flash → bullet whoosh → street → cowboy).
+
+## 3. Story structure (the same skeleton every time)
+Timings are for a ~60 s video (scale for 30 s).
+
+| Beat | Time | What happens | Example |
+|---|---|---|---|
+| **Hook** | 0-4 s | Strange act / paradox | gaps every 39 feet |
+| **"You see," setup** | 4-10 s | Stakes + rival/clock. A race, a deadline, a bet | two companies racing across a canyon |
+| **Protagonist is mocked** | 10-25 s | Counter-intuitive choice makes him look dumb. Boss angry, rival laughs, police laugh | "You're wrecking my railroad!" |
+| **Rival/wrong way wins (for now)** | 20-35 s | The obvious approach looks better. Tension: viewer wants to see it fail | perfect smooth rails, "everyone switches" |
+| **Turn** | 35-45 s | "Then summer comes, and something weird happens." Reality starts to prove him right | gaps shrink |
+| **Escalation** | 45-55 s | Conditions get extreme ("hottest day anyone can remember") | gaps close, rails groan |
+| **Payoff + one-line science** | last 10-15 s | Rival's perfect thing fails dramatically; physics explained in one plain sentence | rails buckle "like a snake" |
+| **Hard stop** | final frame | Ends on the visual consequence (explosion, crash, "buyer is him"). No outro, no CTA, no "follow for more" | train hits kinked rail |
+
+Variants:
+- **Explainer-in-story (Second Draw, Slots)**: story first, then mid-video "You see, think about the last time your phone slid off a table." / "So let's crack it open." Explain with a relatable everyday analogy, then show the mechanism literally (slot machine opened up to show the reel-stop list).
+- **Twist ending (Burglar)**: No science. The last line recontextualises everything ("the buyer is him; he'd kept one key"). Reveal the twist in the final 8 s.
+- **30 s version (Slots)**: problem (0-16 s) → "So let's crack it open." (16.5 s) → mechanism (18-31 s). Same bones, no middle.
+
+### Phrases the narrator repeats (reuse them)
+- "You see, ..." (introduces the reason / explanation). Appears in 4 of 5 videos.
+- "So, ..." to chain every cause-and-effect beat.
+- "But..." to flip fortune. ("But he can't miss the opening.")
+- "Then ... and something weird happens."
+- "By the end of the week / month..." to compress time.
+- "Imagine you're..." to put the viewer in the scene.
+- "So let's crack it open." to enter explanation mode.
+- A line of character dialogue in quotes at the emotional peak ("You're wrecking my railroad!", "bro, it's just warming up").
+- Similes that are physical and vivid: "crushed like a soda can", "snap like a twig", "kicks sideways like a snake", "goes purple".
+
+## 4. Writing the narration
+- **Pace**: 3.3-4.1 words/second (~200-245 wpm), measured. Total script 110 words (30 s) to 240 words (60 s). No pauses; audio has no silence gaps over 0.25 s.
+- Average sentence ~12-16 words. Alternate one long sentence with a very short one ("Not really." "But it's too late." "Rail touching rail.").
+- Present tense for the story ("the fridge is blocking the back door"), second person for the viewer-in-the-scene.
+- Everything concrete and countable: 39 feet, 5 vs 60 mph, a hundred dollars, 3am, one inch.
+- One idea per video. Explain it with ONE everyday analogy (dropped phone, car on a hairpin turn).
+- Name characters by role or a funny nickname ("slow Eddie", "the youngest engineer"), not backstory.
+- The science line is spoken plainly, like to a friend: no jargon, no formulas.
+- Never address the camera with "hey guys", never say "like and subscribe".
+- Reading level: 6th-8th grade.
+
+## 5. Visual style
+### Look
+- **Characters**: pure 2D-looking cel-shaded "stick people": big white round head, tiny dot-and-line face, thick dark outline, bean body in one bold costume colour, thin noodle legs/arms. Costume tells the role at a glance (striped train cap = engineer, red cap + overalls = builder, black balaclava = burglar, cowboy hats, police uniform).
+- Faces carry the emotion: smug half-lidded eyes (confident), huge round eyes + wide grin (excited/mad), squinty-laugh (gleeful). Exaggerate; no subtle expressions.
+- **World**: fully 3D, painterly/stylised, high-saturation, strong lighting (rim light, volumetric glow, long shadows). Characters are flat 2D billboards placed in a real 3D scene, so camera moves create real parallax.
+- **One coherent palette per video**: Railroads = canyon reds/oranges + sky blue; Coasters = green hills + blue sky, then moonlit night; Western = golden sand + blue; Burglar = moody blue night → warm yellow day. Contrast of warm vs cool carries the day/night and mood changes.
+- **Time-of-day change = story change**: night scenes for sneaking/scheming, bright day for public reveal, golden hour for the climax.
+- Props/set pieces are legible at phone size and are the *explanation device* (reel-stop list, a loop track, the gap between rails, the one-inch ruler).
+- Comedy details: signs, banners, newspapers, tiny background jokes ("Don't move!" fridge magnet).
+
+### Camera (this is what makes it feel expensive)
+- The camera **almost never stops**. Continuous push-ins, dollies down the track, orbits, whip-pans, low-angle looks up at a character, extreme close-ups (bullet, holster, rail gap, a foot on a slipper).
+- **Cuts happen on the beat of the sentence (every ~1.5-3 s)** and are usually motion-matched: whip-pan, zoom through an object, cross-dissolve while the camera pushes. Hard-cut ratio is low; the energy comes from camera motion rather than editing alone *(estimate, 0.25-threshold scene detector found only 0-2 hard cuts per video, so the cuts are blended with motion/dissolves)*.
+- Mix of three scales in every beat: **wide** (shows the world/danger) → **medium** (character emotion) → **extreme close-up** (the key object). Rotate through them.
+- Use a **top-down / "diagram" shot** when explaining mechanism (the reel-stop list, the loop shape).
+- Vertical 9:16 composition: subject in the upper two thirds, **bottom 25% is reserved for captions**; keep faces/key action clear of it.
+- Reveals use **scale**: a tiny character dwarfed by a huge canyon/loop, then punch into close-up.
+- Climax = **explosion / crash / big FX** for the last 1-2 s (railroad, roller coaster: fireball). Ends on it. The twist-story ends on a character reaction.
+
+### Pacing of visuals
+- A new visual idea roughly every sentence (3-4 s) and a camera or shot change roughly every 1.5-3 s *(estimate from 1 fps / 2 fps contact sheets)*.
+- First 4 s are the densest: ~6-8 distinct frames.
+- Never hold the same framing without camera drift.
+- When something is explained, the visual literally shows it (cutaway/blueprint/cutting open the machine). Don't narrate over unrelated footage.
+
+## 6. Captions
+- **Burned in, word-by-word (1-3 words per caption, never a full sentence)**, changes in sync with each spoken word or short phrase.
+- Position: horizontally centred, lower third, around 70% down the frame *(y ≈ 900-960 of 1280)*.
+- Font: heavy rounded/bold sans-serif (Montserrat/Poppins/Inter ExtraBold-like), **white fill, thick black outline + soft drop shadow**, no background box, no per-word colour animation. Sentence-case with punctuation kept (periods/commas appear in the caption).
+- Size: cap height ~3-4% of frame height (about 36-44 px on 720 wide; ~55-65 px at 1080 wide).
+- Occasionally two small words share a caption ("the end of", "and over."), never more than ~3 short words.
+- Never overlap with the top 10% (platform UI) or the very bottom 12%.
+- Captions are always on, from the first word to the last.
+
+## 7. Audio
+- One **AI/narrator voice**, male-ish, bright, fast, confident storyteller tone, **continuous with no silent gaps**, slightly rising energy at the turn and payoff.
+- **Loudness −14 LUFS integrated** (30 s clip: −15), true peak ≤ −2 dBFS, very low loudness range (LRA 1.7-3.2 LU), meaning voice is compressed and consistent.
+- 44.1 kHz, AAC ~128 kbps stereo.
+- Music/SFX: subtle bed under the voice and **short SFX for each action** (whoosh on camera whips, spark, gunshot, crash, explosion, cartoon boing). SFX sit under the voice; the voice is never masked. Silence never used for effect.
+- Dialogue lines inside the story are delivered in the same voice, with slight pitch shift/character if desired.
+
+## 8. Technical spec (to match platform expectations)
+- 1080x1920 (9:16) at 30 fps, H.264 + AAC. References are 720x1280; render at 1080x1920 (better).
+- Length: 30-65 s. Longer ones (55-65 s) use the full 7-beat structure; 30 s uses the short variant.
+- No intro card, no logo, no outro, no end screen. Loop-friendly: last frame is a hard stop on the consequence.
+- Safe zones: keep important content out of the top 10% and bottom ~20% except captions.
+
+## 9. Production checklist (use for every new video)
+1. **Pick a fact** that is counter-intuitive and explainable with one analogy. (Test: "most people think X, but actually Y".)
+2. **Write the hook sentence first** (formulas in §2). If it doesn't spark a "why?", rewrite.
+3. **Write the script** using the beat table (§3). Count words: 3.5 wps × target seconds. Keep the science line to one sentence.
+4. **Shot list**: one shot per sentence, minimum; label wide/medium/close; mark every camera move; mark the day/night and colour palette; mark the final FX.
+5. **Build characters**: round white head, dot eyes, thick outline, bean body in a unique costume colour per role; 3-5 expressions.
+6. **Build the world in Three.js** (see `video/src`): billboard characters in a 3D scene, animated camera paths driven by `useCurrentFrame()`.
+7. **Captions** from word timestamps (`npm run transcribe`), 1-3 words per page (`createTikTokStyleCaptions` with a small `combineTokensWithinMilliseconds`, ~200-400 ms), white/black-outline style.
+8. **Audio**: voiceover → normalise to −14 LUFS → add music bed + SFX on every action beat.
+9. **QA**: first frame has action? Hook ≤ 4 s? No dead air? Caption never > 3 words? Last frame is the payoff? No CTA/outro? Loudness −14 LUFS?
+
+## 10. Don'ts
+- Don't open with a greeting, logo, title card, fade-in, or "did you know".
+- Don't explain the answer in the first third.
+- Don't use a static camera or a held still image.
+- Don't use full-sentence subtitles or small captions.
+- Don't leave silence.
+- Don't add a call to action or outro.
+- Don't use realistic/3D characters. The characters stay flat 2D-style stick people.
+- Don't pile multiple facts into one video. One fact, one analogy, one payoff.
+
+
+---
+
+# APPROVED HOUSE STYLE v2: "Painted 3D world" (user approved, saved. Follow this for every new video)
+
+Approved by the user on the "Cut Every Tail" street shots: *"very nice, this is what I want, remember this style."*
+Reference implementation: `video/src/rats/` (scenes), `video/src/full/` (characters, nature, fonts), `video/src/hotel/` (kit, PostFX).
+
+## 1. World: always a real, deep 3D place, never a flat plaza
+- **Long streets / spaces that recede to a hazy horizon.** Shopfronts on BOTH sides running away from the camera (`StreetCanyon` in `src/rats/scenes.tsx`), 5-7 buildings deep per side, roofs (gable or false-front), awnings, signs, flower boxes, glowing windows.
+- **Foreground, midground, background in every shot.** Foreground: stones, flags, a stall edge, a lamp. Midground: characters and the story prop. Background: shops, trees, hazy town, steeple, lake.
+- **Scale and atmosphere:** soft gradient sky with real painted clouds (`SkyDome`), warm key light from the upper left, soft shadows, fog colour matched to the horizon, bloom, film grain, vignette, depth-of-field focused on the subject (`PostFX`).
+- **Ground has texture and scatter:** painted cobbles/mud with ruts and puddles that mirror the sky, plus instanced small stones (`Scatter`, size about 0.04, never big rocks).
+- **Life and set dressing in every location:** market stalls with fruit, lanterns with glow, bunting flags overhead, clocks with moving hands, framed pictures, shelves with books and jars, plants, hanging lamps, window light bars, dust motes. Interiors are furnished, never an empty box.
+- **Signs and text are painted inside the world** (Rye for signs, Playfair for plates, Lilita One for chalk and captions), at the true proportions of the board. Never stretched or squashed.
+
+## 2. Characters
+- Painted 2D characters standing inside the 3D world (`Person2`, `Rat`): big round pale head, calm half-lidded eyes, thin tapered ink limbs, hand-inked outline that redraws 5 times a second (calm boil), shaded two-tone clothes, soft contact shadow plus a long soft shadow away from the key light.
+- Each role is recognisable by costume (pith helmet official, conical-hat locals, bowler, cap, top hat).
+- 8+ expressions that change with the story (deadpan, smug, worried, shock, grin, laugh, angry, proud, think), with sweat drops and blush. Blink every 3-4 s, breathing bob, head nod.
+- **Feet and legs are one unit** (feet are children of the legs; no X-crossing). No object may pass through a character: keep desks, rails, fences and walls clear (stand people on the balcony/behind the desk, never inside).
+
+## 3. Camera
+- **Every shot has its own angle and the camera never stops:** long dolly down a street, crane down onto a crowd, low hero angle, top-down diagram, tilted close-up, side track, high pull-back.
+- Cuts land 0.1 s before each spoken line with a small zoom punch and a soft flash.
+- 60 fps, ease in/out (monotone time warp), tiny natural sway, slight roll on tense shots.
+
+## 4. Audio
+- Narration: Kokoro, **no pitch shifting or phase-vocoder (it makes echo and a sinking tone)**. Use ONE voice with a near-constant speed; emotion comes from wording, punctuation, pauses and small gain changes. Check the median pitch of each shot stays within about 1 semitone.
+- **Voice choice:** the user found `am_liam` (about 127 Hz) too deep. Current voice is **`am_eric` (about 162 Hz): lighter, friendly, inviting.** Keep it unless the user asks otherwise.
+- Original score that changes with the story, sound effects on every action, about -14 LUFS, music about 10 dB under the voice and ducked.
+
+## 5. QA before telling the user it is ready
+1. Render about 30 frames spread across the WHOLE video and look at every one (not just the changed shots).
+2. Look specifically for: things passing through each other, cut-off hats or props, parts floating or detached, text running off boards, objects blocking faces, flat empty ground.
+3. State plainly what was checked and what was not (I cannot hear audio).
+
+## Update: narrator + ending (user choices, latest)
+- **Narrator: `af_sarah`** (user picked sample #8, "friendly female", about 200 Hz). Use it as-is: one steady voice, no pitch shifting, no clarity chain unless asked.
+- **Ending "ta-ding":** every video ends with the same short sparkle right after the last spoken word: a quick marimba "ta" (about 0.12 s after the word) and then a bright bell/marimba "-ding" arpeggio with a soft pad (about 0.36 s after). The video runs about 1.5 s past the last word to let it ring. Implemented in `projects/hanoi-rats/make_audio.py` (`END`).
+- **"You see," pause rule:** always stop before "You see" (about 1 s of silence after the previous line), then say "You see," as its own beat and stop again (about 0.35 s) before the explanation. It must never run on into the next words.
+
+## Update (latest): narrator for "Cut Every Tail" = version 5 voice
+The user went back to the **version 5 voice: `am_liam`**, steady, no pitch shifting, NO clarity chain and no extra processing, with the newer details kept
+(ta-ding ending, pause before and after "You see,", the long-street visuals). `af_sarah` (sample #8) was liked as a sample, but the user chose to keep v5 for this video.
+Do not re-apply `clarify_voice.py` or change the narrator for this video unless asked.
+
+
+## FINAL narrator rule (user decision, overrides every earlier voice note)
+- **Narrator for ALL videos: Kokoro `am_liam`, the "version 5" voice.** One steady voice, speed varies only slightly, NO pitch shifting, NO clarity/EQ chain, NO other TTS tools.
+- **Chatterbox was tried and removed** (user: "so zesty"). Do not reinstall it. `af_sarah` (sample #8) and other voices were samples only.
+- If the user asks for "deeper": the only clearly deeper Kokoro voice is British (`bm_lewis`, about 83 Hz). The user does not want other accents, so keep `am_liam` (about 122 Hz) unless told otherwise.
+- Delivery: phrase by phrase, no "?" or "!" on lines that would sound sassy; pause ~1 s before "You see,", say it as its own phrase, pause ~0.4 s after. End every video with the "ta-ding" right after the last word.
+- Pipeline: `projects/<video>/make_voice.py` -> whisper word timings (fix "You'll see" -> "You see,", "x -rays" -> "X-rays" in captions) -> `make_audio.py` -> `loudnorm` -> `public/<video>_mix.wav`.
+- For a more human sound the user can record their own voice or use a paid service; offer it but do not push it.
+
+## Zero tolerance: stray lines and seams (user, final)
+No thin wavy lines, hard texture stripes, tile seams, spiky outlines or faceted shards anywhere. Causes found and rules:
+- Ground textures must be seamless (draw blobs wrapped at the tile edges) and must not contain ripple/stroke lines.
+- Organic meshes (rocks, lumps) must be welded (`mergeVertices`) with smooth normals before outlining; never outline a non-indexed displaced icosahedron (it spikes).
+- Wrapped UVs make seams: use a planar projection for blob textures.
+- Check every shot at full resolution (crop the ground and the props), not just thumbnails.
+
+## STYLE 1: "Explain-it-with-a-story" short (CORRECTED 2026-11-25: the user says Style 1 is NOT day-by-day)
+Use this whenever the user says "style 1". It is the original house format: a strange hook, a tiny story in a vivid 3D world, the "You see," pivot, ONE plain analogy that explains one real fact, and a last joke or payoff. Vertical Short, 30 to 65 s, about 110 to 240 words of narration (3.3 to 4.1 words per second). The full rule book is sections 1 to 10 at the top of this file (hook formulas, 7-beat table, phrases, captions, audio, camera) plus the "APPROVED HOUSE STYLE v2", narrator, ending ("ta-ding") and zero-tolerance sections. The newest build of it is "The Bear in the Saloon" (inattentional blindness; `projects/bear-saloon/`, Blender scenes in `projects/blender/`): hook = a gorilla experiment, then "Imagine you're in a saloon", the bear walks in, the reveal, "You see, think about the last time you searched the whole house for your keys...", then the last joke "The bear, for the record, got a free drink." See `video/STYLE1_INSTRUCTIONS.md` for the full briefing.
+
+## LONG WHAT-IF (day-by-day story; reference build = "What if a town won the lottery") - the user says this is NOT Style 1
+Older long-form variant (about 3 minutes, 1920x1080). Keep it only if the user asks for a "what if day by day" video. It is a fictional/theoretical story told as scenes, not a facts lecture.
 
 **Script rules**
 - Topic = a clear what-if premise with a cause. Hook = say the premise, then explain what started it in 2-3 short lines, then go straight into the story. NO foreshadowing of how the week ends ("by Friday X will happen" is banned).
