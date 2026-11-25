@@ -28,6 +28,8 @@ import { BearSaloon, BEAR_TOTAL, FPS as BEAR_FPS } from "./mg/BearSaloon";
 
 import { Banner } from "./full/Banner";
 
+import { CharSheet } from "./full/CharSheet";
+
 export const FPS = 30;
 
 export const Root: React.FC = () => {
@@ -57,6 +59,7 @@ export const Root: React.FC = () => {
       <Composition id="Style4Full" component={Style4Full} durationInFrames={Math.ceil(S4F_TOTAL * S4F_FPS)} fps={S4F_FPS} width={1080} height={1920} defaultProps={{ audio: true }} />
       <Composition id="Style4Sample" component={Style4Sample} durationInFrames={Math.ceil(S4_TOTAL * S4_FPS)} fps={S4_FPS} width={1080} height={1920} defaultProps={{ audio: true }} />
       <Composition id="Banner" component={Banner} durationInFrames={1} fps={30} width={2048} height={1152} />
+      <Composition id="CharSheet" component={CharSheet} durationInFrames={2} fps={30} width={1080} height={1920} defaultProps={{ only: "" }} />
       <Composition id="TownThumb2" component={TownThumb2} durationInFrames={2} fps={30} width={1920} height={1080} />
       <Composition id="TownThumb" component={TownThumb} durationInFrames={2} fps={30} width={1920} height={1080} />
       <Composition id="Juliane" component={Juliane} durationInFrames={Math.ceil(JUL_TOTAL * JUL_FPS)} fps={JUL_FPS} width={1920} height={1080} defaultProps={{ captions: true, audio: true }} />

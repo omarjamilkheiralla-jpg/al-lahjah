@@ -11,11 +11,13 @@ export type Look = {
   pants: string;
   hat?: "top" | "bowler" | "cap" | "balaclava" | "nightcap" | "pith" | "conical" | "diver" | "slouch" | "none"; hatColor?: string; hatBand?: string;
   glasses?: boolean; mustache?: boolean; stripes?: boolean;
+  /** reference style (Cashiers video): white egg head, grey lidded eyes, hair cap with curl, polo + name tag */
+  ref?: boolean; curl?: boolean; polo?: string; tag?: string; badge?: string; bowtie?: string; apron?: string; slick?: boolean;
 };
 
 export type Expr =
   | "deadpan" | "smug" | "worried" | "strain" | "shock" | "grin" | "sleep" | "blink"
-  | "laugh" | "angry" | "proud" | "think";
+  | "laugh" | "angry" | "proud" | "think" | "smile" | "sad";
 
 const tex = (c: HTMLCanvasElement) => {
   const t = new THREE.CanvasTexture(c);
@@ -89,7 +91,7 @@ export const headTexture = (look: Look, expr: Expr, key: string, v = 0) => {
   gr.addColorStop(0, look.skin); gr.addColorStop(0.55, look.skin); gr.addColorStop(1, look.skinShade);
   g.fillStyle = gr; g.fillRect(0, 0, S, S);
   // crescent shade
-  g.fillStyle = look.skinShade; g.globalAlpha = 0.55;
+  g.fillStyle = look.skinShade; g.globalAlpha = look.ref ? 0.3 : 0.55;
   g.beginPath(); g.ellipse(cx + rx * 0.22, cy + ry * 0.2, rx * 1.02, ry * 1.0, 0, 0, 7);
   g.ellipse(cx - rx * 0.08, cy - ry * 0.12, rx * 0.95, ry * 0.95, 0, 0, 7, true);
   g.fill("evenodd"); g.globalAlpha = 1;
@@ -102,7 +104,7 @@ export const headTexture = (look: Look, expr: Expr, key: string, v = 0) => {
     }
   }
   // cheeks + nose bump
-  g.fillStyle = "rgba(240,150,150,0.35)";
+  g.fillStyle = look.ref ? "rgba(240,150,150,0.0)" : "rgba(240,150,150,0.35)";
   g.beginPath(); g.ellipse(cx - rx * 0.56, cy + ry * 0.24, 30, 17, 0, 0, 7); g.fill();
   g.beginPath(); g.ellipse(cx + rx * 0.56, cy + ry * 0.24, 30, 17, 0, 0, 7); g.fill();
   grain(g, S, S, 9);
@@ -132,9 +134,27 @@ export const headTexture = (look: Look, expr: Expr, key: string, v = 0) => {
     for (let i = 0; i < 4; i++) { g.beginPath(); g.moveTo(cx - rx * 0.5 + i * 60, cy - ry * 0.95); g.quadraticCurveTo(cx - rx * 0.4 + i * 60, cy - ry * 0.7, cx - rx * 0.3 + i * 60 + side * 20, cy - ry * 0.45); g.stroke(); }
     g.globalAlpha = 1; g.restore();
     g.lineWidth = 9; g.strokeStyle = INKD; g.lineJoin = "round"; g.stroke();
+    if (look.ref) {
+      // glossy parallel streaks across the fringe
+      g.save(); g.clip(); g.strokeStyle = look.hairHi; g.lineCap = "round"; g.globalAlpha = 0.9;
+      for (let k = 0; k < 4; k++) { g.lineWidth = 9 - k; g.beginPath(); g.moveTo(cx - rx * 0.78 + k * 18, cy - ry * (0.52 - k * 0.05)); g.quadraticCurveTo(cx - rx * 0.1, cy - ry * (0.98 - k * 0.07), cx + rx * 0.7 - k * 18, cy - ry * (0.52 - k * 0.04)); g.stroke(); }
+      g.restore();
+    }
   }
   g.restore();
   inkStroke(g, outline, 15, 2 + v * 5, true);
+  if (look.curl && look.hairStyle !== "bald") {
+    // the little curl on top
+    g.save(); g.fillStyle = look.hair; g.lineWidth = 11; g.strokeStyle = INKD; g.lineJoin = "round";
+    g.beginPath(); g.moveTo(cx + rx * 0.02, cy - ry * 0.98); g.bezierCurveTo(cx + rx * 0.02, cy - ry * 1.28, cx + rx * 0.3, cy - ry * 1.36, cx + rx * 0.42, cy - ry * 1.18);
+    g.bezierCurveTo(cx + rx * 0.3, cy - ry * 1.22, cx + rx * 0.2, cy - ry * 1.16, cx + rx * 0.22, cy - ry * 0.96); g.closePath(); g.fill(); g.stroke();
+    g.strokeStyle = look.hairHi; g.lineWidth = 6; g.beginPath(); g.moveTo(cx + rx * 0.06, cy - ry * 1.04); g.quadraticCurveTo(cx + rx * 0.1, cy - ry * 1.22, cx + rx * 0.26, cy - ry * 1.24); g.stroke(); g.restore();
+  }
+  if (look.slick) {
+    // slicked-back shine for the con man
+    g.save(); g.strokeStyle = look.hairHi; g.lineCap = "round"; g.lineWidth = 8; g.globalAlpha = 0.75;
+    g.beginPath(); g.moveTo(cx - rx * 0.7, cy - ry * 0.62); g.quadraticCurveTo(cx, cy - ry * 0.98, cx + rx * 0.72, cy - ry * 0.58); g.stroke(); g.restore();
+  }
 
   // ---- hat
   const hc = look.hatColor ?? "#2a2630";
@@ -274,7 +294,36 @@ export const headTexture = (look: Look, expr: Expr, key: string, v = 0) => {
     }
   };
 
+  const refEye = (side: number, open: number) => {
+    const x = cx + side * ex; const hh = 34 * open;
+    g.fillStyle = "#6f6f74"; g.beginPath(); g.ellipse(x, ey + 4, 46, hh + 8, 0, 0, Math.PI); g.closePath(); g.fill();
+    g.fillStyle = "rgba(255,255,255,0.35)"; g.beginPath(); g.ellipse(x - 14, ey + 14, 10, 5, 0, 0, 7); g.fill();
+    inkStroke(g, [[x - 50, ey + 2], [x, ey + 1], [x + 50, ey + 2]], 10, 80 + side);
+  };
+  const refMouth = (kind: string) => {
+    const mx = cx, my = cy + ry * 0.5;
+    if (kind === "bar") { g.fillStyle = "#6f6f74"; g.beginPath(); g.roundRect(mx - 52, my - 10, 104, 28, 12); g.fill(); }
+    else if (kind === "smile") inkStroke(g, [[mx - 50, my - 6], [mx - 24, my + 14], [mx + 10, my + 20], [mx + 40, my + 8], [mx + 58, my - 10]], 10, 55);
+    else if (kind === "smirk") inkStroke(g, [[mx - 40, my + 8], [mx, my + 10], [mx + 50, my - 10]], 10, 56);
+    else if (kind === "frown") inkStroke(g, [[mx - 42, my + 16], [mx, my - 2], [mx + 42, my + 16]], 10, 57);
+    else if (kind === "oh") { g.fillStyle = "#4a3a42"; g.beginPath(); g.ellipse(mx, my + 4, 22, 28, 0, 0, 7); g.fill(); g.lineWidth = 8; g.strokeStyle = INKD; g.stroke(); }
+  };
+  const refSweat = () => { g.fillStyle = "#a8d8f2"; g.beginPath(); g.moveTo(cx + rx * 0.74, cy - ry * 0.62); g.quadraticCurveTo(cx + rx * 0.92, cy - ry * 0.3, cx + rx * 0.74, cy - ry * 0.22); g.quadraticCurveTo(cx + rx * 0.54, cy - ry * 0.3, cx + rx * 0.74, cy - ry * 0.62); g.fill(); g.lineWidth = 7; g.strokeStyle = INKD; g.stroke(); };
+  const happyArc = (side: number) => { const x = cx + side * ex; inkStroke(g, [[x - 42, ey + 12], [x - 20, ey - 10], [x, ey - 18], [x + 20, ey - 10], [x + 42, ey + 12]], 11, 60 + side); };
+  if (look.ref) {
+    switch (expr) {
+      case "smug": case "proud": refEye(-1, 0.5); refEye(1, 0.5); inkStroke(g, [[cx - ex - 40, ey - 44], [cx - ex + 40, ey - 54]], 9, 91); inkStroke(g, [[cx + ex - 40, ey - 58], [cx + ex + 40, ey - 44]], 9, 92); refMouth("smirk"); break;
+      case "shock": case "worried": eye(-1, 1.25, 0, true); eye(1, 1.25, 0, true); brow(-1, 30, -4, 8); brow(1, 30, -4, 8); refMouth(expr === "shock" ? "oh" : "frown"); refSweat(); break;
+      case "grin": case "smile": case "laugh": happyArc(-1); happyArc(1); refMouth("smile"); break;
+      case "angry": case "strain": refEye(-1, 0.55); refEye(1, 0.55); inkStroke(g, [[cx - ex - 44, ey - 62], [cx - ex + 44, ey - 38]], 12, 93); inkStroke(g, [[cx + ex - 44, ey - 38], [cx + ex + 44, ey - 62]], 12, 94); refMouth("frown"); break;
+      case "sad": refEye(-1, 0.6); refEye(1, 0.6); inkStroke(g, [[cx - ex - 44, ey - 36], [cx - ex + 44, ey - 60]], 10, 95); inkStroke(g, [[cx + ex - 44, ey - 60], [cx + ex + 44, ey - 36]], 10, 96); refMouth("frown"); break;
+      case "blink": case "sleep": inkStroke(g, [[cx - ex - 44, ey + 4], [cx - ex, ey + 12], [cx - ex + 44, ey + 4]], 12, 65); inkStroke(g, [[cx + ex - 44, ey + 4], [cx + ex, ey + 12], [cx + ex + 44, ey + 4]], 12, 66); refMouth("bar"); break;
+      default: refEye(-1, 0.55); refEye(1, 0.55); refMouth("bar");
+    }
+  } else
   switch (expr) {
+    case "smile": eye(-1, 0.85); eye(1, 0.85); lid(-1, 0.2); lid(1, 0.2); brow(-1, 10, -6); brow(1, 10, -6); mouth("smirk"); break;
+    case "sad": eye(-1, 0.8); eye(1, 0.8); lid(-1, 0.4); lid(1, 0.4); brow(-1, 4, -14); brow(1, 4, -14); mouth("frown"); break;
     case "deadpan": eye(-1, 0.75); eye(1, 0.75); lid(-1, 0.45); lid(1, 0.45); brow(-1, 0, 4); brow(1, 0, 4); mouth("o"); break;
     case "smug": eye(-1, 0.7); eye(1, 0.7); lid(-1, 0.5); lid(1, 0.5); brow(-1, 4, 10); brow(1, 14, -6); mouth("smirk"); break;
     case "think": eye(-1, 0.8); eye(1, 0.8); lid(-1, 0.3); lid(1, 0.3); brow(-1, 18, -4); brow(1, 2, 10); mouth("flat"); break;
@@ -321,8 +370,8 @@ export const torsoTexture = (look: Look, key: string, v = 0) => {
   const body: [number, number][] = [];
   const curve = (t: number) => {
     // t 0..1 top to bottom, half width
-    const w = 120 + 120 * Math.sin(Math.min(1, t * 1.15) * Math.PI * 0.62);
-    return Math.min(w, 210) * (t > 0.92 ? 1 - (t - 0.92) * 6 : 1);
+    const w = look.ref ? 105 + 80 * Math.sin(Math.min(1, t * 1.1) * Math.PI * 0.6) : 120 + 120 * Math.sin(Math.min(1, t * 1.15) * Math.PI * 0.62);
+    return Math.min(w, look.ref ? 175 : 210) * (t > 0.92 ? 1 - (t - 0.92) * 6 : 1);
   };
   for (let i = 0; i <= 50; i++) { const t = i / 50; body.push([cx + curve(t), 40 + t * (H - 80)]); }
   for (let i = 50; i >= 0; i--) { const t = i / 50; body.push([cx - curve(t), 40 + t * (H - 80)]); }
@@ -344,7 +393,25 @@ export const torsoTexture = (look: Look, key: string, v = 0) => {
   g.fillStyle = look.shirtShade; g.globalAlpha = 0.6; g.beginPath(); g.roundRect(cx + 70, 300, 80, 70, 8); g.fill(); g.globalAlpha = 1; g.lineWidth = 6; g.strokeStyle = INKD; g.stroke();
   grain(g, W, H, 4, 700, 0.045);
   g.restore();
+  if (look.apron) {
+    g.save(); path(g, body); g.clip();
+    g.fillStyle = look.apron; g.beginPath(); g.moveTo(cx - 118, 160); g.lineTo(cx + 118, 160); g.lineTo(cx + 150, H); g.lineTo(cx - 150, H); g.closePath(); g.fill();
+    g.lineWidth = 8; g.strokeStyle = INKD; g.stroke();
+    g.fillStyle = "rgba(0,0,0,0.12)"; g.beginPath(); g.roundRect(cx - 70, 380, 140, 90, 10); g.fill(); g.stroke();
+    g.strokeStyle = look.apron; g.lineWidth = 12; g.beginPath(); g.moveTo(cx - 118, 160); g.lineTo(cx - 80, 40); g.moveTo(cx + 118, 160); g.lineTo(cx + 80, 40); g.stroke();
+    g.restore();
+  }
+  if (look.polo) {
+    // polo collar with two buttons, like the Cashiers reference
+    g.fillStyle = look.polo; g.lineWidth = 8; g.strokeStyle = INKD;
+    g.beginPath(); g.moveTo(cx - 100, 44); g.lineTo(cx - 8, 56); g.lineTo(cx - 6, 170); g.lineTo(cx - 70, 110); g.closePath(); g.fill(); g.stroke();
+    g.beginPath(); g.moveTo(cx + 100, 44); g.lineTo(cx + 8, 56); g.lineTo(cx + 6, 170); g.lineTo(cx + 70, 110); g.closePath(); g.fill(); g.stroke();
+    g.fillStyle = "#fbfbf6"; for (const yy of [92, 130]) { g.beginPath(); g.arc(cx, yy, 9, 0, 7); g.fill(); g.lineWidth = 5; g.stroke(); }
+    if (look.tag) { g.fillStyle = "#fbfbf6"; g.beginPath(); g.roundRect(cx + 38, 250, 120, 56, 8); g.fill(); g.lineWidth = 6; g.stroke(); g.fillStyle = INKD; g.font = "900 40px 'Lilita One', Arial Black, sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(look.tag, cx + 98, 280); }
+    if (look.badge) { g.fillStyle = look.badge; g.beginPath(); g.arc(cx - 100, 270, 32, 0, 7); g.fill(); g.lineWidth = 6; g.stroke(); g.fillStyle = "#2b5fa8"; g.beginPath(); g.ellipse(cx - 100, 270, 16, 8, 0, 0, 7); g.fill(); g.beginPath(); g.moveTo(cx - 84, 270); g.lineTo(cx - 70, 260); g.lineTo(cx - 70, 280); g.fill(); }
+  }
   // collar + tie
+  if (!look.polo) {
   g.fillStyle = look.collar ?? "#fbf4ec";
   g.beginPath(); g.moveTo(cx - 90, 40); g.lineTo(cx, 40); g.lineTo(cx - 12, 150); g.closePath(); g.fill();
   g.beginPath(); g.moveTo(cx + 90, 40); g.lineTo(cx, 40); g.lineTo(cx + 12, 150); g.closePath(); g.fill();
@@ -356,6 +423,8 @@ export const torsoTexture = (look: Look, key: string, v = 0) => {
     g.restore(); g.lineWidth = 7; g.strokeStyle = INKD; g.stroke();
     g.fillStyle = look.tie; g.beginPath(); g.roundRect(cx - 24, 56, 48, 46, 10); g.fill(); g.stroke();
   }
+  }
+  if (look.bowtie) { g.fillStyle = look.bowtie; g.lineWidth = 8; g.strokeStyle = INKD; g.beginPath(); g.moveTo(cx, 110); g.lineTo(cx - 62, 78); g.lineTo(cx - 62, 142); g.closePath(); g.fill(); g.stroke(); g.beginPath(); g.moveTo(cx, 110); g.lineTo(cx + 62, 78); g.lineTo(cx + 62, 142); g.closePath(); g.fill(); g.stroke(); g.beginPath(); g.arc(cx, 110, 15, 0, 7); g.fill(); g.stroke(); }
   inkStroke(g, body, 14, 8 + v * 5, true);
   const t = tex(c);
   torsoCache.set(key + v, t);
@@ -385,4 +454,11 @@ export const LOOKS: Record<string, Look> = {
   farm: { skin: "#f8efe6", skinShade: "#c6b4cc", hair: "#6a4a30", hairHi: "#a8784a", hairStyle: "side", shirt: "#7f9fb4", shirtShade: "#58788c", shirtHi: "#a8c4d4", vest: "#7a5a34", pants: "#4f4036", hat: "slouch", hatColor: "#d6bf7a", hatBand: "#8a3b2f", mustache: true, collar: "#7f9fb4" },
   officer: { skin: "#f8efe6", skinShade: "#c6b4cc", hair: "#3b2b2f", hairHi: "#7a5a50", hairStyle: "side", shirt: "#a39458", shirtShade: "#76693a", shirtHi: "#c8ba7c", tie: "#5a3a22", tie2: "rgba(255,230,180,.35)", pants: "#5f5430", hat: "slouch", hatColor: "#7d6f40", hatBand: "#3a2e1a", mustache: true, collar: "#a39458" },
   baker: { skin: "#f8efe6", skinShade: "#c6b4cc", hair: "#5a3a2a", hairHi: "#9a6a4a", hairStyle: "bald", shirt: "#f4f0e8", shirtShade: "#c0b8a8", shirtHi: "#ffffff", tie: undefined, pants: "#4a3a3a", hat: "none" },
+  // ---- reference style (Cashiers video) looks
+  kyle: { skin: "#fdfdfa", skinShade: "#d8d8de", hair: "#8a5a34", hairHi: "#c28a58", hairStyle: "fringe", curl: true, ref: true, shirt: "#e0302a", shirtShade: "#a81e1c", shirtHi: "#f2574a", polo: "#d8302a", tag: "KYLE", badge: "#f3d36a", pants: "#2c2c34" },
+  victor: { skin: "#fdfdfa", skinShade: "#d8d8de", hair: "#241a1c", hairHi: "#6a5a60", hairStyle: "side", slick: true, ref: true, mustache: true, shirt: "#2a2d3e", shirtShade: "#171a28", shirtHi: "#4a4f6a", collar: "#fbfbf6", bowtie: "#b8342e", pants: "#1f2230", hat: "top", hatColor: "#23232e", hatBand: "#b8342e" },
+  poisson: { skin: "#fdfdfa", skinShade: "#d8d8de", hair: "#6a4a32", hairHi: "#a87850", hairStyle: "fringe", ref: true, mustache: true, shirt: "#9a8a62", shirtShade: "#6e6040", shirtHi: "#c4b488", collar: "#fbfbf6", apron: "#d9d2bc", pants: "#4a3f34", hat: "bowler", hatColor: "#7a5a3c" },
+  dealer: { skin: "#fdfdfa", skinShade: "#d8d8de", hair: "#3a2a22", hairHi: "#7a5a46", hairStyle: "side", ref: true, shirt: "#5a7a8a", shirtShade: "#3a5262", shirtHi: "#86a8b8", collar: "#fbfbf6", pants: "#3a3a44", hat: "slouch", hatColor: "#7a6a4a", hatBand: "#3a2e1a", mustache: true },
+  dealer2: { skin: "#fdfdfa", skinShade: "#d8d8de", hair: "#8a8a92", hairHi: "#d4d4dc", hairStyle: "bald", ref: true, mustache: true, shirt: "#8a4a3a", shirtShade: "#5e2e22", shirtHi: "#b8705a", collar: "#fbfbf6", apron: "#c8c0a8", pants: "#3a3030" },
+  gendarme: { skin: "#fdfdfa", skinShade: "#d8d8de", hair: "#241a1c", hairHi: "#6a5a60", hairStyle: "side", ref: true, mustache: true, shirt: "#28365a", shirtShade: "#162040", shirtHi: "#4a5e8e", collar: "#e8e0c8", pants: "#1f2842", hat: "cap", hatColor: "#28365a" },
 };

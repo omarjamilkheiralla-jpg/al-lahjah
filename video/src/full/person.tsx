@@ -130,7 +130,7 @@ export const Person2: React.FC<PersonProps> = ({
       <group position={[0, bob, 0]} rotation={[0, 0, lean]}>
         {/* back arm (screen-left), drawn behind the torso */}
         <Arm s={ang.as} e={ang.ae} x={-0.27} z={-0.01} prop={handL} />
-        <group scale={[1, breathe, 1]} position={[0, 0.98, 0]}>
+        <group scale={[L.ref ? 1.16 : 1, breathe * (L.ref ? 1.08 : 1), 1]} position={[0, L.ref ? 1.0 : 0.98, 0]}>
           <mesh material={torsoMat}>
             <planeGeometry args={[0.66, 0.88]} />
           </mesh>
