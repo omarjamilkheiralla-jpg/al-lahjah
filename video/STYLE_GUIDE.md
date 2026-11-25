@@ -210,8 +210,11 @@ No thin wavy lines, hard texture stripes, tile seams, spiky outlines or faceted 
 - Wrapped UVs make seams: use a planar projection for blob textures.
 - Check every shot at full resolution (crop the ground and the props), not just thumbnails.
 
-## STYLE 1: "What if" day-by-day story (saved by the user; reference build = "What if a town won the lottery")
-Use this whenever the user says "style 1". It is a fictional/theoretical story told as scenes, not a facts lecture.
+## STYLE 1: "Explain-it-with-a-story" short (CORRECTED 2026-11-25: the user says Style 1 is NOT day-by-day)
+Use this whenever the user says "style 1". It is the original house format: a strange hook, a tiny story in a vivid 3D world, the "You see," pivot, ONE plain analogy that explains one real fact, and a last joke or payoff. Vertical Short, 30 to 65 s, about 110 to 240 words of narration (3.3 to 4.1 words per second). The full rule book is sections 1 to 10 at the top of this file (hook formulas, 7-beat table, phrases, captions, audio, camera) plus the "APPROVED HOUSE STYLE v2", narrator, ending ("ta-ding") and zero-tolerance sections. The newest build of it is "The Bear in the Saloon" (inattentional blindness; `projects/bear-saloon/`, Blender scenes in `projects/blender/`): hook = a gorilla experiment, then "Imagine you're in a saloon", the bear walks in, the reveal, "You see, think about the last time you searched the whole house for your keys...", then the last joke "The bear, for the record, got a free drink." See `video/STYLE1_INSTRUCTIONS.md` for the full briefing.
+
+## LONG WHAT-IF (day-by-day story; reference build = "What if a town won the lottery") - the user says this is NOT Style 1
+Older long-form variant (about 3 minutes, 1920x1080). Keep it only if the user asks for a "what if day by day" video. It is a fictional/theoretical story told as scenes, not a facts lecture.
 
 **Script rules**
 - Topic = a clear what-if premise with a cause. Hook = say the premise, then explain what started it in 2-3 short lines, then go straight into the story. NO foreshadowing of how the week ends ("by Friday X will happen" is banned).

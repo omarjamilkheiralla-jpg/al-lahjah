@@ -1,130 +1,142 @@
-# STYLE 1 INSTRUCTION DOCUMENT ("What if" day-by-day story)
+# STYLE 1 INSTRUCTION DOCUMENT ("Explain-it-with-a-story" short)
 
-Give this whole file to a new Claude chat. It contains everything learned while building the Style 1 reference video "What if an entire town won the lottery?" plus the user's standing rules. Read it fully before doing anything. Repo: `omarjamilkheiralla-jpg/al-lahjah`, branch `claude/magical-cannon-9igec5`, folder `video/`.
+Give this whole file to a new Claude chat. It holds everything learned about Style 1 plus the user's standing rules. Repo: `omarjamilkheiralla-jpg/al-lahjah`, branch `claude/magical-cannon-9igec5`, folder `video/`. Read it fully before doing anything.
+
+**Correction note:** an earlier version of this file said Style 1 was the "day by day what-if" story. The user said that is WRONG. Style 1 is the story short described here. The day-by-day what-if is a separate long-form format (section 14) and must NOT be used unless he asks for it by name. If anything in this file still feels off, ask the user one short question before building.
 
 ---
 
-## 0. The rules about working with this user (read first)
+## 0. Working with this user (read first)
 
-- The user runs a faceless YouTube channel, "Unlikely True": strange facts, what-ifs and stories, animated. He is NOT a programmer. He uses a Windows PC (`C:\Users\jamil`, repo at `C:\Users\jamil\al-lahjah`) with a Radeon RX 6800M laptop graphics card and renders every video himself.
+- He runs a faceless YouTube channel, "Unlikely True": strange facts, what-ifs and stories, animated. He is NOT a programmer. He uses a Windows PC (`C:\Users\jamil`, repo `C:\Users\jamil\al-lahjah`) with a Radeon RX 6800M laptop graphics card and renders the videos himself.
 - Talk short and plain. No jargon, no walls of text. ONE command per code block, each starting from a known folder. When he sends a screenshot of an error, solve only that error.
-- Be honest about what you did and did not check. You cannot hear audio and cannot watch motion. Say so every time. Never claim something is verified if it is not. Do not stand in for missing parts with fake results.
-- ALWAYS write the script first and WAIT for his approval before building anything. Exception: when he explicitly says to build a short sample, build it, but still show what the script was.
-- He gets frustrated by repeated mistakes, vague messages, and sloppy results. He compares your output to real reference videos frame by frame. Match references closely, not roughly.
-- Commit and push everything to the branch above. A stop hook forces commit and push at the end of every turn. Do NOT open a pull request unless he asks.
-- Always remind him to `git pull` before rendering (his git sometimes fails with "Could not resolve host": that means his internet was down, just retry).
+- Be honest about what you did and did not check. You cannot hear audio and cannot watch motion. Say so every time. Never claim something is verified if it is not, and never fake a missing part.
+- ALWAYS write the script first and WAIT for his approval before building a new video. (When he explicitly asks for a short sample, build it and show the script.)
+- Later rule from him: no permission prompts or questions in the middle of a task. Do the work, then report. Ask only when you truly cannot tell what he means (like which style).
+- He is frustrated by repeated mistakes, vague messages and sloppy results. He compares your output to references frame by frame. Match references closely.
+- Commit and push everything to the branch above. Do NOT open a pull request unless he asks. Always remind him to `git pull` before rendering (his git says "Could not resolve host" when his internet is down; just retry).
 - Never put his name, email or project details in outside requests.
 
-## 1. What Style 1 is (one paragraph)
+## 1. What Style 1 is
 
-A fictional, theoretical story told as a countdown of scenes, not a facts lecture. Premise = a clear "what if" with a cause (what if an entire town won the lottery). Each day (Monday, Tuesday, ...) is a new place, a new problem and a punchline, and it escalates every day. Lots of jokes, reactions and visual gags, almost no wisdom. About 3 minutes long, horizontal 1920x1080. The reference build is the lottery town video (composition id `Town`, about 2:45, 27 shots, narration about 164 s).
+A tiny cartoon story, told in a lush 3D world, that secretly teaches ONE real science, psychology or engineering fact. The viewer thinks they are watching a story; the payoff is the explanation. Format of Zack D. Films: strange hook, story, explanation, payoff. Vertical Short, 1080x1920, 30 to 65 seconds, 110 to 240 words of narration (3.3 to 4.1 words per second), ends on a last joke or visual. One fact, one analogy, one payoff.
 
-## 2. Script rules (the most important part)
+Newest build: **"The Bear in the Saloon"** (`projects/bear-saloon/`, scenes in `projects/blender/`), about inattentional blindness. Its narration is the model to copy (12 sentences):
+1. Hook: "In a famous experiment, half the people who stared right at a gorilla never saw it."
+2. Put the viewer in the story: "Imagine you're in a saloon, and the sheriff gives you one job. Count how many times the dealer shuffles the deck."
+3. Easy setup, short lines: "Easy. You watch his hands. Shuffle. Shuffle. Shuffle."
+4. The surprise happens in plain sight: "Behind him, a giant brown bear walks in, stops in the middle of the room, waves at the crowd, and walks out."
+5. Question, answer: "The sheriff asks, notice anything strange?" / "You say, no. Fourteen shuffles."
+6. Reveal: "Then he plays it back. And there's a bear. Right there, for nine whole seconds."
+7. The real fact: "Nothing is wrong with your eyes. In nineteen ninety nine, researchers at Harvard ran this test with a gorilla suit, and about half the people missed it."
+8. "You see," pivot with ONE everyday analogy: "You see, think about the last time you searched the whole house for your keys, and they were right there on the table."
+9. Plain science line: "Your eyes saw them. Your brain just wasn't looking for them." / "Give it a job, and it ignores everything that isn't part of the job. Even a bear."
+10. Last joke: "The bear, for the record, got a free drink."
 
-**Premise and hook**
-- The hook says the premise, then explains what started it in 2 to 3 short lines, then goes straight into the story.
-- NO foreshadowing of how the week ends. "By Friday X will happen" is banned. No teaser of the ending.
-- If the user's idea is false as science, SAY SO and offer a nearby topic where the claim is true (he accepted this when "the Moon collapses by day 7" was dropped). Never present a made-up claim as real.
+## 2. The hook (first 0 to 4 seconds), most important
 
-**Structure**
-- Day-by-day or time-by-time countdown. Each day: new location, new problem, a punchline. Escalate every day.
-- Beats: "But" (turn), "You see," (pivot, own beat), "So" (consequence). The video ends with the "ta-ding" (section 4).
-- Short punchy lines, concrete scenes, jokes, reactions. About 450 to 550 words is enough for about 3 minutes. More scenes, NOT more talk. Little yapping.
-- NO wisdom talk, no moral speeches, no "life lesson" ending. The ending is a last joke or visual (lottery town: the baker's "Help wanted, pay one million dollars a day" sign, and "Nobody applies. They are all in line for bread.").
-- At most ONE real fact, phrased safely, as a one-line twist (lottery town: the plain meaning of inflation, "too much money, chasing too few things"). Everything else is clearly fiction.
-- Write numbers and abbreviations as words: "Monday morning", NOT "8 a.m."; "three thousand", "one million dollars".
-- Merge tiny fragments into one full sentence so the voice and the captions read clean.
-- The "You see," line is exactly one sentence that starts with "You see," (example: "You see, the million dollars was never the problem.") and is followed by 2 to 3 short lines of explanation.
+- One sentence that is a strange, specific, concrete event. No greeting, no intro, no "today we'll learn", no "did you know". Frame 0 already shows the action; the camera is already moving. Never a static title card, never a fade-in.
+- Maximum about 15 words, ideally 7 to 12, spoken in 2.5 to 5 seconds. It must make the viewer ask "why?". Do NOT answer it in the first third. Use one exact number or tiny detail (39 feet, one inch, nine seconds).
+- Formulas (pick one): (1) weird deliberate act, "He sawed gaps into a railroad every 39 feet." (2) paradox, "The fastest gun in the west had one rule: never draw first." (3) you-moment, "You just watched two jackpot symbols land, and the third stopped one click short." (4) absurd crime or prank, "A man snuck into a house every night and moved every thing one inch to the left."
+- The title is the same hook in a "Why X..." or "This ... " form.
+- The first 4 seconds are the densest: about 6 to 8 distinct frames. The hook visual changes every 0.5 to 1 s.
+- No foreshadowing of the ending and no moral at the end.
+- If the user's idea is false as science, SAY SO and offer a topic where the claim is true (he accepted this when "the Moon collapses by day 7" was dropped).
 
-**Reference script shape (lottery town)**: hook (premise, small town, one dollar a week for ten years, 3 billion jackpot, one million each) -> Monday (check delivered, town screams) -> Tuesday (shopping spree: cars, boat in a driveway with no lake, trucks, gas station runs low) -> Wednesday (everyone quits, the shops are still open) -> Thursday (prices: bread 3 to 20 to 50 to 100 dollars, a couch for ten thousand, lemonade two hundred) -> Friday (empty shelves, burst pipe, no plumber) -> Saturday (helicopters sell sandwiches for five hundred dollars) -> "You see," pivot -> the one real fact -> Sunday (back to work, Help wanted sign) -> last joke.
+## 3. Story skeleton (for about 60 s, scale down for 30 s)
 
-## 3. Voice (final decisions, never break)
+| Beat | Time | What happens |
+|---|---|---|
+| Hook | 0 to 4 s | strange act or paradox |
+| Setup / "Imagine you're..." | 4 to 10 s | stakes, a job, a race or a deadline |
+| Protagonist chooses the unusual thing or is mocked | 10 to 25 s | counter-intuitive choice, the others laugh |
+| The obvious way looks like it wins | 20 to 35 s | tension: viewer wants to see it fail |
+| Turn | 35 to 45 s | "Then something weird happens", reality proves him right |
+| Escalation | 45 to 55 s | conditions get extreme |
+| Payoff + one-line science | last 10 to 15 s | the obvious thing fails; science in ONE plain sentence with ONE everyday analogy |
+| Hard stop | last frame | ends on the visual consequence or a last joke. No outro, no call to action, no "follow for more" |
+Variants: explainer-in-story (story first, then "You see," and an analogy); twist ending (no science, the last line recontextualises everything); 30 s short (problem, then "So let's crack it open", then the mechanism).
 
-- Narrator for Style 1: Kokoro `am_liam` (the "version 5" voice), one steady voice. Speed formula `1 + (sp - 1) * 0.35`, gain at most 0.8 dB. NO pitch shifting, NO phase vocoder, NO clarity/EQ chain, NO other text-to-speech tools. Chatterbox was tried and removed ("so zesty"): never reinstall it. Other Kokoro voices were samples only.
-- Deliver phrase by phrase. No "?" or "!" on lines that would sound sassy.
-- **"You see," is its own beat.** Generate it INSIDE its full sentence (a two-word phrase alone sounds clipped and like "You'll see"), cut at the natural comma gap with 25 ms fades, insert a 0.42 s pause, and VERIFY by transcription (faster-whisper) that the first words are "you" then "see". The first half must be between 0.36 s and 1.3 s. If the check fails, retry at other speeds. No sound effect may land on the "You see," beat (a heartbeat thud there was heard as "bp"). In the user's earlier notes: about 1 s of silence before, about 0.4 s after.
-- Voice files are generated by `projects/what-if-lottery-town/make_voice.py <kokoro.onnx> <voices.bin> <out_dir>`; the per-shot lines live in `shots.py` (list of `(sentence, speed, gain_db, gap_after_seconds)`; a line starting with `@YOUSEE:` triggers the "You see," procedure). The Kokoro model files (`kokoro-v1.0.onnx`, `voices-v1.0.bin`) are NOT in the repo and must be downloaded again. Python packages: `kokoro_onnx`, `faster-whisper`, `soundfile`, `numpy`, `scipy`, `pillow`; `ffmpeg` must exist. Run Python with `-I` and add the script folder to `sys.path`.
+Phrases the narrator reuses: "You see, ..." (introduces the reason), "So, ..." (cause and effect), "But..." (flip fortune), "Then ... and something weird happens", "By the end of the week...", "Imagine you're...", "So let's crack it open." A line of character dialogue at the emotional peak. Physical, vivid similes ("crushed like a soda can").
 
-## 4. Audio
+## 4. Writing rules
 
-- Music by section that follows the story: comic, build, tense, lull, resolve. Sound effects per beat: cha-ching on every price, crowd cheer on the big moment, pops on "I quit", a comic "wah" on the "But" beat, etc. Music about 10 dB under the voice and ducked; voice never masked. Loudness -14 LUFS (ffmpeg loudnorm). All synthesised in numpy: `projects/what-if-lottery-town/make_audio.py` writes `public/<name>_mix.wav`.
-- **Ending "ta-ding" (every video, Style 1 included):** right after the last spoken word, a quick marimba "ta" about 0.12 s later, then a bright bell/marimba "-ding" arpeggio with a soft pad about 0.36 s later. The video runs about 1.5 s past the last word to let it ring. (Style 2 to 4 videos do NOT use it; only Style 1 and the older story videos.)
-- Captions come from the real script words aligned to a faster-whisper transcript: `make_timing.py <voice.wav> <lines.json> <timing.json>` (copy result to `src/town/timing.json`). Captions show the EXACT script text, 1 to 4 words at a time, font Lilita One, bottom centre. Fix "You'll see" to "You see," and "x -rays" to "X-rays" in captions.
+- Average sentence 12 to 16 words; alternate one long sentence with a very short one ("Not really." "But it's too late.").
+- Present tense for the story, second person for the viewer in the scene. Concrete and countable (39 feet, five versus sixty miles per hour, a hundred dollars, three in the morning, one inch).
+- One idea per video, explained with ONE everyday analogy. Name characters by role or nickname, not backstory.
+- Reading level 6th to 8th grade. Science line spoken plainly, like to a friend: no jargon, no formulas.
+- Write numbers and abbreviations as words ("nineteen ninety nine", "Monday morning", NOT "8 a.m."). Merge tiny fragments into full sentences so the voice and captions read clean.
+- No wisdom talk, no moral speech, no "life lesson", little yapping. Never "hey guys", never "like and subscribe".
 
-## 5. Look (the world and the people)
+## 5. Voice (final decisions, never break)
 
-- 16:9, 1920x1080. The reference used 50 fps, which can judder on a 60 Hz screen (the user said "a bit of lag"): offer 60 fps.
-- ONE shot per place or camera idea; split a long line into two shots when the location changes. A DIFFERENT camera angle every shot; the camera NEVER stops (push in, crane, low hero angle, top-down, tilted close-up, side track). Cuts land about 0.1 s before each spoken line with a small zoom punch and a soft flash. Camera key paths with a monotone cubic time warp (ease in/out), tiny natural sway.
-- The world must read as a REAL CITY: continuous buildings on both sides of the street, a cross street, plaza, skyline behind, no isolated block on an empty lawn, no hills or grass as filler. Every special place (gas station, suburb street, moving van, houses, dealership) sits INSIDE the street layout.
-- Buildings: brick/paint/siding, shop fronts with awnings and signs, water tanks, AC units, balconies, flower boxes, potted plants, pilasters, blade signs, a clock tower town hall. Painted in-world signs and price tags for every number (never floating text). Soft key light from the upper left, soft shadows, hazy horizon fog, bloom, grain, vignette, depth of field on the subject (`src/hotel/PostFX.tsx`).
-- People: flat painted 2D characters (`Person2`, `src/full/person.tsx`, art in `src/full/paint.ts`) standing in the 3D world: big round pale head, calm half-lidded eyes, thin ink limbs, shaded two-tone clothes, soft contact shadow. 44 generated crowd looks (`src/town/looks.ts`: skin tones, hair, hats, shirts, ties, vests, glasses, mustaches) so crowds are never the same twice; role characters (mayor, baker, clerk, doctor...) keep fixed looks. No conical hats for generic crowds. Expressions that change with the story (deadpan, smug, worried, shock, grin, laugh, angry, proud, think), blinking every 3 to 4 s, breathing bob.
-- People must NEVER walk in place, overlap or collide: moving = walk pose, arrived = idle/cheer; each person gets a unique target spot and lane. `Person2` has `gait` and `amp` so the walk cycle matches ground speed (no foot sliding). No object may pass through a character; no characters inside furniture.
-- Props that tell the story: giant check on an easel, scrolling names, lottery TV, money confetti, SOLD signs, car dealership, boat in a driveway, couch carried to a moving van, price board flipping, helicopter food drop, balloon inflating.
-- Geometry facts: flat characters face +z, so film them from +z (looking along -z). At yaw above 0.3 they mirror. The camera must never look along their plane (they become sticks). In the Town world keep camera z at most 14 (front-row awnings reach z about 15.6).
+- Narrator for Style 1: Kokoro `am_liam` (the "version 5" voice), one steady voice. Speed `1 + (sp - 1) * 0.35` (near constant), gain at most 0.8 dB. NO pitch shifting, NO phase vocoder, NO clarity/EQ chain, NO other text-to-speech tools. Emotion comes from wording, punctuation, pauses and tiny gain changes. Chatterbox was tried and removed ("so zesty"): never reinstall. (Style 4 is the only style allowed different voices per character.)
+- No "?" or "!" on lines that would sound sassy; deliver phrase by phrase.
+- **"You see," is its own beat.** Generate it INSIDE its full sentence (a two-word phrase alone sounds clipped and like "You'll see"), cut at the comma gap with 25 ms fades, insert a 0.42 s pause (about 1 s of silence BEFORE the line, about 0.4 s after), and VERIFY by transcription (faster-whisper) that the first words are "you" then "see". No sound effect may land on the "You see," beat (a heartbeat thud there was heard as "bp"). Reference code: `projects/bear-saloon/make_voice.py` and `projects/what-if-lottery-town/make_voice.py` (`yousee()` function).
+- Kokoro model files (`kokoro-v1.0.onnx`, `voices-v1.0.bin`) are NOT in the repo; on his PC they are in `C:\Users\jamil\kokoro_models` (set `HF_HUB_DISABLE_XET=1` when downloading). Python packages: `kokoro_onnx`, `faster-whisper`, `soundfile`, `numpy`, `scipy`, `pillow`; ffmpeg must exist. Run Python with `-I`.
+- Captions: the REAL script words aligned to a faster-whisper transcript (`make_timing.py` in the lottery project is the reference), so captions show the exact script text. Fix "You'll see" to "You see," and "x -rays" to "X-rays".
 
-## 6. ZERO tolerance (the user's words, final)
+## 6. Captions, camera, pacing
 
-No stray lines, thin wavy lines, hard texture stripes, tile seams, spiky outlines, faceted shards, floating or cut-off parts (hats, props), text running off boards, objects blocking faces, flat empty ground, characters sideways, objects phasing through each other. Every surface needs texture and detail; depth in everything. Rules that came from real bugs:
-- Ground textures must be seamless (draw blobs wrapped at the tile edges) and contain no ripple/stroke lines.
-- Organic meshes must be welded (`mergeVertices`) with smooth normals before outlining; never outline a non-indexed displaced icosahedron.
-- Wrapped UVs make seams: use a planar projection for blob textures.
-- Hats are drawn at 78 percent inside the head canvas so they are never cut off.
-- Signs are painted in the world at true proportions (Rye for signs, Playfair for plates, Lilita One for chalk and captions), never stretched.
+- Captions burned in, word by word: 1 to 4 words each, never a full sentence, font Lilita One, white with a thick dark outline and soft shadow, no box, centred in the lower third (about 70 percent down). Keep out of the top 10 percent and the bottom 12 percent. Always on, first word to last.
+- The camera almost never stops: push-ins, dollies, orbits, whip-pans, low hero angles, extreme close-ups. A DIFFERENT camera angle every shot. Cuts land about 0.1 s before each spoken line, with a small zoom punch and a soft flash. A new shot about every 1.5 to 3 s; a new visual idea about every sentence. Ease in and out (monotone time warp), tiny natural sway.
+- Mix three scales in every beat: wide (world), medium (character emotion), extreme close-up (the key object). Use a top-down "diagram" shot when explaining the mechanism, and literally show the mechanism (cut open the machine, show the gap, the ruler). Never narrate over unrelated footage.
+- Vertical composition: subject in the upper two thirds, bottom quarter reserved for captions.
+- Climax = explosion, crash or big effect for the last 1 to 2 s, OR a character reaction/last joke. No outro.
 
-## 7. Engineering rules (so the render does not crash)
+## 7. Audio
 
-- Stack: Remotion 4.0.541 + three 0.187 + @react-three/fiber 9 + drei + `postprocessing`. Composition `Town`, files `src/town/{world,scenes,looks,TownFull}.tsx`, `src/town/Thumb.tsx`, `src/town/timing.json`, root registration in `src/Root.tsx`.
-- NEVER create geometry, materials or textures inside render code. Per-frame allocation ran Chrome out of memory at frame 2016. Use the cached helpers in `src/town/world.tsx` (`box`, `geo`, `toon`, `rep`) and `React.memo` all static scenery (buildings, trees, lamps, street, skyline).
-- Fonts are shipped in `public/fonts` (Lilita One, Rye, Playfair Display) so every machine renders the same.
-- Three-band toon materials, inverted-hull ink outlines (`Ink` in `src/hotel/kit.tsx`, ink `#351f22`), painted canvas textures.
+- Synthesised in numpy (`make_audio.py` pattern): music bed that changes with the story, short sound effects for EVERY action (whoosh on camera moves, spark, crash, boing), comic beats. Music about 10 dB under the voice and ducked; voice never masked. About -14 LUFS (ffmpeg loudnorm), true peak at most -2 dB. Never leave silence for effect.
+- **Ending "ta-ding" (every Style 1 video):** right after the last spoken word, a quick marimba "ta" about 0.12 s later, then a bright bell/marimba "-ding" arpeggio with a soft pad about 0.36 s later. The video runs about 1.5 s past the last word to let it ring.
 
-## 8. QA before you say "ready"
+## 8. Look
 
-The cloud has NO graphics card (software rendering). A single half-size test frame can take 1 to 25 minutes. Procedure:
-1. Render one frame per shot at half size, 4 to 6 at a time, with long timeouts: `npx remotion still src/index.ts Town out.png --frame=N --scale=0.5 --props='{"captions":false,"audio":false}' --gl=swangle`. Make contact sheets with PIL and LOOK at every shot at full size (crop ground and props, not just thumbnails). Then render one frame with captions.
-2. Look specifically for: things passing through each other, cut-off hats or props, parts floating or detached, text running off boards, objects blocking faces, characters in the lens, flat empty ground, people walking in place, collisions.
-3. Be honest in the final message: list what was checked and what was NOT (all audio, all motion, any frame you did not render).
-Better: if a session on the user's PC is available (section 10), render there, it is far faster.
+- House style v2 ("painted 3D world", approved on "Cut Every Tail"): a real, deep 3D place with foreground, midground and background; long streets that recede to a hazy horizon; atmosphere (sky with real clouds, warm key light from upper left, soft shadows, fog matched to the horizon, bloom, film grain, vignette, depth of field on the subject); textured ground with scatter; life and set dressing in every location (stalls, lanterns, bunting, clocks, shelves with books, plants). Signs and text are painted INSIDE the world at true proportions (Rye for signs, Playfair for plates, Lilita One for chalk and captions), never stretched.
+- Characters: painted 2D characters standing in the 3D world (`Person2` in `src/full/person.tsx`): big round pale head, calm half-lidded eyes, thin tapered ink limbs, shaded two-tone clothes, soft contact shadow; recognisable by costume; 8+ expressions that change with the story; blink every 3 to 4 s. Feet and legs are one unit. No object may pass through a character.
+- Flat characters face +z: film them from +z (looking along -z). At yaw above 0.3 they mirror, and the camera must never look along their plane.
+- **Newest direction (Bear in the Saloon):** a Blender (EEVEE) pipeline with a free Poly Haven library (`video/assets/polyhaven`, gitignored, about 1.5 GB), a stick-character kit with ink outlines, and Remotion for captions, graphics and the grade. He wants a luxurious, movie-like, watchable look, and (his "later" request) thicker, smoother limbs with smoother joins instead of thin sticks. Blender 5.3 is on his PC; the RX 6800M needs a newer AMD driver (Vulkan `VK_KHR_dynamic_rendering` missing). Read `video/HANDOFF.md` sections 9 and 10 for the latest before choosing Remotion or Blender.
 
-## 9. The user renders it himself (Windows PowerShell, one command at a time)
+## 9. ZERO tolerance (his words, final)
+
+No stray lines, thin wavy lines, hard texture stripes, tile seams, spiky outlines, faceted shards, floating or cut-off parts (hats, props), text running off boards, objects blocking faces, flat empty ground, characters sideways, people walking in place or overlapping, objects phasing through each other. Every surface needs texture and detail, depth in everything. Lessons from real bugs: seamless wrapped ground textures with no stroke lines; weld meshes (`mergeVertices`) with smooth normals before outlining; planar UVs for blob textures; hats drawn at 78 percent inside the head canvas.
+
+## 10. Engineering rules (Remotion side)
+
+- Stack: Remotion 4.0.541 + three 0.187 + @react-three/fiber 9 + drei + `postprocessing`, 60 fps for Shorts at 1080x1920. Custom `src/hotel/PostFX.tsx` (depth of field, bloom, grain, vignette). Fonts are shipped in `public/fonts`.
+- NEVER create geometry, materials or textures inside render code (that crashed Chrome at frame 2016). Use cached helpers (`box`, `geo`, `toon`, `rep` in `src/town/world.tsx`) and `React.memo` all static scenery.
+- Anti-glitch: seamless textures, welded meshes, planar UVs, no characters inside furniture.
+
+## 11. QA before you say "ready"
+
+The cloud has NO graphics card; one half-size test frame takes 1 to 25 minutes. Render one frame per shot at half size, 4 to 6 in parallel with long timeouts: `npx remotion still src/index.ts <CompositionId> out.png --frame=N --scale=0.5 --props='{"captions":false,"audio":false}' --gl=swangle`. Make contact sheets and LOOK at every shot at full size. Look for: things passing through each other, cut-off hats or props, floating or detached parts, text off boards, objects blocking faces, characters in the lens, flat empty ground, people walking in place. Then be honest in the final message about what was NOT checked (all audio, all motion, unrendered frames). If a session on his PC is available (section 13), render there: far faster.
+
+## 12. The user renders it himself (Windows PowerShell, one command at a time)
 
 ```
 cd C:\Users\jamil\al-lahjah
 git checkout -- video/package-lock.json
 git pull
 cd video
-npx remotion render src/index.ts Town out\lottery_town_v2.mp4 --gl=angle --concurrency=2 --crf=17 --image-format=jpeg --jpeg-quality=92 --timeout=300000
+npx remotion render src/index.ts <CompositionId> out\<name>_v2.mp4 --gl=angle --concurrency=2 --crf=17 --image-format=jpeg --jpeg-quality=92 --timeout=300000
 ```
-(Each line is its own command.) If Chrome runs out of memory use `--concurrency=1`. Use a NEW output file name every time (a locked old file gives EPERM). He must be inside `...\al-lahjah\video` or `npx` gives a network error. `render_town.bat` exists; the old bat used `--concurrency=4`, which can crash him.
+(each line is its own command). If Chrome runs out of memory use `--concurrency=1`. Use a NEW output file name every time (a locked old file gives EPERM). He must be inside `...\al-lahjah\video` or `npx` shows a network error.
 
-## 10. Using his graphics card from the cloud chat (optional, worked once)
+## 13. Using his graphics card from a cloud chat (worked once)
 
-He installed the Claude command (`npm install -g @anthropic-ai/claude-code`), logged in (`claude auth login`), and ran `claude remote-control` inside `C:\Users\jamil\al-lahjah` (answer `y` to trust and `1` for same-dir). The PowerShell window must stay open, the laptop plugged in and awake (`powercfg /change standby-timeout-ac 0`). Then `list_environments` shows a "bridge" environment, and a session can be started on it with `create_session`; the owner has to approve once with `confirm_repository_trust`. Never run two `claude remote-control` windows at once. Use `--gl=angle` there (NOT `swangle`).
+He installed `npm install -g @anthropic-ai/claude-code`, ran `claude auth login`, then `claude remote-control` inside `C:\Users\jamil\al-lahjah` (answer `y` to trust, `1` for same-dir). The PowerShell window must stay open and the laptop plugged in and awake (`powercfg /change standby-timeout-ac 0`). Never run two `claude remote-control` windows. `list_environments` then shows a "bridge" environment; start a session on it with `create_session` (the owner approves once with `confirm_repository_trust`). On his PC use `--gl=angle`, NOT `swangle`.
 
-## 11. Delivery package for each video
+## 14. Not Style 1 (do not mix up)
 
-- Title, description and thumbnail. NO sources in the description, but include the disclaimer lines and the line that the voice is synthetic (AI-generated).
-- Thumbnails must come from the video's own world (real frames or a close-up render of its scene), never unrelated art. The lottery thumbnail the user liked best is `projects/what-if-lottery-town/thumbnail_clean.png`.
-- Channel assets (new): night profile picture and banner are in `video/reference/channel/`.
+- **Long what-if (day by day)**: Monday, Tuesday, ... countdown, 3 minutes, 1920x1080, one punchline per day, reference build "What if an entire town won the lottery?" (`Town`, `src/town/`, `projects/what-if-lottery-town/`). Only use if he asks for it.
+- **Style 2**: silent doubling-escalation counter. **Style 3**: doubling aura/luck mini-movie with realistic low-poly people and a rolling counter. **Style 4**: first-person phone-horror "two choices" story with a voice per character. All described in `video/STYLE_GUIDE.md`.
+- Another Claude session may work in the same repo folder (Bear in the Saloon). Do not touch its files; avoid two sessions in one folder.
 
-## 12. How to start a NEW Style 1 video (checklist)
+## 15. Checklist for a new Style 1 video
 
-1. Ask the user for the premise, or propose 3 with a clear cause. Check it is true or safely fictional; say so if it is false science.
-2. Write the script (450 to 550 words, day by day, one punchline per day, one real fact at most, "You see," pivot, numbers as words). Post it and WAIT for approval.
-3. After approval: shot list (one shot per line; split when the location changes; mark wide, medium and close, camera move, time of day, props and the signs/prices to paint). Copy the structure of `projects/what-if-lottery-town/` to a new project folder (`SCRIPT.md`, `shots.py`, `make_voice.py`, `make_timing.py`, `make_audio.py`) and `src/town/` to a new scene folder.
-4. Build voice -> timing -> audio -> scenes. Test frames for every shot. Fix at the source.
-5. Tell the user plainly what was and was not checked, then give the render commands. Update `video/HANDOFF.md` and `video/STYLE_GUIDE.md`, commit, push.
-
-## 13. Other styles the user also has (do not mix them up)
-
-- **Style 2**: silent doubling-escalation counter ("every step twice as long as the last"), HUD block top-left, clean blocky 3D, rising soundtrack, no voice, no ta-ding.
-- **Style 3**: "doubling aura/luck" mini-movie with smooth realistic low-poly 3D people and a rolling counter, no catchphrase. Code in `src/style3/`.
-- **Style 4**: first-person phone-horror "two choices" story, different voice per character allowed, ends on "WHAT WOULD YOU DO?". Code in `src/style4/`.
-All are written up in `video/STYLE_GUIDE.md` and `video/HANDOFF.md`. The "one narrator, am_liam" and "ta-ding" rules belong to Style 1 and the older story videos.
-
-## 14. Newer work on the branch (check `video/HANDOFF.md` for the latest, it changes often)
-
-- A newer Style 1 video, **"The Bear in the Saloon"** (`projects/bear-saloon/`, Blender scenes in `projects/blender/`), was built by another Claude session with a Blender (EEVEE) pipeline and a free Poly Haven asset library (`video/assets/polyhaven`, not in git, about 1.5 GB). Its notes in HANDOFF say the user wants a more luxurious, movie-like, watchable look than the Remotion flat-painted people, and that stick/cartoon characters should have thicker, smoother limbs with smoother joins (his "later" request). Read those HANDOFF sections before choosing between the Remotion `Town` approach (this document) and the Blender approach.
-- Style 4 later got two longer videos (`Style4Full`, `Style4Walk`) with per-character Kokoro voices; the Kokoro model files live on the user's PC in `C:\Users\jamil\kokoro_models` (outside the repo). Set `HF_HUB_DISABLE_XET=1` when downloading models.
-- User rule added later: he does NOT want permission prompts or questions in the middle of a task. Just do the work, then report. (He still wants the script approved before building a new video.)
-- Another Claude session may be working in the same repo folder. Do not touch its files and avoid two sessions in one folder.
+1. Pick a counter-intuitive fact that one analogy can explain ("most people think X, but actually Y"). Check it is true; if false, say so and offer a true topic.
+2. Write the hook first (formulas in section 2). If it does not spark a "why?", rewrite.
+3. Write the full script (section 3 and 4), count words (3.5 words per second times the target seconds), mark the "You see," line. Post it and WAIT for approval.
+4. Shot list: at least one shot per sentence, wide/medium/close, camera move, time of day and palette, every sign and number to paint, the final effect.
+5. Build voice, then caption timing, then audio, then scenes; test frames for every shot; fix at the source.
+6. Tell him plainly what was and was not checked, give the render commands. Write title, description (NO sources; include the disclaimer lines and the "synthetic (AI-generated) voice" line) and a thumbnail made from the video's own world.
+7. Update `video/HANDOFF.md` and `video/STYLE_GUIDE.md`, commit, push.
