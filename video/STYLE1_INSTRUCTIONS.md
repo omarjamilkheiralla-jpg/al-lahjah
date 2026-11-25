@@ -121,3 +121,10 @@ He installed the Claude command (`npm install -g @anthropic-ai/claude-code`), lo
 - **Style 3**: "doubling aura/luck" mini-movie with smooth realistic low-poly 3D people and a rolling counter, no catchphrase. Code in `src/style3/`.
 - **Style 4**: first-person phone-horror "two choices" story, different voice per character allowed, ends on "WHAT WOULD YOU DO?". Code in `src/style4/`.
 All are written up in `video/STYLE_GUIDE.md` and `video/HANDOFF.md`. The "one narrator, am_liam" and "ta-ding" rules belong to Style 1 and the older story videos.
+
+## 14. Newer work on the branch (check `video/HANDOFF.md` for the latest, it changes often)
+
+- A newer Style 1 video, **"The Bear in the Saloon"** (`projects/bear-saloon/`, Blender scenes in `projects/blender/`), was built by another Claude session with a Blender (EEVEE) pipeline and a free Poly Haven asset library (`video/assets/polyhaven`, not in git, about 1.5 GB). Its notes in HANDOFF say the user wants a more luxurious, movie-like, watchable look than the Remotion flat-painted people, and that stick/cartoon characters should have thicker, smoother limbs with smoother joins (his "later" request). Read those HANDOFF sections before choosing between the Remotion `Town` approach (this document) and the Blender approach.
+- Style 4 later got two longer videos (`Style4Full`, `Style4Walk`) with per-character Kokoro voices; the Kokoro model files live on the user's PC in `C:\Users\jamil\kokoro_models` (outside the repo). Set `HF_HUB_DISABLE_XET=1` when downloading models.
+- User rule added later: he does NOT want permission prompts or questions in the middle of a task. Just do the work, then report. (He still wants the script approved before building a new video.)
+- Another Claude session may be working in the same repo folder. Do not touch its files and avoid two sessions in one folder.
