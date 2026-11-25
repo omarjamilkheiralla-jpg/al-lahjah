@@ -173,11 +173,11 @@ export const Maggots: React.FC<{ t: number; n: number; spread?: number; fall?: n
 /** plank with carved tally marks (n of them), in-world */
 export const TallyBoard: React.FC<{ p: V3; n: number; rot?: number; s?: number }> = ({ p, n, rot = 0, s = 1 }) => {
   const tx = memo("tally" + n, () => cv(1024, 384, (g, w, h) => {
-    const pt = plankTex("#9a7048").image as HTMLCanvasElement; g.drawImage(pt, 0, 0, w, h);
+    const pt = plankTex("#9a7048").image as HTMLCanvasElement; g.drawImage(pt, 0, 0, w, h); g.fillStyle = "rgba(255,236,200,.55)"; g.fillRect(0, 0, w, h);
     g.strokeStyle = "#2a1a10"; g.lineWidth = 10; g.lineCap = "round";
     for (let i = 0; i < n; i++) { const grp = Math.floor(i / 5), k = i % 5; const gx = 50 + (grp % 6) * 160, gy = 70 + Math.floor(grp / 6) * 150; if (k < 4) { g.beginPath(); g.moveTo(gx + k * 26, gy); g.lineTo(gx + k * 26 + 4, gy + 110); g.stroke(); } else { g.beginPath(); g.moveTo(gx - 14, gy + 80); g.lineTo(gx + 100, gy + 28); g.stroke(); } }
   }));
-  const m = memo("tallym" + n, () => new THREE.MeshToonMaterial({ map: tx }));
+  const m = memo("tallym" + n, () => new THREE.MeshBasicMaterial({ map: tx, color: "#f4e4c8" }));
   return <group position={p} rotation={[0, rot, 0]} scale={s}><Ink geometry={box(2.4, 0.9, 0.08)} material={m} px={1.4} /></group>;
 };
 export const SignBoard: React.FC<{ p: V3; lines: string[]; w?: number; h?: number; rot?: number; bg?: string; fg?: string; posts?: boolean; font?: string }> = ({ p, lines, w = 3, h = 1.4, rot = 0, bg = "#efe2c0", fg = "#3a2a1a", posts = true, font = "Lilita One" }) => {

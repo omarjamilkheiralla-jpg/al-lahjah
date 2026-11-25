@@ -234,7 +234,7 @@ export const Canopy: React.FC<{ w?: number; d?: number; y?: number; seed?: numbe
 /** winding river ribbon for aerial shots */
 export const RiverRibbon: React.FC<{ f: (x: number) => number; w?: number; x0?: number; x1?: number; y?: number; t?: number }> = React.memo(({ f, w = 10, x0 = -200, x1 = 200, y = 0 }) => {
   const g = useMemo(() => { const n = 160; const pos: number[] = [], uv: number[] = [], idx: number[] = []; for (let i = 0; i <= n; i++) { const x = x0 + (i / n) * (x1 - x0); const z = f(x); const dz = (f(x + 0.5) - f(x - 0.5)); const len = Math.hypot(1, dz); const nx = -dz / len, nz = 1 / len; for (const s of [-1, 1]) { pos.push(x + nx * s * w / 2, y, z + nz * s * w / 2); uv.push(i / n * 20, s > 0 ? 1 : 0); } if (i < n) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); } } const gg = new THREE.BufferGeometry(); gg.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3)); gg.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2)); gg.setIndex(idx); gg.computeVertexNormals(); return gg; }, [f, w, x0, x1, y]);
-  const m = toonT("riverribbon", () => repT(waterTex(), 1, 1));
+  const m = toon("#6e9c9a");
   return <mesh geometry={g} material={m} receiveShadow />;
 });
 
@@ -259,7 +259,7 @@ export const Butterflies: React.FC<{ t: number; n?: number; c?: V3; r?: number }
 export const Motes: React.FC<{ t: number; n?: number; area?: V3; c?: V3; color?: string }> = ({ t, n = 50, area = [14, 5, 10], c = [0, 0, 0], color = "#fff0b0" }) => {
   const pts = useMemo(() => { const r = rng(9); return Array.from({ length: n }, () => ({ x: (r() - 0.5) * area[0], y: 0.3 + r() * area[1], z: (r() - 0.5) * area[2], ph: r() * 6 })); }, [n, area]);
   const m = memo("mote" + color, () => new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.6, depthWrite: false }));
-  return <group position={c}>{pts.map((q, i) => <mesh key={i} material={m} position={[q.x + Math.sin(t * 0.4 + q.ph) * 0.5, q.y + Math.sin(t * 0.6 + q.ph * 2) * 0.3, q.z]}><circleGeometry args={[0.03, 6]} /></mesh>)}</group>;
+  return <group position={c}>{pts.map((q, i) => <mesh key={i} material={m} position={[q.x + Math.sin(t * 0.4 + q.ph) * 0.5, q.y + Math.sin(t * 0.6 + q.ph * 2) * 0.3, q.z]}><circleGeometry args={[0.03, 12]} /></mesh>)}</group>;
 };
 
 /* =================================================================== sky */

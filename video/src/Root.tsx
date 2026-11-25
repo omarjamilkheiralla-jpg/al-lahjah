@@ -60,6 +60,7 @@ export const Root: React.FC = () => {
       <Composition id="TownThumb2" component={TownThumb2} durationInFrames={2} fps={30} width={1920} height={1080} />
       <Composition id="TownThumb" component={TownThumb} durationInFrames={2} fps={30} width={1920} height={1080} />
       <Composition id="Juliane" component={Juliane} durationInFrames={Math.ceil(JUL_TOTAL * JUL_FPS)} fps={JUL_FPS} width={1920} height={1080} defaultProps={{ captions: true, audio: true }} />
+      <Composition id="JulianeVertical" component={Juliane} durationInFrames={Math.ceil(JUL_TOTAL * JUL_FPS)} fps={JUL_FPS} width={1080} height={1920} defaultProps={{ captions: true, audio: true, vertical: true }} />
       <Composition id="Town" component={TownFull} durationInFrames={Math.ceil(TOWN_TOTAL * TOWN_FPS)} fps={TOWN_FPS} width={1920} height={1080} defaultProps={{ captions: true, audio: true }} />
       <Composition id="Emu" component={EmuFull} durationInFrames={Math.ceil(EMU_TOTAL * EMU_FPS)} fps={EMU_FPS} width={1080} height={1920} defaultProps={{ captions: true, audio: true }} />
       {/* the full video: "How Chicago Lifted Itself" */}

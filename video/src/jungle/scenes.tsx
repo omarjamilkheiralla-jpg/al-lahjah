@@ -1,4 +1,4 @@
-/* Scenes (one per shot) for "She Fell Two Miles Out of the Sky". t = seconds since the shot started; at(line, word) = local time of a spoken word. */
+﻿/* Scenes (one per shot) for "She Fell Two Miles Out of the Sky". t = seconds since the shot started; at(line, word) = local time of a spoken word. */
 import * as THREE from "three";
 import React, { useMemo } from "react";
 import { Person2, type Pose } from "../full/person";
@@ -224,7 +224,7 @@ export const SGone: React.FC<SceneProps> = ({ t }) => {
 };
 /* 9b. a small bag of candy */
 export const SCandy: React.FC<SceneProps> = ({ t }) => (
-  <CrashSite t={t} juliane={<P look="julMud" p={[0.6, 0, 2.6]} t={t} pose="point" expr="think" seed={4} handR={<CandyBag p={[0, -0.12, 0.05]} s={0.55} spill={false} />} />} />
+  <CrashSite t={t} juliane={<P look="julMud" p={[0.6, 0, 2.6]} t={t} pose="point" expr="worried" seed={4} handR={<CandyBag p={[0, -0.12, 0.05]} s={0.55} spill={false} />} />} />
 );
 /* 10. DAY TWO: but she knows something most people don't */
 export const SThink: React.FC<SceneProps> = ({ t }) => (
@@ -390,7 +390,8 @@ const HutInside: React.FC<{ t: number; children?: React.ReactNode; tally?: numbe
     <Hut p={[0, 0, 0]} low>
       {can ? <GasCan p={[1.6, 0.35, -1.2]} /> : null}
       <Ink geometry={box(1.6, 0.6, 0.7)} material={toon("#7a5436")} position={[-1.6, 0.65, -1.4]} px={1.4} />
-      {tally !== undefined ? <TallyBoard p={[0.6, 1.9, -1.9]} n={tally} s={0.9} /> : null}
+      {tally !== undefined ? <TallyBoard p={[0.9, 1.55, -1.85]} n={tally} s={1.05} /> : null}
+      <pointLight position={[0, 2.2, 0.6]} intensity={9} color="#ffd8a0" distance={9} />
       {children}
     </Hut>
     <Motes t={t} n={30} area={[6, 3, 4]} c={[0, 0, 0]} />
@@ -459,8 +460,8 @@ export const SPolite: React.FC<SceneProps> = ({ t }) => (
 );
 /* 26a. down the river in the loggers' boat */
 export const SBoat: React.FC<SceneProps> = ({ t }) => (
-  <River t={t} k="jungle" scroll={t * 3.2} flow={0.12} extra={<group position={[0, 0.45, 0.6]}>
-    <Dugout p={[0, 0, 0]} s={1.1} />
+  <River t={t} k="jungle" scroll={t * 3.2} flow={0.12} extra={<group position={[0, 0.78, 0.6]}>
+    <Dugout p={[0, -0.13, 0]} s={1.1} />
     <P look="log3" p={[-2.6, 0.0, 0]} t={t} s={1.15} shadow={false} pose="crank" seed={22} expr="deadpan" />
     <P look="julMud" p={[-0.4, -0.25, 0.05]} t={t} s={1.05} shadow={false} seed={4} expr="grin" />
     <P look="log1" p={[1.4, -0.1, 0]} t={t} s={1.15} shadow={false} seed={20} expr="grin" />
@@ -487,14 +488,14 @@ export const SBoard: React.FC<SceneProps> = ({ t }) => <Station t={t} k="dusk" b
 export const SToday: React.FC<SceneProps> = ({ t }) => (
   <Station t={t} k="jungle" sign>
     <LabTable p={[1.2, 0, 0.2]} />
-    <P look="julOld" p={[1.6, 0, 1.8]} t={t} s={1.15} pose="hold" expr="grin" seed={5} handR={<group><Ink geometry={box(0.3, 0.4, 0.06)} material={toon("#2f6a4a")} px={1} /></group>} />
+    <P look="julOld" p={[1.6, 0, 1.8]} t={t} s={1.15} pose="hold" expr="think" seed={5} handR={<group><Ink geometry={box(0.3, 0.4, 0.06)} material={toon("#2f6a4a")} px={1} /></group>} />
   </Station>
 );
 /* 29. in the same jungle (crane up over the canopy at sunset) */
 export const SFinal: React.FC<SceneProps> = ({ t }) => (
   <group>
     <Station t={t} k="dusk" sign>
-      <P look="julOld" p={[2.4, 0, 1.6]} t={t} s={1.15} pose="idle" expr="proud" seed={5} />
+      <P look="julOld" p={[1.6, 0, 1.8]} t={t} s={1.15} pose="idle" expr="think" seed={5} />
     </Station>
     <Canopy y={24} seed={31} w={300} d={300} hole={[0, -1, 11]} />
     <Mist t={t} n={14} area={[260, 6, 200]} c={[0, 30, -40]} color="#ffd8b8" op={0.35} s={60} />

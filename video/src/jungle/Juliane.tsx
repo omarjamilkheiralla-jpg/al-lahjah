@@ -102,12 +102,12 @@ const PAGES = (() => {
   flush(); return pages;
 })();
 const HOT = /^(alone|two|miles|amazon|lightning|storm|end|over|candy|water|rivers|people|stingrays|maggots|gasoline|thirty|counts|loggers|politely|plane|ninety-two|only|biologist|jungle|juliane|christmas|seventeen-year-old|nineteen|seventy-one|rule|mom|dad|hut|boat|path)/i;
-const Captions: React.FC<{ t: number }> = ({ t }) => {
+const Captions: React.FC<{ t: number; v?: boolean }> = ({ t, v }) => {
   let idx = -1; for (let i = 0; i < PAGES.length; i++) if (t >= PAGES[i].s - 0.04) idx = i; else break;
   if (idx < 0) return null; const pg = PAGES[idx]; if (t > pg.e + 0.35) return null;
   const k = clamp((t - pg.s + 0.04) / 0.1);
   return (
-    <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center", paddingBottom: 84, pointerEvents: "none" }}>
+    <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center", paddingBottom: v ? 430 : 84, pointerEvents: "none" }}>
       <div style={{ fontFamily: "'Lilita One', Impact, sans-serif", fontSize: 88, color: "#fff", letterSpacing: 1.5, whiteSpace: "pre", WebkitTextStroke: "14px #1a0e10", paintOrder: "stroke fill", textShadow: "0 9px 0 rgba(26,14,16,.5)", transform: `scale(${0.88 + 0.12 * k})`, opacity: 0.35 + 0.65 * k }}>
         {pg.words.map((w, i) => <span key={i} style={{ color: HOT.test(w[0].replace(/^["']/, "")) ? "#ffd84a" : "#ffffff" }}>{(i ? " " : "") + w[0]}</span>)}
       </div>
@@ -123,7 +123,7 @@ const DayTitle: React.FC<{ text: string; local: number }> = ({ text, local }) =>
   </div>;
 };
 
-export const Juliane: React.FC<{ captions?: boolean; audio?: boolean }> = ({ captions = true, audio = true }) => {
+export const Juliane: React.FC<{ captions?: boolean; audio?: boolean; vertical?: boolean }> = ({ captions = true, audio = true, vertical = false }) => {
   const [fontsOk, setFontsOk] = React.useState(false);
   const { delayRender, continueRender } = useDelayRender();
   React.useEffect(() => { const h = delayRender("fonts"); loadFonts().then(() => { setFontsOk(true); continueRender(h); }); }, [delayRender, continueRender]);
@@ -133,6 +133,7 @@ export const Juliane: React.FC<{ captions?: boolean; audio?: boolean }> = ({ cap
   const at = React.useCallback((line: number, word: string) => wordAbs(line, word) - start, [start]);
   if (!fontsOk) return <AbsoluteFill style={{ backgroundColor: "#000" }} />;
   const Scene = shot.Scene;
+  const f0 = shot.fov ?? 50; const fov = vertical ? (2 * Math.atan(Math.tan((f0 * Math.PI) / 360) * 1.9) * 180) / Math.PI : f0;
   const flash = si > 0 && !shot.day ? Math.max(0, 1 - local / 0.18) * 0.35 : 0;
   const punch = si > 0 ? 1 + 0.035 * Math.pow(Math.max(0, 1 - local / 0.3), 2) : 1;
   // fade to black after her mother's last words, fade back in on DAY 1
@@ -141,8 +142,8 @@ export const Juliane: React.FC<{ captions?: boolean; audio?: boolean }> = ({ cap
   return (
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
       <AbsoluteFill style={{ transform: `scale(${punch})`, transformOrigin: "50% 50%", filter: grade }}>
-        <ThreeCanvas width={width} height={height} flat shadows camera={{ fov: shot.fov ?? 50, near: 0.1, far: 600, position: [p.x, p.y, p.z] }} gl={{ antialias: true }}>
-          <Rig p={p} l={l} roll={roll} fov={shot.fov ?? 50} />
+        <ThreeCanvas width={width} height={height} flat shadows camera={{ fov, near: 0.1, far: 600, position: [p.x, p.y, p.z] }} gl={{ antialias: true }}>
+          <Rig p={p} l={l} roll={roll} fov={fov} />
           <Scene key={si} t={local} dur={dur} at={at} />
           <PostFX focus={dist} range={Math.max(2.5, dist * 0.55)} bokeh={shot.bokeh ?? 2.6} frame={frame} grain={0.22} />
         </ThreeCanvas>
@@ -151,7 +152,7 @@ export const Juliane: React.FC<{ captions?: boolean; audio?: boolean }> = ({ cap
       {flash > 0 ? <AbsoluteFill style={{ backgroundColor: "#fff6e0", opacity: flash }} /> : null}
       {black > 0 ? <AbsoluteFill style={{ backgroundColor: "#000", opacity: black }} /> : null}
       {shot.day ? <DayTitle text={shot.day} local={local} /> : null}
-      {captions ? <Captions t={t} /> : null}
+      {captions ? <Captions t={t} v={vertical} /> : null}
       {audio ? <Audio src={staticFile("juliane_mix.wav")} /> : null}
     </AbsoluteFill>
   );
