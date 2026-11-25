@@ -103,6 +103,16 @@ export const headTexture = (look: Look, expr: Expr, key: string, v = 0) => {
       g.fillRect(-S, -ry + i * 72, S * 2, 30); g.restore();
     }
   }
+  if (look.ref) {
+    // painted lighting like the Cashiers video: warm key from the top left, cool bounce, glowing rim, soft form shading
+    const key = g.createRadialGradient(cx - rx * 0.38, cy - ry * 0.55, 10, cx - rx * 0.2, cy - ry * 0.3, rx * 1.15); key.addColorStop(0, "rgba(255,238,200,0.75)"); key.addColorStop(0.5, "rgba(255,238,200,0.22)"); key.addColorStop(1, "rgba(255,238,200,0)");
+    g.fillStyle = key; g.fillRect(0, 0, S, S);
+    const cool = g.createRadialGradient(cx + rx * 0.55, cy + ry * 0.62, 10, cx + rx * 0.3, cy + ry * 0.35, rx * 1.05); cool.addColorStop(0, "rgba(120,130,170,0.5)"); cool.addColorStop(0.6, "rgba(150,160,190,0.18)"); cool.addColorStop(1, "rgba(150,160,190,0)");
+    g.fillStyle = cool; g.fillRect(0, 0, S, S);
+    g.fillStyle = "rgba(235,170,150,0.22)"; g.filter = "blur(14px)"; g.beginPath(); g.ellipse(cx - rx * 0.58, cy + ry * 0.3, 46, 26, 0, 0, 7); g.fill(); g.beginPath(); g.ellipse(cx + rx * 0.58, cy + ry * 0.3, 46, 26, 0, 0, 7); g.fill(); g.filter = "none";
+    g.strokeStyle = "rgba(255,226,170,0.85)"; g.lineWidth = 16; g.lineCap = "round"; g.filter = "blur(3px)"; g.beginPath(); g.arc(cx, cy, rx - 10, Math.PI * 0.82, Math.PI * 1.32); g.stroke(); g.filter = "none";
+    g.strokeStyle = "rgba(255,255,255,0.35)"; g.lineWidth = 6; g.beginPath(); g.arc(cx, cy, rx - 22, Math.PI * 0.86, Math.PI * 1.22); g.stroke();
+  }
   // cheeks + nose bump
   g.fillStyle = look.ref ? "rgba(240,150,150,0.0)" : "rgba(240,150,150,0.35)";
   g.beginPath(); g.ellipse(cx - rx * 0.56, cy + ry * 0.24, 30, 17, 0, 0, 7); g.fill();
@@ -385,6 +395,13 @@ export const torsoTexture = (look: Look, key: string, v = 0) => {
     g.fillStyle = look.vest; g.beginPath(); g.moveTo(0, H * 0.5); g.quadraticCurveTo(cx, H * 0.42, W, H * 0.5); g.lineTo(W, H); g.lineTo(0, H); g.fill();
     g.lineWidth = 8; g.strokeStyle = INKD; g.beginPath(); g.moveTo(0, H * 0.5); g.quadraticCurveTo(cx, H * 0.42, W, H * 0.5); g.stroke();
     g.fillStyle = "#e8c66a"; for (let i = 0; i < 3; i++) { g.beginPath(); g.arc(cx, H * 0.6 + i * 60, 9, 0, 7); g.fill(); }
+  }
+  if (look.ref) {
+    const kl = g.createRadialGradient(cx - 90, 110, 10, cx - 40, 220, 340); kl.addColorStop(0, "rgba(255,240,205,0.5)"); kl.addColorStop(1, "rgba(255,240,205,0)"); g.fillStyle = kl; g.fillRect(0, 0, W, H);
+    const sd = g.createLinearGradient(cx + 20, 0, W, 0); sd.addColorStop(0, "rgba(20,10,40,0)"); sd.addColorStop(1, "rgba(20,10,40,0.38)"); g.fillStyle = sd; g.fillRect(0, 0, W, H);
+    const bt = g.createLinearGradient(0, H * 0.55, 0, H); bt.addColorStop(0, "rgba(20,10,30,0)"); bt.addColorStop(1, "rgba(20,10,30,0.4)"); g.fillStyle = bt; g.fillRect(0, 0, W, H);
+    g.strokeStyle = "rgba(255,230,180,0.6)"; g.lineWidth = 12; g.lineCap = "round"; g.filter = "blur(2px)"; g.beginPath(); g.moveTo(cx - 165, 140); g.quadraticCurveTo(cx - 185, 330, cx - 150, 560); g.stroke(); g.filter = "none";
+    g.strokeStyle = "rgba(255,255,255,0.18)"; g.lineWidth = 5; for (let k = 0; k < 3; k++) { g.beginPath(); g.moveTo(cx - 120 + k * 14, 210 + k * 30); g.quadraticCurveTo(cx - 60, 300 + k * 40, cx - 100 + k * 8, 470 + k * 20); g.stroke(); }
   }
   // folds
   g.strokeStyle = "rgba(42,26,30,0.28)"; g.lineWidth = 7;
