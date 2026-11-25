@@ -8,6 +8,7 @@ import { AntiFull, ANTI_TOTAL, FPS as ANTI_FPS } from "./anti/AntiFull";
 import { Thumb } from "./rats/Thumb";
 import { EmuFull, EMU_TOTAL, FPS as EMU_FPS } from "./emu/EmuFull";
 import { TownFull, TOWN_TOTAL, FPS as TOWN_FPS } from "./town/TownFull";
+import { Juliane, JUL_TOTAL, FPS as JUL_FPS } from "./jungle/Juliane";
 import { TownThumb, TownThumb2 } from "./town/Thumb";
 import { Style2Sample, STYLE2_TOTAL, FPS as S2_FPS } from "./style2/Style2Sample";
 
@@ -58,6 +59,7 @@ export const Root: React.FC = () => {
       <Composition id="Banner" component={Banner} durationInFrames={1} fps={30} width={2048} height={1152} />
       <Composition id="TownThumb2" component={TownThumb2} durationInFrames={2} fps={30} width={1920} height={1080} />
       <Composition id="TownThumb" component={TownThumb} durationInFrames={2} fps={30} width={1920} height={1080} />
+      <Composition id="Juliane" component={Juliane} durationInFrames={Math.ceil(JUL_TOTAL * JUL_FPS)} fps={JUL_FPS} width={1920} height={1080} defaultProps={{ captions: true, audio: true }} />
       <Composition id="Town" component={TownFull} durationInFrames={Math.ceil(TOWN_TOTAL * TOWN_FPS)} fps={TOWN_FPS} width={1920} height={1080} defaultProps={{ captions: true, audio: true }} />
       <Composition id="Emu" component={EmuFull} durationInFrames={Math.ceil(EMU_TOTAL * EMU_FPS)} fps={EMU_FPS} width={1080} height={1920} defaultProps={{ captions: true, audio: true }} />
       {/* the full video: "How Chicago Lifted Itself" */}
