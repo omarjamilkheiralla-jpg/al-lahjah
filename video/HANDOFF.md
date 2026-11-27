@@ -77,3 +77,10 @@ User feedback on Style4Full: wanted NO cuts/transitions, always first person, ne
 - Script `projects/koepcke-fall/SCRIPT.md` (approved). Narration: ElevenLabs "Will" on Eleven v3 (user's choice, slower and emotional, tags per line), `projects/koepcke-fall/make_voice.py` (needs env var ELEVENLABS_API_KEY on the user's PC; raw mp3s are committed so it re-times without spending credits). Mix `make_mix.py` -> `public/juliane_mix.wav`.
 - Look = lottery-town style (Remotion three, painted Person2 characters, toon + ink), NOT Blender. Code `src/jungle/{world,props,people,scenes,Juliane}.tsx`. Compositions `Juliane` (1920x1080) and `JulianeVertical` (1080x1920), 30 fps, 35 shots. Bats `render_juliane.bat`, `render_juliane_vertical.bat`.
 - Test stills: `node projects/koepcke-fall/stills.mjs <outdir> <scale> <frames> [1=captions]` (set COMP=JulianeVertical for vertical). Every shot checked as a mid-shot still in both formats; motion and audio NOT checked.
+
+## Eiffel Tower short ("He Sold the Eiffel Tower. Twice.") - composition `Eiffel`
+- Style 1 story short, 1080x1920, 30 fps, about 78 s, slow narrator (Kokoro am_liam speed 0.9; the user said NO ElevenLabs). 16 shots, no hard cuts: camera keeps moving, transitions are iris / dip / flash overlays (`src/eiffel/Eiffel.tsx`, `SHOTS`).
+- Files: `src/eiffel/{tex.ts,kit.tsx,timeline.ts,worlds1.tsx (street, attic, desk),worlds2.tsx (salon, station, study, modern, roofs/finale),Eiffel.tsx,timing.json}`, `projects/eiffel-con/{SCRIPT.md,script_lines.json,make_voice.py,make_audio.py}`, `public/eiffel/*.wav`, `render_eiffel.bat`.
+- Everything is driven by `src/eiffel/timing.json` (sentence/word times). Re-run voice with `python -I projects/eiffel-con/make_voice.py <kokoro model dir>` and the shots/captions follow automatically. Word indices used by cues: `wt(5,13)` "And this is a secret", `wt(11,16)` "delete", `wt(1,2)/(1,4)` SOLD signs.
+- Worlds are separate sets placed at x offsets (`OX`); only the active world is mounted. Characters are billboarded painted `Person2` (Char wrapper in kit.tsx).
+- Verified by half-size still frames only; motion, audio sync and sound levels are NOT verified.

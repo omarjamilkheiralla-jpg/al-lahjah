@@ -32,6 +32,8 @@ import { CharSheet } from "./full/CharSheet";
 
 import { Counter, CounterHero } from "./full/Counter";
 
+import { Eiffel, EIFFEL_TOTAL, FPS as EIF_FPS } from "./eiffel/Eiffel";
+
 export const FPS = 30;
 
 export const Root: React.FC = () => {
@@ -63,6 +65,7 @@ export const Root: React.FC = () => {
       <Composition id="Banner" component={Banner} durationInFrames={1} fps={30} width={2048} height={1152} />
       <Composition id="CharSheet" component={CharSheet} durationInFrames={2} fps={30} width={1080} height={1920} defaultProps={{ only: "" }} />
       <Composition id="Counter" component={Counter} durationInFrames={2} fps={30} width={1080} height={1920} defaultProps={{ look: "kyle", expr: "deadpan", shot: "close" }} />
+      <Composition id="Eiffel" component={Eiffel} durationInFrames={Math.ceil(EIFFEL_TOTAL * EIF_FPS)} fps={EIF_FPS} width={1080} height={1920} />
       <Composition id="CounterHero" component={CounterHero} durationInFrames={150} fps={30} width={1080} height={1920} defaultProps={{ look: "kyle" }} />
       <Composition id="TownThumb2" component={TownThumb2} durationInFrames={2} fps={30} width={1920} height={1080} />
       <Composition id="TownThumb" component={TownThumb} durationInFrames={2} fps={30} width={1920} height={1080} />
