@@ -84,3 +84,8 @@ User feedback on Style4Full: wanted NO cuts/transitions, always first person, ne
 - Everything is driven by `src/eiffel/timing.json` (sentence/word times). Re-run voice with `python -I projects/eiffel-con/make_voice.py <kokoro model dir>` and the shots/captions follow automatically. Word indices used by cues: `wt(5,13)` "And this is a secret", `wt(11,16)` "delete", `wt(1,2)/(1,4)` SOLD signs.
 - Worlds are separate sets placed at x offsets (`OX`); only the active world is mounted. Characters are billboarded painted `Person2` (Char wrapper in kit.tsx).
 - Verified by half-size still frames only; motion, audio sync and sound levels are NOT verified.
+
+## Molasses flood short ("The Day Molasses Flooded Boston") - composition `Molasses` (built unattended, 1 hour)
+- Kokoro am_liam slow narration (speed 0.9), 67.5 s, 15 lines, "You see," as its own take. Files: `src/molasses/{tex.ts,timeline.ts,worlds.tsx (Boston, Car dashboard POV, Court),Molasses.tsx,timing.json}`, `projects/molasses-flood/{SCRIPT.md,script_lines.json,make_voice.py,make_audio.py}`, `public/molasses/*.wav`, `render_molasses.bat`.
+- Reuses the Eiffel kit (`src/eiffel/kit.tsx`: Char, Lit, M, Glow). Wave = extruded profile with vertex colours, driven by `tw` (start time) and `WAVE_SPEED`; burst `TB = wt(6,8)-0.15`, last wave `TF = wt(14,5)-2.4`.
+- Verified by stills only. Known weak: the wave still reads as a block from straight on (chase shot now ¾ view); engine light icon is blocky; people in the wreckage are basic.

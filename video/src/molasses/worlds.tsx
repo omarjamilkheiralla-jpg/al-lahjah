@@ -5,7 +5,7 @@ import { tx2 } from "./tex";
 import { tx } from "../eiffel/tex";
 import { wt, ss, se, clamp, sm, pop } from "./timeline";
 
-const MOL = () => memo("molMat", () => new THREE.MeshStandardMaterial({ vertexColors: true, color: "#ffffff", roughness: 0.16, metalness: 0.1, emissive: "#5a2a0c", emissiveIntensity: 0.9 }));
+const MOL = () => memo("molMat", () => new THREE.MeshStandardMaterial({ vertexColors: true, color: "#ffffff", roughness: 0.4, metalness: 0.05, emissive: "#5a2a0c", emissiveIntensity: 0.8 }));
 const MOLF = () => M("#6a3410", null, 0.14, "#4a2208", 0.9, { metalness: 0.15 });
 export const WAVE_SPEED = 19;
 const moundGeo = (sx: number, sy: number, sz: number, seed: number) => memo(`mound${sx}${sy}${sz}${seed}`, () => {
@@ -14,6 +14,14 @@ const moundGeo = (sx: number, sy: number, sz: number, seed: number) => memo(`mou
     let x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i); const n = Math.sin(x * 4.1 + seed) * 0.05 + Math.sin(y * 5.3 + z * 3.7 + seed * 2) * 0.05 + Math.sin(x * 9 + z * 8) * 0.02; const k = 1 + n;
     x *= sx * k; y *= sy * k; z *= sz * k; pos.setXYZ(i, x, y, z); const c = lo.clone().lerp(hi, Math.min(1, Math.max(0, (y / sy + 0.2) * 0.8)) ** 1.6); col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
   }
+  g.setAttribute("color", new THREE.BufferAttribute(col, 3)); g.computeVertexNormals(); return g;
+});
+const waveGeo = () => memo("waveGeo2", () => {
+  const sh = new THREE.Shape(); const P: [number, number][] = [[-11, 0], [-11, 2.6], [-7, 5.6], [-3.2, 8.4], [-0.4, 10.0], [1.8, 10.2], [3.4, 9.2], [3.6, 7.6], [2.8, 6.4], [3.4, 4.6], [3.2, 2.0], [4.0, 0]];
+  sh.moveTo(-P[0][0], P[0][1]); for (let i = 1; i < P.length; i++) sh.lineTo(-P[i][0], P[i][1]); sh.closePath();
+  const g = new THREE.ExtrudeGeometry(sh, { depth: 14.6, bevelEnabled: true, bevelThickness: 0.9, bevelSize: 0.9, bevelSegments: 6, curveSegments: 8 }); g.translate(0, 0, -7.3); g.rotateY(Math.PI / 2);
+  const pos = g.attributes.position; const col = new Float32Array(pos.count * 3); const lo = new THREE.Color("#4a200a"), hi = new THREE.Color("#b8742a");
+  for (let i = 0; i < pos.count; i++) { const k = Math.min(1, Math.max(0, pos.getY(i) / 10.4)); const c = lo.clone().lerp(hi, k ** 1.5); col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b; }
   g.setAttribute("color", new THREE.BufferAttribute(col, 3)); g.computeVertexNormals(); return g;
 });
 const frontZ = (t: number, tw: number | null) => (tw === null || t < tw ? -56 : Math.min(80, -56 + (t - tw) * WAVE_SPEED));
@@ -133,7 +141,7 @@ export const Boston: React.FC<BostonProps> = ({ t, cam, tw = null, paint = 1, le
       {/* the molasses: flood sheet + the wave */}
       {(waving || flooded) ? <mesh material={MOLF()} position={[0, 0.34, -56 + floodLen / 2]} scale={[1, 1, 1]}><boxGeometry args={[16, 0.68, floodLen]} /></mesh> : null}
       {(waving || flooded) ? <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.7, -56 + floodLen / 2]}><planeGeometry args={[16, floodLen]} /><meshStandardMaterial color="#7a3c12" roughness={0.08} metalness={0.4} emissive="#4a2208" emissiveIntensity={0.8} /></mesh> : null}
-      {waving && zf < 70 ? <group position={[0, 0, zf - 3.4]}><mesh geometry={moundGeo(8.2, 6.4, 7.5, 1)} material={MOL()} position={[0, 3.0, -1.5]} castShadow /><mesh geometry={moundGeo(7.8, 2.4, 3.6, 3)} material={MOL()} position={[0, 8.2, 1.6]} rotation={[0.25, 0, 0]} castShadow /><mesh geometry={moundGeo(6.0, 3.0, 5.0, 5)} material={MOL()} position={[0, 2.2, 3.4]} /><Splat t={t} z0={1} /><Glow p={[0, 9, 2]} s={12} c="#ff9a50" o={0.18} /></group> : null}
+      {waving && zf < 70 ? <group position={[0, 0, zf - 3.4]}><mesh geometry={waveGeo()} material={MOL()} castShadow />{Array.from({ length: 7 }, (_, i) => <mesh key={i} geometry={moundGeo(1.5, 1.1, 1.4, i)} material={MOL()} position={[-6 + i * 2, 9.4 + Math.sin(t * 4 + i) * 0.3, 2.2]} />)}<Splat t={t} z0={1} /><Glow p={[0, 9, 2]} s={12} c="#ff9a50" o={0.18} /></group> : null}
       {folk}
       {/* 21 lanterns, one for each person */}
       {lanternsAt !== null ? Array.from({ length: 21 }, (_, i) => { const k = clamp((t - (lanternsAt + i * 0.11)) / 0.35); const row = i % 3, col = Math.floor(i / 3); return k > 0 ? <group key={i} position={[(row - 1) * 3.2, 0.95 + Math.sin(t * 1.6 + i) * 0.04, 8 - col * 5.6]} scale={[k, k, k]}><Cy r={0.16} h={0.3} p={[0, 0.15, 0]} m={M("#fff0c8", null, 0.4, "#ffa830", 2.2)} s={10} cast={false} /><Glow p={[0, 0.25, 0]} s={1.7} c="#ffb860" o={0.85} /></group> : null; }) : null}
@@ -151,8 +159,8 @@ export const Car: React.FC<{ t: number }> = ({ t }) => {
       <mesh position={[0, 0.3, -9]}><planeGeometry args={[22, 9]} /><meshBasicMaterial map={tx2("skyDay")} /></mesh>
       <Bx g={[5, 0.4, 3.4]} p={[0, -1.1, -1.0]} m={M("#14121a", null, 0.6)} />
       <mesh position={[0, -0.1, -1.55]} rotation={[-0.38, 0, 0]}><planeGeometry args={[3.6, 1.8]} /><meshStandardMaterial map={tx2("dash")} roughness={0.35} emissive="#ffffff" emissiveMap={tx2("dash")} emissiveIntensity={0.9} /></mesh>
-      <mesh position={[0, 0.0, -1.5]} rotation={[-0.38, 0, 0]}><planeGeometry args={[0.7, 0.7]} /><meshBasicMaterial map={tx2("engine")} transparent opacity={blink} depthWrite={false} blending={THREE.AdditiveBlending} /></mesh>
-      {blink > 0.5 ? <Glow p={[0, 0.1, -1.4]} s={2.2} c="#ffb000" o={0.7} /> : null}
+      <mesh position={[0, 0.0, -1.5]} rotation={[-0.38, 0, 0]}><planeGeometry args={[0.9, 0.9]} /><meshBasicMaterial map={tx2("engine")} transparent opacity={blink} depthWrite={false} blending={THREE.AdditiveBlending} /></mesh>
+      {blink > 0.5 ? <Glow p={[0, 0.1, -1.4]} s={1.0} c="#ffb000" o={0.55} /> : null}
       {tape > 0 ? <mesh position={[0.9 - tape * 0.9, 0.01, -1.47]} rotation={[-0.38, 0, 0.08]}><planeGeometry args={[0.9, 0.2]} /><meshStandardMaterial map={tx2("tape")} roughness={0.5} /></mesh> : null}
       <mesh position={[0, -1.25, -0.2]} rotation={[-1.1, 0, 0]}><torusGeometry args={[0.95, 0.11, 10, 40]} /><meshStandardMaterial color="#0e0e12" roughness={0.45} /></mesh>
       {/* the hand comes in with a roll of tape */}
