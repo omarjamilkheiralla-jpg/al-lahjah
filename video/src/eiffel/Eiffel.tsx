@@ -8,7 +8,7 @@ import { loadFonts } from "../full/fonts";
 import timing from "./timing.json";
 import { SENT, TOTAL, ss, se, wt, OX, clamp, sm } from "./timeline";
 import { Street, Attic, Desk } from "./worlds1";
-import { ShotAge } from "./kit";
+import { ShotAge, Char, Bx, M } from "./kit";
 import { Salon, Station, Study, Modern, Roofs, stationState } from "./worlds2";
 
 export const FPS = 30;
@@ -158,6 +158,28 @@ export const Eiffel: React.FC = () => {
       {sfx("click", wt(11, 16), 0.6)}
       {sfx("police", ss(14) + 0.1, 0.55)}
       {sfx("tading", se(15) + 0.3, 0.8)}
+    </AbsoluteFill>
+  );
+};
+
+/** YouTube thumbnail taken from the video's own world (1920x1080). Render with:  npx remotion still src/index.ts EiffelThumb out/eiffel_thumb.png */
+export const EiffelThumb: React.FC = () => {
+  const { width, height } = useVideoConfig();
+  const [ok, setOk] = React.useState(false); const { delayRender, continueRender } = useDelayRender();
+  React.useEffect(() => { const h = delayRender("fonts"); loadFonts().then(() => { setOk(true); continueRender(h); }); }, [delayRender, continueRender]);
+  if (!ok) return <AbsoluteFill style={{ background: "#0c0806" }} />;
+  const t = ss(15) + 2.5; const ox = OX.roofs; const p: V3 = [ox + 0, 24, -34]; const l: V3 = [ox + 0, 28, -92]; const focus = 56;
+  const stroke: React.CSSProperties = { fontFamily: "'Lilita One', sans-serif", textTransform: "uppercase", WebkitTextStroke: "16px #140a0c", paintOrder: "stroke fill", textShadow: "0 10px 0 rgba(0,0,0,.45), 0 0 40px rgba(0,0,0,.6)", lineHeight: 0.92, position: "absolute", left: 70 };
+  return (
+    <AbsoluteFill style={{ background: "#000" }}>
+      <ThreeCanvas width={width} height={height} flat shadows camera={{ fov: 46, position: p }} gl={{ antialias: true }}>
+        <Rig p={p} l={l} fov={46} roll={0} />
+        <group position={[ox, 0, 0]}><Roofs t={t} cam={[p[0] - ox, p[1], p[2]]} /><Bx g={[7, 0.4, 4]} p={[4.4, 21.6, -42]} m={M("#6a7aa8", null, 0.6, "#3a4a7a", 0.6)} /><Char look="victor" expr="grin" t={t} p={[4.4, 21.8, -42]} cam={[p[0] - ox, p[1], p[2]]} scale={1.5} pose="hold" tint="#ffe0c0" seed={5} handR={<mesh position={[0, -0.05, 0.05]}><boxGeometry args={[0.5, 0.3, 0.15]} /><meshBasicMaterial color="#6fa05a" /></mesh>} /></group>
+        <PostFX focus={focus} range={70} bokeh={2.0} frame={0} grain={0.18} />
+      </ThreeCanvas>
+      <AbsoluteFill style={{ background: "radial-gradient(ellipse at 60% 40%, rgba(0,0,0,0) 40%, rgba(8,5,6,.6) 100%)" }} />
+      <div style={{ ...stroke, top: 70, fontSize: 190, color: "#fff" }}>He sold the<br />Eiffel Tower</div>
+      <div style={{ ...stroke, bottom: 60, fontSize: 280, color: "#ffd84a", transform: "rotate(-3deg)" }}>Twice.</div>
     </AbsoluteFill>
   );
 };
