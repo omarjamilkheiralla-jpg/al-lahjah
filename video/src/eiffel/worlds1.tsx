@@ -6,7 +6,7 @@ import { wt, ss, pop, sm, clamp } from "./timeline";
 /** ============================ STREET: Paris at dusk, the tower at the end of the street ============================ */
 const facadeMat = (side: number, v: number) => memo(`fm${side}${v}`, () => {
   const plain = new THREE.MeshStandardMaterial({ color: "#d8c6a2", roughness: 0.9 });
-  const face = new THREE.MeshStandardMaterial({ map: tx(["facade", "facade2", "facade3"][v]), roughness: 0.85, emissive: "#ffb070", emissiveMap: tx(["facade", "facade2", "facade3"][v]), emissiveIntensity: 0.06 });
+  const face = new THREE.MeshStandardMaterial({ map: tx(["facade", "facade2", "facade3"][v]), roughness: 0.85, emissive: "#ffd0a0", emissiveMap: tx(["facade", "facade2", "facade3"][v]), emissiveIntensity: 0.22 });
   return side < 0 ? [face, plain, plain, plain, plain, plain] : [plain, face, plain, plain, plain, plain];
 });
 const StreetStatic = React.memo(() => {

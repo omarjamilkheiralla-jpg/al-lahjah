@@ -8,6 +8,7 @@ import { loadFonts } from "../full/fonts";
 import timing from "./timing.json";
 import { SENT, TOTAL, ss, se, wt, OX, clamp, sm } from "./timeline";
 import { Street, Attic, Desk } from "./worlds1";
+import { ShotAge } from "./kit";
 import { Salon, Station, Study, Modern, Roofs, stationState } from "./worlds2";
 
 export const FPS = 30;
@@ -138,7 +139,7 @@ export const Eiffel: React.FC = () => {
     <AbsoluteFill style={{ background: "#000" }}>
       <ThreeCanvas width={width} height={height} flat shadows camera={{ fov: cam.fov, position: p }} gl={{ antialias: true }}>
         <Rig p={p} l={l} fov={cam.fov} roll={(cam.roll ?? 0) + Math.sin(t * 0.6) * 0.006} />
-        <group position={[ox, 0, 0]} key={S.world}>{S.render(t, local)}</group>
+        <ShotAge.Provider value={s}><group position={[ox, 0, 0]} key={S.world}>{S.render(t, local)}</group></ShotAge.Provider>
         <PostFX focus={focus} range={Math.max(1.5, focus * 0.45)} bokeh={3.4} frame={f} grain={0.26} />
       </ThreeCanvas>
       <AbsoluteFill style={{ background: "radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0) 46%, rgba(8,5,6,.5) 100%)" }} />

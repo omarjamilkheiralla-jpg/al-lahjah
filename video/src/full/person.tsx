@@ -66,10 +66,11 @@ export type PersonProps = {
   emph?: number;
   gait?: number;
   amp?: number;
+  noBlink?: boolean;
 };
 
 export const Person2: React.FC<PersonProps> = ({
-  look, expr = "deadpan", t, position = [0, 0, 0], yaw = 0, scale = 1, seed = 1, pose = "idle", power = 1, lean = 0, tint = "#ffffff", handR, handL, still, stripes, emph = 0, gait = 1, amp = 1,
+  look, expr = "deadpan", t, position = [0, 0, 0], yaw = 0, scale = 1, seed = 1, pose = "idle", power = 1, lean = 0, tint = "#ffffff", handR, handL, still, stripes, emph = 0, gait = 1, amp = 1, noBlink,
 }) => {
   const r = useMemo(() => rng(seed), [seed]);
   const ph = useMemo(() => r() * 6, [r]);
@@ -77,7 +78,7 @@ export const Person2: React.FC<PersonProps> = ({
   const lk = look + (stripes ? "S" : "");
   const per = 3.2 + (seed % 4) * 0.5;
   const bx = ((t + ph) % per) / per;
-  const blinking = !still && bx > 0.955 && ["deadpan", "smug", "think", "proud", "grin"].includes(expr);
+  const blinking = !still && !noBlink && bx > 0.955 && ["deadpan", "smug", "think", "proud", "grin"].includes(expr);
   const showExpr: Expr = blinking ? "blink" : expr;
 
   const headMat = useMemo(() => new THREE.MeshBasicMaterial({ transparent: true, alphaTest: 0.04, side: THREE.DoubleSide }), []);

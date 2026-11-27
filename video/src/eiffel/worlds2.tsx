@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import React from "react";
-import { Bx, Cy, Sp, Pl, Glow, Sky, Char, Tower, M, BM, BG, PG, tx, rnd, memo, type V3 } from "./kit";
+import { Bx, Cy, Sp, Pl, Glow, Sky, Char, Tower, M, BM, BG, PG, Lit, tx, rnd, memo, type V3 } from "./kit";
 import { wt, ss, se, pop, sm, clamp } from "./timeline";
 
 /** ============================ SALON: the grand hotel room with the six dealers ============================ */
@@ -242,25 +242,35 @@ const ModernStatic = React.memo(() => (
 
 /** ============================ ROOFS: night Paris, the chase and the finale ============================ */
 const RoofsStatic = React.memo(() => {
-  const r = rnd(41); const roofs: React.ReactNode[] = [];
+  const r = rnd(41); const roofs: React.ReactNode[] = []; const lamps: React.ReactNode[] = [];
+  const tints = ["#ffffff", "#f0e4d0", "#e6d8c4", "#f4e8dc"]; const roofC = ["#ffffff", "#c8d0e0", "#e0c8c0"];
   for (let ix = -9; ix <= 9; ix++) for (let iz = -2; iz <= 9; iz++) {
-    if (Math.abs(ix * 11) < 22 && iz < 6) continue; if (iz <= 1 && iz >= 0) continue;
-    const x = ix * 11 + (r() - 0.5) * 2, z = 12 - iz * 11 + (r() - 0.5) * 2; const h = 9 + r() * 9; const rh = 2.2 + r() * 1.2;
+    if (Math.abs(ix * 11) < 22 && iz < 6) continue; if (iz <= 1 && iz >= 0) continue; if (iz === 6) continue; // chase corridor + the river
+    const x = ix * 11 + (r() - 0.5) * 1.6, z = 12 - iz * 11 + (r() - 0.5) * 1.6; const h = 9 + r() * 9; const rh = 2.4 + r() * 1.4; const ti = Math.floor(r() * 4);
     roofs.push(
       <group key={`${ix}_${iz}`} position={[x, 0, z]}>
-        <mesh geometry={BG(10, h, 10)} material={M("#ffffff", tx("facade3"), 0.9, "#ffb070", 0.45)} position={[0, h / 2, 0]} />
-        <mesh position={[0, h + rh / 2, 0]} rotation={[0, Math.PI / 4, 0]}><coneGeometry args={[7.4, rh, 4]} /><meshStandardMaterial map={tx("roof", 3, 2)} roughness={0.7} /></mesh>
-        {[0, 1].map((c) => <Bx key={c} g={[0.7, 1.7, 0.7]} p={[-2 + c * 3.4, h + rh + 0.2, 0.8 - c]} m={M("#7a6a58", null, 0.9)} />)}
+        <mesh geometry={BG(10, h, 10)} material={Lit(tx(["facade", "facade2", "facade3"][(ix + iz + 20) % 3]), ["#c8c0d8", "#d8c8c0", "#c0c8d8", "#d8d0c0"][ti], 0.85)} position={[0, h / 2, 0]} />
+        {[0.34, 0.62].map((f) => <Bx key={f} g={[10.5, 0.32, 10.5]} p={[0, h * f, 0]} m={M("#b8a888", null, 0.9)} cast={false} />)}
+        <Bx g={[10.7, 0.5, 10.7]} p={[0, h + 0.1, 0]} m={M("#c4b496", null, 0.9)} cast={false} />
+        <mesh position={[0, h + rh / 2 + 0.3, 0]} rotation={[0, Math.PI / 4, 0]}><coneGeometry args={[7.5, rh, 4]} /><meshStandardMaterial map={tx("roof", 3, 2)} color={roofC[ti % 3]} roughness={0.7} emissive="#2a3a6a" emissiveIntensity={0.45} /></mesh>
+        {[[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([a, c], k) => (r() < 0.6 ? <group key={k} position={[a * 2.6, h + rh * 0.32, c * 2.6]}><Bx g={[1.1, 1.0, 1.1]} p={[0, 0, 0]} m={M("#c4b496", null, 0.9)} cast={false} /><Bx g={[0.7, 0.7, 0.12]} p={[0, 0, c * 0.56]} m={M("#ffd88a", null, 0.4, "#ffb040", 1.6)} cast={false} /><Bx g={[1.3, 0.12, 1.3]} p={[0, 0.58, 0]} m={M("#4a5668", null, 0.7)} cast={false} /></group> : null))}
+        {[0, 1, 2].map((c) => <group key={c} position={[-3 + c * 2.6, h + rh * 0.9, 1.2 - c * 1.2]}><Bx g={[0.7, 1.7, 0.7]} p={[0, 0, 0]} m={M("#8a7a68", null, 0.9)} cast={false} /><Cy r={0.24} h={0.5} p={[0, 1.0, 0]} m={M("#b05a3a", null, 0.8)} s={8} cast={false} /></group>)}
+        {r() < 0.55 ? <Glow p={[0, h * 0.5, 5.4]} s={7} c="#ffb860" o={0.28} /> : null}
       </group>);
+    if (iz < 6 && iz > 1 && ix % 2 === 0) lamps.push(<group key={`l${ix}_${iz}`} position={[x + 6, 0, z + 5.6]}><Cy r={0.07} h={3.4} p={[0, 1.7, 0]} m={M("#1c1d22", null, 0.5)} s={6} cast={false} /><Glow p={[0, 3.5, 0]} s={4.6} c="#ffc070" o={0.8} /></group>);
   }
   return (
     <group>
       <Sky night r={320} />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.2, 0]}><planeGeometry args={[420, 420]} /><meshStandardMaterial color="#10121c" roughness={1} /></mesh>
-      {roofs}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.2, 0]}><planeGeometry args={[420, 420]} /><meshStandardMaterial color="#1c1e30" roughness={0.9} emissive="#14182c" emissiveIntensity={0.6} /></mesh>
+      {/* the Seine with lamp reflections and two bridges */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.1, -54]}><planeGeometry args={[420, 12]} /><meshStandardMaterial color="#1a2a5a" roughness={0.15} metalness={0.4} emissive="#1a3070" emissiveIntensity={0.7} /></mesh>
+      {Array.from({ length: 36 }, (_, i) => <Glow key={`rv${i}`} p={[-150 + i * 8.5 + (i % 3) * 2, 0.3, -50 - (i % 5) * 2.2]} s={3.4} c={i % 3 ? "#ffc070" : "#9ab4ff"} o={0.55} />)}
+      {[-28, 30].map((x) => <group key={x} position={[x, 0, -54]}><Bx g={[5, 0.6, 14]} p={[0, 0.6, 0]} m={M("#9a8c78", null, 0.8)} />{[-1, 1].map((k) => <Bx key={k} g={[5.2, 0.9, 0.3]} p={[0, 1.3, k * 6.9]} m={M("#7a6c58", null, 0.8)} />)}{[-5, -2.5, 0, 2.5, 5].map((z) => <Glow key={z} p={[2.6, 2.2, z]} s={2.2} c="#ffc878" o={0.8} />)}</group>)}
+      {roofs}{lamps}
       <hemisphereLight args={["#6a7ab8", "#3a2a24", 1.1]} />
       <directionalLight color="#9ab0ff" intensity={1.8} position={[30, 60, 40]} />
-      <Bx g={[90, 11, 12]} p={[0, 5.5, 6]} m={M("#ffffff", tx("facade3", 6, 1), 0.9, "#ffb070", 0.35)} /><Bx g={[90, 0.4, 12.4]} p={[0, 11.2, 6]} m={M("#7a8aaa", null, 0.6, "#4a5a8a", 0.6)} />
+      <Bx g={[90, 11, 12]} p={[0, 5.5, 6]} m={Lit(tx("facade3", 6, 1), "#c8c8e0", 0.8)} /><Bx g={[90, 0.4, 12.4]} p={[0, 11.2, 6]} m={M("#7a8aaa", null, 0.6, "#4a5a8a", 0.6)} />
       <directionalLight color="#ffb070" intensity={0.5} position={[-20, 10, -80]} />
     </group>
   );
@@ -285,7 +295,7 @@ export const Roofs: React.FC<{ t: number; cam: V3; finale?: number }> = ({ t, ca
       {/* roof ledge for the chase */}
       <Bx g={[80, 0.12, 5]} p={[0, 11.45, 6]} m={M("#ffffff", tx("roof", 14, 1), 0.7, "#4a5a8a", 0.7)} />
       <Bx g={[80, 0.7, 0.4]} p={[0, 11.9, 9.1]} m={M("#6a5a4a", null, 0.9)} />
-      {[-30, -12, 10, 28].map((x, i) => <Bx key={i} g={[1.4, 2.6, 1.4]} p={[x, 12.8, 5]} m={M("#7a6a58", null, 0.9)} />)}
+      {[-30, -12, 10, 28].map((x, i) => <Bx key={i} g={[1.4, 2.6, 1.4]} p={[x, 12.8, 5]} m={M("#9a8a78", null, 0.9, "#4a3a2a", 0.6)} />)}
       <Char look="victor" expr="worried" t={t} p={[vx, 11.5, 6.4]} cam={cam} scale={1.0} pose="walk" gait={2.4} amp={2.4} tint="#a8b4e8" seed={5} />
       {[0, 1].map((i) => <Char key={i} look="gendarme" expr="angry" t={t} p={[vx - 9 - i * 4.5 + Math.sin(t * 3) * 0.3, 11.5, 6.4 - i * 0.2]} cam={cam} scale={1.0} pose="walk" gait={2.1} amp={2.2} tint="#a8b4e8" seed={10 + i} />)}
       {Array.from({ length: 8 }, (_, i) => { const a = i / 8 * 6.28 + t * 6; return <mesh key={i} position={[-14 + i * 4, 15 + Math.sin(a) * 0.4, 2]}><circleGeometry args={[0.12, 8]} /><meshBasicMaterial color={i % 2 ? "#ff3a3a" : "#4a7aff"} /></mesh>; })}

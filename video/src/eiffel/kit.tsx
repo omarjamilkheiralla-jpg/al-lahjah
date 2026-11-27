@@ -9,6 +9,8 @@ export type V3 = [number, number, number];
 
 export const M = (c: string, map?: THREE.Texture | null, rough = 0.8, em?: string, ei = 1, extra?: Partial<THREE.MeshStandardMaterialParameters>) =>
   memo(`m${c}${map?.uuid}${rough}${em}${ei}${extra ? JSON.stringify(extra) : ""}`, () => new THREE.MeshStandardMaterial({ color: c, map: map ?? null, roughness: rough, emissive: em ?? "#000", emissiveIntensity: ei, ...extra }));
+/** self-lit painted surface: the texture itself glows (lit windows stay bright, stone stays textured) */
+export const Lit = (map: THREE.Texture, color = "#ffffff", k = 0.8, rough = 0.9) => memo(`lit${map.uuid}${color}${k}`, () => new THREE.MeshStandardMaterial({ map, color, roughness: rough, emissive: "#ffe2c0", emissiveMap: map, emissiveIntensity: k }));
 export const BM = (c: string, map?: THREE.Texture | null, opacity = 1, blend: THREE.Blending = THREE.NormalBlending, side: THREE.Side = THREE.FrontSide) =>
   memo(`bm${c}${map?.uuid}${opacity}${blend}${side}`, () => new THREE.MeshBasicMaterial({ color: c, map: map ?? null, transparent: opacity < 1 || blend !== THREE.NormalBlending || !!map, opacity, blending: blend, depthWrite: blend === THREE.NormalBlending, side, fog: false }));
 export const BG = (w: number, h: number, d: number) => memo(`b${w},${h},${d}`, () => new THREE.BoxGeometry(w, h, d));
@@ -32,17 +34,19 @@ export const Blob: React.FC<{ p: V3; s?: number; o?: number }> = ({ p, s = 1.6, 
 export const Sky: React.FC<{ night?: boolean; p?: V3; r?: number }> = ({ night, p = [0, 0, 0], r = 300 }) =>
   <mesh position={p} scale={[1, 1, 1]}><sphereGeometry args={[r, 32, 24]} /><meshBasicMaterial map={tx(night ? "skyNight" : "skyDusk")} side={THREE.BackSide} fog={false} depthWrite={false} /></mesh>;
 
+export const ShotAge = React.createContext(10);
 /** Billboard character: Y-axis billboard toward the camera, soft foot shadow, optional extras. Our painted look, lit by tint. */
 export const Char: React.FC<{
   look: string; expr?: Expr; t: number; p: V3; cam: V3; scale?: number; pose?: Pose; tint?: string; seed?: number; flip?: boolean; yawK?: number;
   handR?: React.ReactNode; handL?: React.ReactNode; emph?: number; power?: number; sit?: number; lean?: number; shadow?: boolean; gait?: number; amp?: number; children?: React.ReactNode; yawOverride?: number;
 }> = ({ look, expr = "deadpan", t, p, cam, scale = 1, pose = "idle", tint = "#ffeedd", seed = 3, flip, yawK = 0.9, handR, handL, emph = 0, power = 1, sit = 0, lean = 0, shadow = true, gait = 1, amp = 1, children, yawOverride }) => {
+  const age = React.useContext(ShotAge);
   const a = yawOverride ?? Math.atan2(cam[0] - p[0], cam[2] - p[2]) * yawK;
   return (
     <group>
       {shadow ? <Blob p={[p[0], p[1] + sit, p[2]]} s={1.7 * scale} /> : null}
       <group position={[p[0], p[1] - sit, p[2]]} rotation={[0, a, 0]}>
-        <Person2 look={look as any} expr={expr} t={t} position={[0, 0, 0]} scale={scale} seed={seed} tint={tint} pose={pose} handR={handR} handL={handL} emph={emph} power={power} lean={lean} yaw={flip ? -1 : 0} gait={gait} amp={amp} />
+        <Person2 look={look as any} expr={expr} t={t} position={[0, 0, 0]} scale={scale} seed={seed} tint={tint} pose={pose} handR={handR} handL={handL} emph={emph} power={power} lean={lean} yaw={flip ? -1 : 0} gait={gait} amp={amp} noBlink={age < 1.6} />
         {children}
       </group>
     </group>
