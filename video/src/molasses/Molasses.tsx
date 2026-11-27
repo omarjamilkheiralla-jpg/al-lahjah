@@ -43,7 +43,7 @@ const SHOTS: Shot[] = [
     cam: (u, _s, _d, t) => ({ p: lv([0.5, 3.0, -34], [0, 4.6, -45], ez(u)).map((v, i) => v + (i === 1 ? Math.sin(t * 47) * 0.03 * u : Math.sin(t * 53 + i) * 0.04 * u)) as V3, l: [0, 6, -54], fov: mix(54, 46, u) }),
     render: (t, c) => <Boston t={t} cam={c} showFolk="none" paint={1} shake={clamp((t - ss(6)) / Math.max(0.5, TB - ss(6)))} burst={TB} /> },
   { id: "chase", at: TB - 0.15, tr: "flash", world: "boston",
-    cam: (_u, _s, _d, t) => { const s = t - TB; const zf = -56 + s * WAVE_SPEED; return { p: [6.2, 4.6 + s * 0.3, zf + 15 - s * 1.4], l: [-1.5, 4.2, zf - 2], fov: 58 }; },
+    cam: (_u, _s, _d, t) => { const s = t - TB; const zf = -56 + s * WAVE_SPEED; return { p: [0.8, 8.8 + s * 0.2, zf + 26 - s * 1.3], l: [0, 3.2, zf - 3], fov: 52 }; },
     render: (t, c) => <Boston t={t} cam={c} tw={TB} showFolk="run" paint={1} burst={TB} /> },
   { id: "after", at: gap(8), tr: "iris", world: "boston",
     cam: (u, _s, _d, t) => ({ p: lv([2.5, 11, 34], [1, 8, 16], ez(u)), l: lv([0, 2, -12], [0, 1, -18], u), fov: 52 }),
